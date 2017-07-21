@@ -1,29 +1,30 @@
 package example.users;
 
+import org.neogroup.warp.Request;
+import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.routing.Get;
-import org.neogroup.warp.routing.Request;
 import org.neogroup.warp.routing.Route;
 
 public class UserController extends Controller {
 
     @Get("/users/")
-    public Route showUsersRoute = (req, res) -> {
+    public Object showUsers (Request req, Response res) {
         return "chess optus !! yessss ....";
-    };
+    }
 
     @Get("/camote/*")
-    public Route camoteRoute = (req, res) -> {
+    public Object camote (Request req, Response res) {
         return "Hello camote: " + req.getParameter("name");
-    };
+    }
 
     @Get("/users/:userId/rama")
-    public Route getUserIdRoute = (req, res) -> {
+    public Object getUserId (Request req, Response res) {
         return "The user id is: " + req.getParameter("userId");
-    };
+    }
 
-    @Request("cumpli")
-    public Route cumpliRoute = (req, res) -> {
-        return "Hello cumpli !!";
-    };
+    @Route("cumpli")
+    public Object cumpli (Request req, Response res) {
+        return "Hello cumpli mental !!";
+    }
 }

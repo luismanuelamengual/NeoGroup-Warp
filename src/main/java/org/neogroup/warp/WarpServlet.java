@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +42,17 @@ public class WarpServlet extends HttpServlet {
                     Controller controller = (Controller)cls.newInstance();
                     controllers.add(controller);
 
-                    for (Field field : cls.getDeclaredFields()) {
-                        Get getAnnotation = field.getAnnotation(Get.class);
+                    for (Method controllerMethod : cls.getDeclaredMethods()) {
+                        Get getAnnotation = controllerMethod.getAnnotation(Get.class);
                         if (getAnnotation != null) {
                             for (String path : getAnnotation.value()) {
-                                routes.addRoute(new RouteEntry("GET", path, (Route)field.get(controller)));
+                                routes.addRoute(new RouteEntry("GET", path, controller, controllerMethod));
                             }
                         }
-                        org.neogroup.warp.routing.Request requestAnnotation = field.getAnnotation(org.neogroup.warp.routing.Request.class);
+                        Route requestAnnotation = controllerMethod.getAnnotation(Route.class);
                         if (requestAnnotation != null) {
                             for (String path : requestAnnotation.value()) {
-                                routes.addRoute(new RouteEntry(null, path, (Route)field.get(controller)));
+                                routes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
                             }
                         }
                     }
@@ -71,18 +71,22 @@ public class WarpServlet extends HttpServlet {
 
         Request request = new Request(servletRequest);
         Response response = new Response(servletResponse);
-        RouteEntry routeEntry = routes.findRoute(request);
-        if (routeEntry != null) {
-            Object routeResponse = routeEntry.getRoute().handleRequest(request, response);
-            if (routeResponse != null) {
-                if (routeResponse instanceof String) {
-                    response.getWriter().print(routeResponse);
-                    response.flushBuffer();
+        try {
+            RouteEntry routeEntry = routes.findRoute(request);
+            if (routeEntry != null) {
+                Object routeResponse = routeEntry.getControllerMethod().invoke(routeEntry.getController(), request, response);
+                if (routeResponse != null) {
+                    if (routeResponse instanceof String) {
+                        response.getWriter().print(routeResponse);
+                        response.flushBuffer();
+                    }
                 }
+            } else {
+                response.getWriter().println("NOT FOUND !!");
             }
         }
-        else {
-            response.getWriter().println("URI: " + request.getPathInfo());
+        catch (Exception ex) {
+            response.getWriter().println("ERROR: " + ex.getMessage());
         }
     }
 }

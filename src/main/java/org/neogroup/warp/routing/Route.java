@@ -1,8 +1,13 @@
+
 package org.neogroup.warp.routing;
 
-import org.neogroup.warp.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface Route {
-
-    public Object handleRequest (org.neogroup.warp.Request request, Response response);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Route {
+    public String[] value();
 }
