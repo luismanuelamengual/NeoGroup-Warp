@@ -49,6 +49,12 @@ public class WarpServlet extends HttpServlet {
                                 routes.addRoute(new RouteEntry("GET", path, (Route)field.get(controller)));
                             }
                         }
+                        org.neogroup.warp.routing.Request requestAnnotation = field.getAnnotation(org.neogroup.warp.routing.Request.class);
+                        if (requestAnnotation != null) {
+                            for (String path : requestAnnotation.value()) {
+                                routes.addRoute(new RouteEntry(null, path, (Route)field.get(controller)));
+                            }
+                        }
                     }
 
                     return true;

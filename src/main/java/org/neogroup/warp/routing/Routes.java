@@ -66,7 +66,7 @@ public class Routes {
                     if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
                         String parameterName = pathPart.substring(1);
                         String parameterValue = pathParts[i];
-                        //TODO: Add parameter to the request
+                        request.setParameter(parameterName, parameterValue);
                     }
                 }
             }

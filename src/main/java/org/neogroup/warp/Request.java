@@ -6,14 +6,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
 
     private final HttpServletRequest request;
+    private final Map<String,String> parameters;
 
     protected Request (HttpServletRequest request) {
         this.request = request;
+        parameters = new HashMap<>();
     }
 
     public String getPathInfo() {
@@ -64,21 +67,19 @@ public class Request {
         return request.getInputStream();
     }
 
-    public String getParameter(String s) {
-        return request.getParameter(s);
+    public void setParameter(String key, String value) {
+        parameters.put(key, value);
     }
 
-    public Enumeration<String> getParameterNames() {
-        return request.getParameterNames();
+    public String getParameter(String key) {
+
+        String value = parameters.get(key);
+        if (value == null) {
+            value = request.getParameter(key);
+        }
+        return value;
     }
 
-    public String[] getParameterValues(String s) {
-        return request.getParameterValues(s);
-    }
-
-    public Map<String, String[]> getParameterMap() {
-        return request.getParameterMap();
-    }
 
     public String getProtocol() {
         return request.getProtocol();
