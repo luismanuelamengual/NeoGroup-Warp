@@ -82,11 +82,11 @@ public class WarpServlet extends HttpServlet {
                     }
                 }
             } else {
-                response.getWriter().println("NOT FOUND !!");
+                response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
             }
         }
         catch (Exception ex) {
-            response.getWriter().println("ERROR: " + ex.getMessage());
+            ex.printStackTrace(response.getWriter());
         }
     }
 }

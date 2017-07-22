@@ -25,6 +25,6 @@ public class UserController extends Controller {
 
     @Route("cumpli")
     public Object cumpli (Request req, Response res) {
-        return "Hello cumpli mental !!";
+        return 21 / 0;
     }
 }
