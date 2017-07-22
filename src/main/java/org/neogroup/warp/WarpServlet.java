@@ -4,6 +4,7 @@ package org.neogroup.warp;
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.routing.*;
+import org.neogroup.warp.routing.Error;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,11 +22,19 @@ public class WarpServlet extends HttpServlet {
 
     private List<Controller> controllers;
     private final Routes routes;
+    private final Routes beforeRoutes;
+    private final Routes afterRoutes;
+    private final Routes notFoundRoutes;
+    private final Routes errorRoutes;
 
     public WarpServlet() {
 
         controllers = new ArrayList<>();
         routes = new Routes();
+        beforeRoutes = new Routes();
+        afterRoutes = new Routes();
+        notFoundRoutes = new Routes();
+        errorRoutes = new Routes();
     }
 
     @Override
@@ -70,6 +79,30 @@ public class WarpServlet extends HttpServlet {
                                 routes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
                             }
                         }
+                        Before beforeAnnotation = controllerMethod.getAnnotation(Before.class);
+                        if (beforeAnnotation != null) {
+                            for (String path : beforeAnnotation.value()) {
+                                beforeRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
+                            }
+                        }
+                        After afterAnnotation = controllerMethod.getAnnotation(After.class);
+                        if (afterAnnotation != null) {
+                            for (String path : afterAnnotation.value()) {
+                                afterRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
+                            }
+                        }
+                        NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
+                        if (notFoundAnnotation != null) {
+                            for (String path : notFoundAnnotation.value()) {
+                                notFoundRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
+                            }
+                        }
+                        Error errorAnnotation = controllerMethod.getAnnotation(Error.class);
+                        if (errorAnnotation != null) {
+                            for (String path : errorAnnotation.value()) {
+                                notFoundRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
+                            }
+                        }
                     }
 
                     return true;
@@ -97,11 +130,30 @@ public class WarpServlet extends HttpServlet {
                     }
                 }
             } else {
-                response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
+                RouteEntry notFoundRoute = notFoundRoutes.findRoute(request);
+                if (notFoundRoute != null) {
+                    notFoundRoute.getControllerMethod().invoke(notFoundRoute.getController(), request, response);
+                }
+                else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
+                }
             }
         }
-        catch (Exception ex) {
-            ex.printStackTrace(response.getWriter());
+        catch (Throwable throwable) {
+            try {
+                RouteEntry errorRoute = errorRoutes.findRoute(request);
+                if (errorRoute != null) {
+                    errorRoute.getControllerMethod().invoke(errorRoute.getController(), request, response, throwable);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    throwable.printStackTrace(response.getWriter());
+                }
+            }
+            catch (Throwable errorThrowable) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                errorThrowable.printStackTrace(response.getWriter());
+            }
         }
     }
 }
