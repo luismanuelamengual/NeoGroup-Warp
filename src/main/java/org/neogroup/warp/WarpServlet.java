@@ -3,10 +3,7 @@ package org.neogroup.warp;
 
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.Controller;
-import org.neogroup.warp.routing.Get;
-import org.neogroup.warp.routing.Route;
-import org.neogroup.warp.routing.RouteEntry;
-import org.neogroup.warp.routing.Routes;
+import org.neogroup.warp.routing.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -47,6 +44,24 @@ public class WarpServlet extends HttpServlet {
                         if (getAnnotation != null) {
                             for (String path : getAnnotation.value()) {
                                 routes.addRoute(new RouteEntry("GET", path, controller, controllerMethod));
+                            }
+                        }
+                        Post postAnnotation = controllerMethod.getAnnotation(Post.class);
+                        if (postAnnotation != null) {
+                            for (String path : postAnnotation.value()) {
+                                routes.addRoute(new RouteEntry("POST", path, controller, controllerMethod));
+                            }
+                        }
+                        Put putAnnotation = controllerMethod.getAnnotation(Put.class);
+                        if (putAnnotation != null) {
+                            for (String path : putAnnotation.value()) {
+                                routes.addRoute(new RouteEntry("PUT", path, controller, controllerMethod));
+                            }
+                        }
+                        Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
+                        if (deleteAnnotation != null) {
+                            for (String path : deleteAnnotation.value()) {
+                                routes.addRoute(new RouteEntry("DELETE", path, controller, controllerMethod));
                             }
                         }
                         Route requestAnnotation = controllerMethod.getAnnotation(Route.class);
