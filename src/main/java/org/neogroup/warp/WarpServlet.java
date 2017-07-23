@@ -120,11 +120,24 @@ public class WarpServlet extends HttpServlet {
         Request request = new Request(servletRequest);
         Response response = new Response(servletResponse);
         try {
-            RouteEntry routeEntry = routes.findRoute(request);
-            if (routeEntry != null) {
-                Object routeResponse = routeEntry.getControllerMethod().invoke(routeEntry.getController(), request, response);
-                if (routeResponse != null) {
-                    if (routeResponse instanceof String) {
+            RouteEntry route = routes.findRoute(request);
+            if (route != null) {
+
+                RouteEntry beforeRoute = beforeRoutes.findRoute(request);
+                boolean executeRoute = true;
+                if (beforeRoute != null) {
+                    executeRoute = (boolean)beforeRoute.getControllerMethod().invoke(beforeRoute.getController(), request, response);
+                }
+
+                if (executeRoute) {
+                    Object routeResponse = route.getControllerMethod().invoke(route.getController(), request, response);
+
+                    RouteEntry afterRoute = afterRoutes.findRoute(request);
+                    if (afterRoute != null) {
+                        routeResponse = afterRoute.getControllerMethod().invoke(afterRoute.getController(), request, response, routeResponse);
+                    }
+
+                    if (routeResponse != null) {
                         response.getWriter().print(routeResponse);
                         response.flushBuffer();
                     }

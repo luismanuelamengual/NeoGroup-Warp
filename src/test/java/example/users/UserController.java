@@ -3,10 +3,17 @@ package example.users;
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.Controller;
+import org.neogroup.warp.routing.Before;
 import org.neogroup.warp.routing.Get;
 import org.neogroup.warp.routing.Route;
 
 public class UserController extends Controller {
+
+    @Before("users")
+    public boolean beforeShowUsers (Request req, Response res) {
+        System.out.println ("accessing users !!");
+        return true;
+    }
 
     @Get("/users/")
     public Object showUsers (Request req, Response res) {
