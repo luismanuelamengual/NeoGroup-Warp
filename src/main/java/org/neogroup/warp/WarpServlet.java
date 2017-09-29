@@ -43,7 +43,7 @@ public class WarpServlet extends HttpServlet {
         String scanBasePackage = config.getInitParameter(SCAN_BASE_PACKAGE_PARAMETER_NAME);
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
-            if (Controller.class.isAssignableFrom(cls) && cls.getPackage().getName().startsWith(scanBasePackage)) {
+            if (Controller.class.isAssignableFrom(cls) && (scanBasePackage == null || cls.getPackage().getName().startsWith(scanBasePackage))) {
                 try {
                     Controller controller = (Controller)cls.newInstance();
                     controllers.add(controller);

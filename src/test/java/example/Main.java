@@ -7,7 +7,6 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         WarpApplication application = new WarpApplication(8080);
-        application.setScanBasePackage("example");
         application.start();
     }
 }
