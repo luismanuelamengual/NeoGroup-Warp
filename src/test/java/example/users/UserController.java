@@ -1,13 +1,14 @@
 package example.users;
 
+import org.neogroup.warp.Controller;
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
-import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.routing.Before;
 import org.neogroup.warp.routing.Get;
 import org.neogroup.warp.routing.Route;
 
-public class UserController extends Controller {
+@Controller
+public class UserController {
 
     @Before("users")
     public boolean beforeShowUsers (Request req, Response res) {

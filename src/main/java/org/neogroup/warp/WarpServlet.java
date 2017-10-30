@@ -2,7 +2,6 @@
 package org.neogroup.warp;
 
 import org.neogroup.util.Scanner;
-import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.routing.*;
 import org.neogroup.warp.routing.Error;
 
@@ -13,14 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WarpServlet extends HttpServlet {
 
     public static final String SCAN_BASE_PACKAGE_PARAMETER_NAME = "scan_base_package";
 
-    private List<Controller> controllers;
+    private Map<Class, Object> controllers;
     private final Routes routes;
     private final Routes beforeRoutes;
     private final Routes afterRoutes;
@@ -29,7 +28,7 @@ public class WarpServlet extends HttpServlet {
 
     public WarpServlet() {
 
-        controllers = new ArrayList<>();
+        controllers = new HashMap<>();
         routes = new Routes();
         beforeRoutes = new Routes();
         afterRoutes = new Routes();
@@ -43,75 +42,89 @@ public class WarpServlet extends HttpServlet {
         String scanBasePackage = config.getInitParameter(SCAN_BASE_PACKAGE_PARAMETER_NAME);
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
-            if (Controller.class.isAssignableFrom(cls) && (scanBasePackage == null || cls.getPackage().getName().startsWith(scanBasePackage))) {
-                try {
-                    Controller controller = (Controller)cls.newInstance();
-                    controllers.add(controller);
+            if ((scanBasePackage == null || cls.getPackage().getName().startsWith(scanBasePackage))) {
 
-                    for (Method controllerMethod : cls.getDeclaredMethods()) {
-                        Get getAnnotation = controllerMethod.getAnnotation(Get.class);
-                        if (getAnnotation != null) {
-                            for (String path : getAnnotation.value()) {
-                                routes.addRoute(new RouteEntry("GET", path, controller, controllerMethod));
+                Controller controllerAnnotation = (Controller)cls.getAnnotation(Controller.class);
+                if (controllerAnnotation != null) {
+                    try {
+                        if (controllerAnnotation.singleInstance()) {
+                            controllers.put(cls, cls.newInstance());
+                        }
+
+                        for (Method controllerMethod : cls.getDeclaredMethods()) {
+                            Get getAnnotation = controllerMethod.getAnnotation(Get.class);
+                            if (getAnnotation != null) {
+                                for (String path : getAnnotation.value()) {
+                                    routes.addRoute(new RouteEntry("GET", path, cls, controllerMethod));
+                                }
+                            }
+                            Post postAnnotation = controllerMethod.getAnnotation(Post.class);
+                            if (postAnnotation != null) {
+                                for (String path : postAnnotation.value()) {
+                                    routes.addRoute(new RouteEntry("POST", path, cls, controllerMethod));
+                                }
+                            }
+                            Put putAnnotation = controllerMethod.getAnnotation(Put.class);
+                            if (putAnnotation != null) {
+                                for (String path : putAnnotation.value()) {
+                                    routes.addRoute(new RouteEntry("PUT", path, cls, controllerMethod));
+                                }
+                            }
+                            Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
+                            if (deleteAnnotation != null) {
+                                for (String path : deleteAnnotation.value()) {
+                                    routes.addRoute(new RouteEntry("DELETE", path, cls, controllerMethod));
+                                }
+                            }
+                            Route requestAnnotation = controllerMethod.getAnnotation(Route.class);
+                            if (requestAnnotation != null) {
+                                for (String path : requestAnnotation.value()) {
+                                    routes.addRoute(new RouteEntry(null, path, cls, controllerMethod));
+                                }
+                            }
+                            Before beforeAnnotation = controllerMethod.getAnnotation(Before.class);
+                            if (beforeAnnotation != null) {
+                                for (String path : beforeAnnotation.value()) {
+                                    beforeRoutes.addRoute(new RouteEntry(null, path, cls, controllerMethod));
+                                }
+                            }
+                            After afterAnnotation = controllerMethod.getAnnotation(After.class);
+                            if (afterAnnotation != null) {
+                                for (String path : afterAnnotation.value()) {
+                                    afterRoutes.addRoute(new RouteEntry(null, path, cls, controllerMethod));
+                                }
+                            }
+                            NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
+                            if (notFoundAnnotation != null) {
+                                for (String path : notFoundAnnotation.value()) {
+                                    notFoundRoutes.addRoute(new RouteEntry(null, path, cls, controllerMethod));
+                                }
+                            }
+                            Error errorAnnotation = controllerMethod.getAnnotation(Error.class);
+                            if (errorAnnotation != null) {
+                                for (String path : errorAnnotation.value()) {
+                                    errorRoutes.addRoute(new RouteEntry(null, path, cls, controllerMethod));
+                                }
                             }
                         }
-                        Post postAnnotation = controllerMethod.getAnnotation(Post.class);
-                        if (postAnnotation != null) {
-                            for (String path : postAnnotation.value()) {
-                                routes.addRoute(new RouteEntry("POST", path, controller, controllerMethod));
-                            }
-                        }
-                        Put putAnnotation = controllerMethod.getAnnotation(Put.class);
-                        if (putAnnotation != null) {
-                            for (String path : putAnnotation.value()) {
-                                routes.addRoute(new RouteEntry("PUT", path, controller, controllerMethod));
-                            }
-                        }
-                        Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
-                        if (deleteAnnotation != null) {
-                            for (String path : deleteAnnotation.value()) {
-                                routes.addRoute(new RouteEntry("DELETE", path, controller, controllerMethod));
-                            }
-                        }
-                        Route requestAnnotation = controllerMethod.getAnnotation(Route.class);
-                        if (requestAnnotation != null) {
-                            for (String path : requestAnnotation.value()) {
-                                routes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                            }
-                        }
-                        Before beforeAnnotation = controllerMethod.getAnnotation(Before.class);
-                        if (beforeAnnotation != null) {
-                            for (String path : beforeAnnotation.value()) {
-                                beforeRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                            }
-                        }
-                        After afterAnnotation = controllerMethod.getAnnotation(After.class);
-                        if (afterAnnotation != null) {
-                            for (String path : afterAnnotation.value()) {
-                                afterRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                            }
-                        }
-                        NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
-                        if (notFoundAnnotation != null) {
-                            for (String path : notFoundAnnotation.value()) {
-                                notFoundRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                            }
-                        }
-                        Error errorAnnotation = controllerMethod.getAnnotation(Error.class);
-                        if (errorAnnotation != null) {
-                            for (String path : errorAnnotation.value()) {
-                                notFoundRoutes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                            }
-                        }
+                        return true;
                     }
-
-                    return true;
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }            }
+            }
             return false;
         });
+    }
+
+    protected Object getController (Class controllerClass) throws Exception {
+
+        Object controllerInstance = controllers.get(controllerClass);
+        if (controllerInstance == null) {
+            controllerInstance = controllerClass.newInstance();
+        }
+        return controllerInstance;
     }
 
     @Override
@@ -126,15 +139,15 @@ public class WarpServlet extends HttpServlet {
                 RouteEntry beforeRoute = beforeRoutes.findRoute(request);
                 boolean executeRoute = true;
                 if (beforeRoute != null) {
-                    executeRoute = (boolean)beforeRoute.getControllerMethod().invoke(beforeRoute.getController(), request, response);
+                    executeRoute = (boolean)beforeRoute.getControllerMethod().invoke(getController(beforeRoute.getControllerClass()), request, response);
                 }
 
                 if (executeRoute) {
-                    Object routeResponse = route.getControllerMethod().invoke(route.getController(), request, response);
+                    Object routeResponse = route.getControllerMethod().invoke(getController(route.getControllerClass()), request, response);
 
                     RouteEntry afterRoute = afterRoutes.findRoute(request);
                     if (afterRoute != null) {
-                        routeResponse = afterRoute.getControllerMethod().invoke(afterRoute.getController(), request, response, routeResponse);
+                        routeResponse = afterRoute.getControllerMethod().invoke(getController(afterRoute.getControllerClass()), request, response, routeResponse);
                     }
 
                     if (routeResponse != null) {
@@ -145,7 +158,7 @@ public class WarpServlet extends HttpServlet {
             } else {
                 RouteEntry notFoundRoute = notFoundRoutes.findRoute(request);
                 if (notFoundRoute != null) {
-                    notFoundRoute.getControllerMethod().invoke(notFoundRoute.getController(), request, response);
+                    notFoundRoute.getControllerMethod().invoke(getController(notFoundRoute.getControllerClass()), request, response);
                 }
                 else {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -157,7 +170,7 @@ public class WarpServlet extends HttpServlet {
             try {
                 RouteEntry errorRoute = errorRoutes.findRoute(request);
                 if (errorRoute != null) {
-                    errorRoute.getControllerMethod().invoke(errorRoute.getController(), request, response, throwable);
+                    errorRoute.getControllerMethod().invoke(getController(errorRoute.getControllerClass()), request, response, throwable);
                 } else {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     throwable.printStackTrace(response.getWriter());
