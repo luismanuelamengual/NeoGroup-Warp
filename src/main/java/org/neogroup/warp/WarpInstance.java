@@ -6,18 +6,25 @@ import org.neogroup.warp.controllers.Request;
 import org.neogroup.warp.controllers.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
+import org.neogroup.warp.models.CustomModelManager;
+import org.neogroup.warp.models.Manager;
+import org.neogroup.warp.models.ModelManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WarpInstance {
 
     private final Map<Class, Object> controllers;
+    private final Map<Class, ModelManager> managersByClass;
+    private final Map<String, CustomModelManager> managersByModelName;
     private final Routes routes;
     private final Routes beforeRoutes;
     private final Routes afterRoutes;
@@ -36,6 +43,8 @@ public class WarpInstance {
         this.afterRoutes = new Routes();
         this.notFoundRoutes = new Routes();
         this.errorRoutes = new Routes();
+        this.managersByClass = new HashMap<>();
+        this.managersByModelName = new HashMap<>();
         initialize(basePackage);
     }
 
@@ -45,9 +54,11 @@ public class WarpInstance {
         scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
 
-                Controller controllerAnnotation = (Controller) cls.getAnnotation(Controller.class);
-                if (controllerAnnotation != null) {
-                    try {
+                try {
+
+                    Controller controllerAnnotation = (Controller) cls.getAnnotation(Controller.class);
+                    if (controllerAnnotation != null) {
+
                         if (controllerAnnotation.singleInstance()) {
                             controllers.put(cls, cls.newInstance());
                         }
@@ -109,9 +120,30 @@ public class WarpInstance {
                             }
                         }
                         return true;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
                     }
+
+                    Manager managerAnnotation = (Manager)cls.getAnnotation(Manager.class);
+                    if (managerAnnotation != null) {
+                        if (cls.isAssignableFrom(CustomModelManager.class)) {
+                            CustomModelManager modelManager = (CustomModelManager)cls.newInstance();
+                            managersByModelName.put(modelManager.getModelName(), modelManager);
+                        }
+                        else if (cls.isAssignableFrom(ModelManager.class)) {
+                            ModelManager modelManager = (ModelManager)cls.newInstance();
+                            Type type = cls.getGenericSuperclass();
+                            if(type instanceof ParameterizedType) {
+                                ParameterizedType parameterizedType = (ParameterizedType) type;
+                                Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
+                                Class modelClass = (Class)fieldArgTypes[0];
+                                managersByClass.put(modelClass, modelManager);
+                            }
+                        }
+                        return true;
+                    }
+
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
             return false;
