@@ -1,7 +1,7 @@
 
-package org.neogroup.warp.routing;
+package org.neogroup.warp.controllers.routing;
 
-import org.neogroup.warp.Request;
+import org.neogroup.warp.controllers.Request;
 
 public class Routes {
 
@@ -46,6 +46,13 @@ public class Routes {
             }
         }
         currentRootIndex.addRoute(route);
+    }
+
+    /**
+     * Clear all the added routes for controllers
+     */
+    public void clearRoutes () {
+        routeIndex.clear();
     }
 
     /**

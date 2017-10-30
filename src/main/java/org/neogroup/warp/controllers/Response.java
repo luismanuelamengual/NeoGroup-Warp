@@ -1,4 +1,4 @@
-package org.neogroup.warp;
+package org.neogroup.warp.controllers;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -11,7 +11,7 @@ public class Response {
 
     private final HttpServletResponse response;
 
-    protected Response (HttpServletResponse response) {
+    public Response (HttpServletResponse response) {
         this.response = response;
     }
 

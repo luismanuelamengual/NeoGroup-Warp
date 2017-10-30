@@ -1,11 +1,12 @@
 package example.users;
 
-import org.neogroup.warp.Controller;
-import org.neogroup.warp.Request;
-import org.neogroup.warp.Response;
-import org.neogroup.warp.routing.Before;
-import org.neogroup.warp.routing.Get;
-import org.neogroup.warp.routing.Route;
+import org.neogroup.warp.Warp;
+import org.neogroup.warp.controllers.Controller;
+import org.neogroup.warp.controllers.Request;
+import org.neogroup.warp.controllers.Response;
+import org.neogroup.warp.controllers.routing.Before;
+import org.neogroup.warp.controllers.routing.Get;
+import org.neogroup.warp.controllers.routing.Route;
 
 @Controller
 public class UserController {

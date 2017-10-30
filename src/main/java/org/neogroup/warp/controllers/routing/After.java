@@ -1,4 +1,5 @@
-package org.neogroup.warp.routing;
+
+package org.neogroup.warp.controllers.routing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +8,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Get {
+public @interface After {
     public String[] value();
 }

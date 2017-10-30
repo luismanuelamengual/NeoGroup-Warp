@@ -36,10 +36,9 @@ public class WarpApplication {
     public void start () {
 
         try {
+            Warp.initialize(scanBasePackage);
+
             ServletHolder holder = new ServletHolder(WarpServlet.class);
-            if (scanBasePackage != null) {
-                holder.setInitParameter(WarpServlet.SCAN_BASE_PACKAGE_PARAMETER_NAME, scanBasePackage);
-            }
             ServletHandler handler = new ServletHandler();
             handler.addServletWithMapping(holder, "/*");
             Server server = new Server(port);
@@ -48,7 +47,7 @@ public class WarpApplication {
             server.join();
         }
         catch (Exception ex) {
-            throw new RuntimeException("Error initializing warp application");
+            throw new RuntimeException("Error initializing warp application", ex);
         }
     }
 }

@@ -1,5 +1,5 @@
 
-package org.neogroup.warp.routing;
+package org.neogroup.warp.controllers.routing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +14,11 @@ public class RouteIndex {
     public RouteIndex() {
         routes = new ArrayList<>();
         routeIndexes = new HashMap<>();
+    }
+
+    public void clear () {
+        routes.clear();
+        routeIndexes.clear();
     }
 
     public List<RouteEntry> getRoutes() {

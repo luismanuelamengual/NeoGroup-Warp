@@ -1,4 +1,4 @@
-package org.neogroup.warp;
+package org.neogroup.warp.controllers;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
@@ -14,7 +14,7 @@ public class Request {
     private final HttpServletRequest request;
     private final Map<String,String> parameters;
 
-    protected Request (HttpServletRequest request) {
+    public Request (HttpServletRequest request) {
         this.request = request;
         parameters = new HashMap<>();
     }
