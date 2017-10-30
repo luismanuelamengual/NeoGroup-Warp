@@ -1,5 +1,6 @@
 package example.users;
 
+import org.neogroup.warp.Warp;
 import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.controllers.Request;
 import org.neogroup.warp.controllers.Response;
