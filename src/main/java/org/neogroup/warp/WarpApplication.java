@@ -36,9 +36,10 @@ public class WarpApplication {
     public void start () {
 
         try {
-            Warp.initialize(scanBasePackage);
-
             ServletHolder holder = new ServletHolder(WarpServlet.class);
+            if (scanBasePackage != null) {
+                holder.setInitParameter(WarpServlet.SCAN_BASE_PACKAGE_PARAMETER_NAME, scanBasePackage);
+            }
             ServletHandler handler = new ServletHandler();
             handler.addServletWithMapping(holder, "/*");
             Server server = new Server(port);
