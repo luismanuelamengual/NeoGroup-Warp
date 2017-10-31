@@ -1,20 +1,16 @@
 
 package org.neogroup.warp.controllers.routing;
 
-import java.lang.reflect.Method;
-
 public class RouteEntry {
 
     private final String method;
     private final String path;
-    private final Class controllerClass;
-    private final Method controllerMethod;
+    private final AbstractRoute route;
 
-    public RouteEntry(String method, String path, Class controllerClass, Method controllerMethod) {
+    public RouteEntry(String method, String path, AbstractRoute route) {
         this.method = method;
         this.path = path;
-        this.controllerClass = controllerClass;
-        this.controllerMethod = controllerMethod;
+        this.route = route;
     }
 
     public String getMethod() {
@@ -25,11 +21,7 @@ public class RouteEntry {
         return path;
     }
 
-    public Class getControllerClass() {
-        return controllerClass;
-    }
-
-    public Method getControllerMethod() {
-        return controllerMethod;
+    public AbstractRoute getRoute() {
+        return route;
     }
 }
