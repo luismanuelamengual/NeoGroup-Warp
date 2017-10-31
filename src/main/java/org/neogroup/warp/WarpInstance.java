@@ -1,14 +1,12 @@
 package org.neogroup.warp;
 
 import org.neogroup.util.Scanner;
-import org.neogroup.warp.controllers.Controller;
+import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Request;
 import org.neogroup.warp.controllers.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
-import org.neogroup.warp.models.CustomModelManager;
-import org.neogroup.warp.models.Manager;
-import org.neogroup.warp.models.ModelManager;
+import org.neogroup.warp.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,14 +15,15 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WarpInstance {
 
     private final Map<Class, Object> controllers;
-    private final Map<Class, ModelManager> managersByClass;
-    private final Map<String, CustomModelManager> managersByModelName;
+    private final Map<Class, Object> managers;
+    private final Map<String, ModelManager> managersByModelName;
     private final Routes routes;
     private final Routes beforeRoutes;
     private final Routes afterRoutes;
@@ -43,7 +42,7 @@ public class WarpInstance {
         this.afterRoutes = new Routes();
         this.notFoundRoutes = new Routes();
         this.errorRoutes = new Routes();
-        this.managersByClass = new HashMap<>();
+        this.managers = new HashMap<>();
         this.managersByModelName = new HashMap<>();
         initialize(basePackage);
     }
@@ -56,12 +55,10 @@ public class WarpInstance {
 
                 try {
 
-                    Controller controllerAnnotation = (Controller) cls.getAnnotation(Controller.class);
+                    ControllerComponent controllerAnnotation = (ControllerComponent) cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
 
-                        if (controllerAnnotation.singleInstance()) {
-                            controllers.put(cls, cls.newInstance());
-                        }
+                        controllers.put(cls, cls.newInstance());
 
                         for (Method controllerMethod : cls.getDeclaredMethods()) {
                             Get getAnnotation = controllerMethod.getAnnotation(Get.class);
@@ -122,22 +119,23 @@ public class WarpInstance {
                         return true;
                     }
 
-                    Manager managerAnnotation = (Manager)cls.getAnnotation(Manager.class);
+                    ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
+                        ModelManager modelManager = (ModelManager)cls.newInstance();
                         if (cls.isAssignableFrom(CustomModelManager.class)) {
-                            CustomModelManager modelManager = (CustomModelManager)cls.newInstance();
-                            managersByModelName.put(modelManager.getModelName(), modelManager);
+                            CustomModelManager customModelManager = (CustomModelManager)modelManager;
+                            managersByModelName.put(customModelManager.getModelName(), customModelManager);
                         }
                         else if (cls.isAssignableFrom(ModelManager.class)) {
-                            ModelManager modelManager = (ModelManager)cls.newInstance();
                             Type type = cls.getGenericSuperclass();
                             if(type instanceof ParameterizedType) {
                                 ParameterizedType parameterizedType = (ParameterizedType) type;
                                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                                 Class modelClass = (Class)fieldArgTypes[0];
-                                managersByClass.put(modelClass, modelManager);
+                                managersByModelName.put(modelClass.getName(), modelManager);
                             }
                         }
+                        managers.put(cls, modelManager);
                         return true;
                     }
 
@@ -210,13 +208,34 @@ public class WarpInstance {
     }
 
     public <C extends Object> C getController (Class<? extends C> controllerClass) {
+        return (C)controllers.get(controllerClass);
+    }
 
-        Object controllerInstance = controllers.get(controllerClass);
-        if (controllerInstance == null) {
-            try {
-                controllerInstance = controllerClass.newInstance();
-            } catch (Exception ex) { throw new RuntimeException("Controller \"" + controllerClass.getName() + "\" could not be created", ex); }
-        }
-        return (C)controllerInstance;
+    public <M extends ModelManager> M getModelManager (Class<? extends M> modelManagerClass) {
+        return (M)managers.get(modelManagerClass);
+    }
+
+    private String getModelName(Object model) {
+        return (model instanceof CustomModel)? ((CustomModel)model).getModelName() : model.getClass().getName();
+    }
+
+    public <M extends Object> M create(M model, Object... params) {
+        return (M)managersByModelName.get(getModelName(model)).create(model, params);
+    }
+
+    public <M extends Object> M update(M model, Object... params) {
+        return (M)managersByModelName.get(getModelName(model)).update(model, params);
+    }
+
+    public <M extends Object> M delete(M model, Object... params) {
+        return (M)managersByModelName.get(getModelName(model)).delete(model, params);
+    }
+
+    public <M extends Object> Collection<M> retrieve (Class<? extends M> modelClass, ModelQuery query, Object... params) {
+        return retrieve(modelClass.getName(), query, params);
+    }
+
+    public <M extends Object> Collection<M> retrieve (String modelName, ModelQuery query, Object... params) {
+        return (Collection<M>)managersByModelName.get(modelName).retrieve(query, params);
     }
 }

@@ -1,9 +1,13 @@
 package org.neogroup.warp;
 
+import org.neogroup.warp.models.ModelManager;
+import org.neogroup.warp.models.ModelQuery;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,5 +63,29 @@ public class Warp {
 
     public static <C> C getController(Class<? extends C> controllerClass) {
         return getInstance().getController(controllerClass);
+    }
+
+    public static <M extends ModelManager> M getModelManager(Class<? extends M> modelManagerClass) {
+        return getInstance().getModelManager(modelManagerClass);
+    }
+
+    public static <M> M create(M model, Object... params) {
+        return getInstance().create(model, params);
+    }
+
+    public static <M> M update(M model, Object... params) {
+        return getInstance().update(model, params);
+    }
+
+    public static <M> M delete(M model, Object... params) {
+        return getInstance().delete(model, params);
+    }
+
+    public static <M> Collection<M> retrieve(Class<? extends M> modelClass, ModelQuery query, Object... params) {
+        return getInstance().retrieve(modelClass, query, params);
+    }
+
+    public static <M> Collection<M> retrieve(String modelName, ModelQuery query, Object... params) {
+        return getInstance().retrieve(modelName, query, params);
     }
 }

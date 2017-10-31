@@ -11,7 +11,7 @@ public abstract class ModelManager<M extends Object> {
      * @param params parameters
      * @return created model
      */
-    protected abstract M create (M model, Map<String,Object> params);
+    public abstract M create (M model, Object... params);
 
     /**
      * Updates a model
@@ -19,7 +19,7 @@ public abstract class ModelManager<M extends Object> {
      * @param params parameters
      * @return updated model
      */
-    protected abstract M update (M model, Map<String,Object> params);
+    public abstract M update (M model, Object... params);
 
     /**
      * Deletes an model
@@ -27,7 +27,7 @@ public abstract class ModelManager<M extends Object> {
      * @param params parameters
      * @return deleted model
      */
-    protected abstract M delete (M model, Map<String,Object> params);
+    public abstract M delete (M model, Object... params);
 
     /**
      * Retrieves a collection of models
@@ -35,5 +35,5 @@ public abstract class ModelManager<M extends Object> {
      * @param params parameters
      * @return collection of models
      */
-    protected abstract Collection<M> retrieve (ModelQuery query, Map<String,Object> params);
+    public abstract Collection<M> retrieve (ModelQuery query, Object... params);
 }
