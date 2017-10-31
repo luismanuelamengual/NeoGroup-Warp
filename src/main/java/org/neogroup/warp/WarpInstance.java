@@ -1,5 +1,6 @@
 package org.neogroup.warp;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Request;
@@ -122,11 +123,11 @@ public class WarpInstance {
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
                         ModelManager modelManager = (ModelManager)cls.newInstance();
-                        if (cls.isAssignableFrom(CustomModelManager.class)) {
+                        if (CustomModelManager.class.isAssignableFrom(cls)) {
                             CustomModelManager customModelManager = (CustomModelManager)modelManager;
                             managersByModelName.put(customModelManager.getModelName(), customModelManager);
                         }
-                        else if (cls.isAssignableFrom(ModelManager.class)) {
+                        else if (ModelManager.class.isAssignableFrom(cls)) {
                             Type type = cls.getGenericSuperclass();
                             if(type instanceof ParameterizedType) {
                                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -231,8 +232,16 @@ public class WarpInstance {
         return (M)managersByModelName.get(getModelName(model)).delete(model, params);
     }
 
+    public <M extends Object> Collection<M> retrieve (Class<? extends M> modelClass, Object... params) {
+        return retrieve(modelClass, null, params);
+    }
+
     public <M extends Object> Collection<M> retrieve (Class<? extends M> modelClass, ModelQuery query, Object... params) {
         return retrieve(modelClass.getName(), query, params);
+    }
+
+    public <M extends Object> Collection<M> retrieve (String modelName, Object... params) {
+        return retrieve(modelName, null, params);
     }
 
     public <M extends Object> Collection<M> retrieve (String modelName, ModelQuery query, Object... params) {

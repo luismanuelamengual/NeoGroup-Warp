@@ -81,6 +81,14 @@ public class Warp {
         return getInstance().delete(model, params);
     }
 
+    public static <M> Collection<M> retrieve(Class<? extends M> modelClass, Object... params) {
+        return getInstance().retrieve(modelClass, params);
+    }
+
+    public static <M> Collection<M> retrieve(String modelName, Object... params) {
+        return getInstance().retrieve(modelName, params);
+    }
+
     public static <M> Collection<M> retrieve(Class<? extends M> modelClass, ModelQuery query, Object... params) {
         return getInstance().retrieve(modelClass, query, params);
     }
