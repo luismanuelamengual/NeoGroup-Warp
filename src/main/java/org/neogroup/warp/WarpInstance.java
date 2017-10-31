@@ -22,7 +22,7 @@ public class WarpInstance {
 
     private final Map<Class, Object> controllers;
     private final Map<Class, Object> managers;
-    private final Map<String, ModelManager> managersByModelName;
+    private final Map<Class, ModelManager> managersByModelClass;
     private final Routes routes;
     private final Routes beforeRoutes;
     private final Routes afterRoutes;
@@ -42,7 +42,7 @@ public class WarpInstance {
         this.notFoundRoutes = new Routes();
         this.errorRoutes = new Routes();
         this.managers = new HashMap<>();
-        this.managersByModelName = new HashMap<>();
+        this.managersByModelClass = new HashMap<>();
         initialize(basePackage);
     }
 
@@ -124,17 +124,13 @@ public class WarpInstance {
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
                         ModelManager modelManager = (ModelManager)cls.newInstance();
-                        if (CustomModelManager.class.isAssignableFrom(cls)) {
-                            CustomModelManager customModelManager = (CustomModelManager)modelManager;
-                            managersByModelName.put(customModelManager.getModelName(), customModelManager);
-                        }
-                        else if (ModelManager.class.isAssignableFrom(cls)) {
+                        if (ModelManager.class.isAssignableFrom(cls)) {
                             Type type = cls.getGenericSuperclass();
                             if(type instanceof ParameterizedType) {
                                 ParameterizedType parameterizedType = (ParameterizedType) type;
                                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                                 Class modelClass = (Class)fieldArgTypes[0];
-                                managersByModelName.put(modelClass.getName(), modelManager);
+                                managersByModelClass.put(modelClass, modelManager);
                             }
                         }
                         managers.put(cls, modelManager);
@@ -232,35 +228,27 @@ public class WarpInstance {
         return (M)managers.get(modelManagerClass);
     }
 
-    private String getModelName(Object model) {
-        return (model instanceof CustomModel)? ((CustomModel)model).getModelName() : model.getClass().getName();
+    public <M extends Object> M createModel(M model, Object... params) {
+        return (M) managersByModelClass.get(model.getClass()).create(model, params);
     }
 
-    public <M extends Object> M create(M model, Object... params) {
-        return (M)managersByModelName.get(getModelName(model)).create(model, params);
+    public <M extends Object> M updateModel(M model, Object... params) {
+        return (M) managersByModelClass.get(model.getClass()).update(model, params);
     }
 
-    public <M extends Object> M update(M model, Object... params) {
-        return (M)managersByModelName.get(getModelName(model)).update(model, params);
+    public <M extends Object> M deleteModel(M model, Object... params) {
+        return (M) managersByModelClass.get(model.getClass()).delete(model, params);
     }
 
-    public <M extends Object> M delete(M model, Object... params) {
-        return (M)managersByModelName.get(getModelName(model)).delete(model, params);
+    public <M extends Object> M retrieveModel(Class<? extends M> modelClass, Object id, Object... params) {
+        return (M) managersByModelClass.get(modelClass).retrieve(id, params);
     }
 
-    public <M extends Object> Collection<M> retrieve (Class<? extends M> modelClass, Object... params) {
-        return retrieve(modelClass, null, params);
+    public <M extends Object> Collection<M> retrieveModels (Class<? extends M> modelClass, Object... params) {
+        return retrieveModels(modelClass, null, params);
     }
 
-    public <M extends Object> Collection<M> retrieve (Class<? extends M> modelClass, ModelQuery query, Object... params) {
-        return retrieve(modelClass.getName(), query, params);
-    }
-
-    public <M extends Object> Collection<M> retrieve (String modelName, Object... params) {
-        return retrieve(modelName, null, params);
-    }
-
-    public <M extends Object> Collection<M> retrieve (String modelName, ModelQuery query, Object... params) {
-        return (Collection<M>)managersByModelName.get(modelName).retrieve(query, params);
+    public <M extends Object> Collection<M> retrieveModels (Class<? extends M> modelClass, ModelQuery query, Object... params) {
+        return (Collection<M>) managersByModelClass.get(modelClass).retrieve(query, params);
     }
 }

@@ -1,7 +1,6 @@
 package org.neogroup.warp.models;
 
 import java.util.Collection;
-import java.util.Map;
 
 public abstract class ModelManager<M extends Object> {
 
@@ -22,12 +21,20 @@ public abstract class ModelManager<M extends Object> {
     public abstract M update (M model, Object... params);
 
     /**
-     * Deletes an model
+     * Deletes a model
      * @param model model to delete
      * @param params parameters
      * @return deleted model
      */
     public abstract M delete (M model, Object... params);
+
+    /**
+     * Retrieve a model by id
+     * @param id id to retrieve the model
+     * @param params parameters
+     * @return model
+     */
+    public abstract M retrieve (Object id, Object... params);
 
     /**
      * Retrieves a collection of models

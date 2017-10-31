@@ -69,31 +69,27 @@ public class Warp {
         return getInstance().getModelManager(modelManagerClass);
     }
 
-    public static <M> M create(M model, Object... params) {
-        return getInstance().create(model, params);
+    public static <M> M createModel(M model, Object... params) {
+        return getInstance().createModel(model, params);
     }
 
-    public static <M> M update(M model, Object... params) {
-        return getInstance().update(model, params);
+    public static <M> M updateModel(M model, Object... params) {
+        return getInstance().updateModel(model, params);
     }
 
-    public static <M> M delete(M model, Object... params) {
-        return getInstance().delete(model, params);
+    public static <M> M deleteModel(M model, Object... params) {
+        return getInstance().deleteModel(model, params);
     }
 
-    public static <M> Collection<M> retrieve(Class<? extends M> modelClass, Object... params) {
-        return getInstance().retrieve(modelClass, params);
+    public static <M> M retrieveModel(Class<? extends M> modelClass, Object id, Object... params) {
+        return getInstance().retrieveModel(modelClass, id, params);
     }
 
-    public static <M> Collection<M> retrieve(String modelName, Object... params) {
-        return getInstance().retrieve(modelName, params);
+    public static <M> Collection<M> retrieveModels(Class<? extends M> modelClass, Object... params) {
+        return getInstance().retrieveModels(modelClass, params);
     }
 
-    public static <M> Collection<M> retrieve(Class<? extends M> modelClass, ModelQuery query, Object... params) {
-        return getInstance().retrieve(modelClass, query, params);
-    }
-
-    public static <M> Collection<M> retrieve(String modelName, ModelQuery query, Object... params) {
-        return getInstance().retrieve(modelName, query, params);
+    public static <M> Collection<M> retrieveModels(Class<? extends M> modelClass, ModelQuery query, Object... params) {
+        return getInstance().retrieveModels(modelClass, query, params);
     }
 }
