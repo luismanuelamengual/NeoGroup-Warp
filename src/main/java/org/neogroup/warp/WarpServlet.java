@@ -27,6 +27,8 @@ public class WarpServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
 
-        warpInstance.processServletRequest(servletRequest, servletResponse);
+        Warp.setCurrentInstance(warpInstance);
+        warpInstance.handleRequest(servletRequest, servletResponse);
+        Warp.setCurrentInstance(null);
     }
 }

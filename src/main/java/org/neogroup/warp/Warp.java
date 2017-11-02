@@ -32,7 +32,7 @@ public class Warp {
 
     public static WarpInstance createInstance (String basePackage) {
         WarpInstance backupWarpInstance = Warp.instance;
-        WarpInstance instance =  new WarpInstance(basePackage);
+        WarpInstance instance =  new WarpInstance();
         Warp.instance = instance;
         instance.initialize(basePackage);
         Warp.instance = backupWarpInstance;
@@ -65,10 +65,6 @@ public class Warp {
         return instance;
     }
 
-    protected static void processServletRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
-        getInstance().processServletRequest(servletRequest, servletResponse);
-    }
-
     public static Properties getProperties() {
         return getInstance().getProperties();
     }
@@ -93,28 +89,16 @@ public class Warp {
         getInstance().loadPropertiesFromFile(filename);
     }
 
+    public static void handleRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
+        getInstance().handleRequest(servletRequest, servletResponse);
+    }
+
     public static <C> C getController(Class<? extends C> controllerClass) {
         return getInstance().getController(controllerClass);
     }
 
     public static <M extends ModelManager> M getModelManager(Class<? extends M> modelManagerClass) {
         return getInstance().getModelManager(modelManagerClass);
-    }
-
-    public static <F extends ViewFactory> F getViewFactory(Class<? extends F> viewFactoryClass) {
-        return getInstance().getViewFactory(viewFactoryClass);
-    }
-
-    public static <F extends ViewFactory> F getViewFactory(String name) {
-        return getInstance().getViewFactory(name);
-    }
-
-    public static <V extends View> V createView(String name) {
-        return getInstance().createView(name);
-    }
-
-    public static <V extends View> V createView(String viewFactoryName, String viewName) {
-        return getInstance().createView(viewFactoryName, viewName);
     }
 
     public static <M> M createModel(M model, Object... params) {
@@ -139,5 +123,21 @@ public class Warp {
 
     public static <M> Collection<M> retrieveModels(Class<? extends M> modelClass, ModelQuery query, Object... params) {
         return getInstance().retrieveModels(modelClass, query, params);
+    }
+
+    public static <F extends ViewFactory> F getViewFactory(Class<? extends F> viewFactoryClass) {
+        return getInstance().getViewFactory(viewFactoryClass);
+    }
+
+    public static <F extends ViewFactory> F getViewFactory(String name) {
+        return getInstance().getViewFactory(name);
+    }
+
+    public static <V extends View> V createView(String name) {
+        return getInstance().createView(name);
+    }
+
+    public static <V extends View> V createView(String viewFactoryName, String viewName) {
+        return getInstance().createView(viewFactoryName, viewName);
     }
 }
