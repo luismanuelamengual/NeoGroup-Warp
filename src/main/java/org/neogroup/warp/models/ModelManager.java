@@ -4,6 +4,34 @@ import java.util.Collection;
 
 public abstract class ModelManager<M extends Object> {
 
+    public static final String DEFAULT_ID_PROPERTY_NAME = "id";
+
+    /**
+     * Retrieve the name of the id property of the model
+     * @return name of the id property
+     */
+    protected String getIdPropertyName () {
+        return DEFAULT_ID_PROPERTY_NAME;
+    }
+
+    /**
+     * Retrieve a model by id
+     * @param id id to retrieve the model
+     * @param params parameters
+     * @return model
+     */
+    public M retrieve (Object id, Object... params) {
+        ModelQuery query = new ModelQuery();
+        query.addFilter(getIdPropertyName(), id);
+        query.setLimit(1);
+        Collection<M> models = retrieve(query, params);
+        M model = null;
+        if (!models.isEmpty()) {
+            model = models.iterator().next();
+        }
+        return model;
+    }
+
     /**
      * Creates a model
      * @param model model to create
@@ -27,14 +55,6 @@ public abstract class ModelManager<M extends Object> {
      * @return deleted model
      */
     public abstract M delete (M model, Object... params);
-
-    /**
-     * Retrieve a model by id
-     * @param id id to retrieve the model
-     * @param params parameters
-     * @return model
-     */
-    public abstract M retrieve (Object id, Object... params);
 
     /**
      * Retrieves a collection of models
