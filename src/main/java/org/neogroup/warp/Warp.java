@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Warp {
 
@@ -59,6 +60,30 @@ public class Warp {
 
     protected static void processServletRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         getInstance().processServletRequest(servletRequest, servletResponse);
+    }
+
+    public static Properties getProperties() {
+        return getInstance().getProperties();
+    }
+
+    public static <R> R getProperty(String property) {
+        return getInstance().getProperty(property);
+    }
+
+    public static boolean hasProperty(String property) {
+        return getInstance().hasProperty(property);
+    }
+
+    public static void setProperty(String property, Object value) {
+        getInstance().setProperty(property, value);
+    }
+
+    public static void loadPropertiesFromResource(String resourceName) {
+        getInstance().loadPropertiesFromResource(resourceName);
+    }
+
+    public static void loadPropertiesFromFile(String filename) {
+        getInstance().loadPropertiesFromFile(filename);
     }
 
     public static <C> C getController(Class<? extends C> controllerClass) {

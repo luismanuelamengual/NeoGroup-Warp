@@ -5,21 +5,27 @@ import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Request;
 import org.neogroup.warp.controllers.Response;
 import org.neogroup.warp.controllers.routing.*;
-import org.neogroup.warp.models.*;
+import org.neogroup.warp.models.ModelManager;
+import org.neogroup.warp.models.ModelManagerComponent;
+import org.neogroup.warp.models.ModelQuery;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class WarpInstance {
 
+    private final Properties properties;
     private final Map<Class, Object> controllers;
     private final Map<Class, Object> managers;
     private final Map<Class, ModelManager> managersByModelClass;
@@ -35,6 +41,7 @@ public class WarpInstance {
 
     protected WarpInstance (String basePackage) {
 
+        this.properties = new Properties();
         this.controllers = new HashMap<>();
         this.routes = new Routes();
         this.beforeRoutes = new Routes();
@@ -217,6 +224,70 @@ public class WarpInstance {
         }
         finally {
             Warp.setCurrentInstance(null);
+        }
+    }
+
+    /**
+     * Get the properties of the context
+     * @return
+     */
+    public Properties getProperties() {
+        return properties;
+    }
+
+    /**
+     * Get a property value
+     * @param property name of the property
+     * @param <R> casted type of response
+     * @return value of the property
+     */
+    public <R> R getProperty(String property) {
+        return (R)this.properties.get(property);
+    }
+
+    /**
+     * Indicates if a property exists
+     * @param property name of the property
+     * @return boolean
+     */
+    public boolean hasProperty(String property) {
+        return this.properties.containsKey(property);
+    }
+
+    /**
+     * Set a property value
+     * @param property name of the property
+     * @param value value of the property
+     */
+    public void setProperty(String property, Object value) {
+        this.properties.put(property, value);
+    }
+
+    /**
+     * Load properties from a classpath resource
+     * @param resourceName name of the resource
+     * @throws IOException
+     */
+    public void loadPropertiesFromResource (String resourceName) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourceName)) {
+            this.properties.load(in);
+        }
+        catch (IOException exception) {
+            throw new RuntimeException("Error reading properties resource file", exception);
+        }
+    }
+
+    /**
+     * Load properties from a file
+     * @param filename name of the file
+     * @throws IOException
+     */
+    public void loadPropertiesFromFile (String filename) {
+        try (FileInputStream in = new FileInputStream(filename)) {
+            this.properties.load(in);
+        }
+        catch (IOException exception) {
+            throw new RuntimeException("Error reading properties file", exception);
         }
     }
 
