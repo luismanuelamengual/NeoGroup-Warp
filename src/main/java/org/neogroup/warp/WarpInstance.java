@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 public class WarpInstance {
@@ -191,5 +192,13 @@ public class WarpInstance {
 
     public <V extends View> V createView(String viewFactoryName, String viewName) {
         return views.createView(viewFactoryName, viewName);
+    }
+
+    public <V extends View> V createView(String name, Map<String, Object> viewParameters) {
+        return views.createView(name, viewParameters);
+    }
+
+    public <V extends View> V createView(String viewFactoryName, String viewName, Map<String, Object> viewParameters) {
+        return views.createView(viewFactoryName, viewName, viewParameters);
     }
 }

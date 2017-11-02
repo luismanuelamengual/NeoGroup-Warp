@@ -140,4 +140,12 @@ public class Warp {
     public static <V extends View> V createView(String viewFactoryName, String viewName) {
         return getInstance().createView(viewFactoryName, viewName);
     }
+
+    public static <V extends View> V createView(String name, Map<String, Object> viewParameters) {
+        return getInstance().createView(name, viewParameters);
+    }
+
+    public static <V extends View> V createView(String viewFactoryName, String viewName, Map<String, Object> viewParameters) {
+        return getInstance().createView(viewFactoryName, viewName, viewParameters);
+    }
 }

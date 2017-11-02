@@ -37,6 +37,10 @@ public class Views {
     }
 
     public <V extends View> V createView (String name) {
+        return createView(name, (Map<String,Object>)null);
+    }
+
+    public <V extends View> V createView (String name, Map<String, Object> viewParameters) {
 
         String viewFactoryName = null;
 
@@ -52,10 +56,14 @@ public class Views {
         else {
             throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please set the property \"" + VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME + "\" !!");
         }
-        return createView(viewFactoryName, name);
+        return createView(viewFactoryName, name, viewParameters);
     }
 
     public <V extends View> V createView(String viewFactoryName, String viewName) {
+        return createView(viewFactoryName, viewName, null);
+    }
+
+    public <V extends View> V createView(String viewFactoryName, String viewName, Map<String,Object> viewParameters) {
 
         if (viewFactoryName == null) {
             throw new ViewFactoryNotFoundException("View Factory Name is required");
@@ -67,6 +75,9 @@ public class Views {
         V view = (V)viewFactory.createView(viewName);
         if (view == null) {
             throw new ViewNotFoundException(MessageFormat.format("View \"" + viewName + " not found !!", viewName));
+        }
+        for (String key : viewParameters.keySet()) {
+            view.setParameter(key, viewParameters.get(key));
         }
         return view;
     }
