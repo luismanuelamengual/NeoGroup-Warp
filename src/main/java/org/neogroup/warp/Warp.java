@@ -2,6 +2,8 @@ package org.neogroup.warp;
 
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelQuery;
+import org.neogroup.warp.views.View;
+import org.neogroup.warp.views.ViewFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +31,12 @@ public class Warp {
     }
 
     public static WarpInstance createInstance (String basePackage) {
-        return new WarpInstance(basePackage);
+        WarpInstance backupWarpInstance = Warp.instance;
+        WarpInstance instance =  new WarpInstance(basePackage);
+        Warp.instance = instance;
+        instance.initialize(basePackage);
+        Warp.instance = backupWarpInstance;
+        return instance;
     }
 
     protected static void setCurrentInstance (WarpInstance instance) {
@@ -92,6 +99,22 @@ public class Warp {
 
     public static <M extends ModelManager> M getModelManager(Class<? extends M> modelManagerClass) {
         return getInstance().getModelManager(modelManagerClass);
+    }
+
+    public static <F extends ViewFactory> F getViewFactory(Class<? extends F> viewFactoryClass) {
+        return getInstance().getViewFactory(viewFactoryClass);
+    }
+
+    public static <F extends ViewFactory> F getViewFactory(String name) {
+        return getInstance().getViewFactory(name);
+    }
+
+    public static <V extends View> V createView(String name) {
+        return getInstance().createView(name);
+    }
+
+    public static <V extends View> V createView(String viewFactoryName, String viewName) {
+        return getInstance().createView(viewFactoryName, viewName);
     }
 
     public static <M> M createModel(M model, Object... params) {

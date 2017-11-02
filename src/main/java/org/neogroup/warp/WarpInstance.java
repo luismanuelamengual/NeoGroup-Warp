@@ -8,6 +8,7 @@ import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelManagerComponent;
 import org.neogroup.warp.models.ModelQuery;
+import org.neogroup.warp.views.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,10 +27,14 @@ import java.util.Properties;
 
 public class WarpInstance {
 
+    private static final String VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME = "views.default.factory.name";
+
     private final Properties properties;
     private final Map<Class, Object> controllers;
-    private final Map<Class, Object> managers;
+    private final Map<Class, ModelManager> managers;
     private final Map<Class, ModelManager> managersByModelClass;
+    private final Map<Class, ViewFactory> viewFactories;
+    private final Map<String, ViewFactory> viewFactoriesByName;
     private final Routes routes;
     private final Routes beforeRoutes;
     private final Routes afterRoutes;
@@ -50,10 +56,11 @@ public class WarpInstance {
         this.errorRoutes = new Routes();
         this.managers = new HashMap<>();
         this.managersByModelClass = new HashMap<>();
-        initialize(basePackage);
+        this.viewFactories = new HashMap<>();
+        this.viewFactoriesByName = new HashMap<>();
     }
 
-    private void initialize (String basePackage) {
+    protected void initialize (String basePackage) {
 
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
@@ -130,8 +137,8 @@ public class WarpInstance {
 
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
-                        ModelManager modelManager = (ModelManager)cls.newInstance();
                         if (ModelManager.class.isAssignableFrom(cls)) {
+                            ModelManager modelManager = (ModelManager)cls.newInstance();
                             Type type = cls.getGenericSuperclass();
                             if(type instanceof ParameterizedType) {
                                 ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -139,11 +146,19 @@ public class WarpInstance {
                                 Class modelClass = (Class)fieldArgTypes[0];
                                 managersByModelClass.put(modelClass, modelManager);
                             }
+                            managers.put(cls, modelManager);
                         }
-                        managers.put(cls, modelManager);
                         return true;
                     }
 
+                    ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
+                    if (viewFactoryComponent != null) {
+                        if (ViewFactory.class.isAssignableFrom(cls)) {
+                            ViewFactory viewFactory = (ViewFactory) cls.newInstance();
+                            viewFactories.put(cls, viewFactory);
+                            viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
+                        }
+                    }
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -297,6 +312,39 @@ public class WarpInstance {
 
     public <M extends ModelManager> M getModelManager (Class<? extends M> modelManagerClass) {
         return (M)managers.get(modelManagerClass);
+    }
+
+    public <F extends ViewFactory> F getViewFactory (Class<? extends F> viewFactoryClass) {
+        return (F)viewFactories.get(viewFactoryClass);
+    }
+
+    public <F extends ViewFactory> F getViewFactory (String name) {
+        return (F)viewFactoriesByName.get(name);
+    }
+
+    public <V extends View> V createView (String name) {
+
+        String viewFactoryName = null;
+        if (viewFactories.size() == 1) {
+            viewFactoryName = viewFactoriesByName.keySet().iterator().next();
+        }
+        else if (hasProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME)) {
+            viewFactoryName = (String)getProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME);
+        }
+        return createView(viewFactoryName, name);
+    }
+
+    public <V extends View> V createView(String viewFactoryName, String viewName) {
+
+        V view = null;
+        ViewFactory viewFactory = viewFactoriesByName.get(viewFactoryName);
+        if (viewFactory != null) {
+            view = (V)viewFactory.createView(viewName);
+        }
+        if (view == null) {
+            throw new ViewNotFoundException(MessageFormat.format("View \"" + viewName + " not found !!", viewName));
+        }
+        return view;
     }
 
     public <M extends Object> M createModel(M model, Object... params) {
