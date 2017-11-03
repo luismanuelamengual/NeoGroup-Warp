@@ -3,7 +3,6 @@ package example.persons;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Route;
-import org.neogroup.warp.datasources.query.Select;
 import org.neogroup.warp.views.View;
 
 import java.util.Collection;
@@ -20,8 +19,6 @@ public class PersonsController {
         Collection<Person> persons = retrieveModels(Person.class);
         View personsView = createView("persons");
         personsView.setParameter("persons", persons);
-
-
         return personsView;
     };
 

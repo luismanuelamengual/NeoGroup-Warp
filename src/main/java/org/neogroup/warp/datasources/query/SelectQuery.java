@@ -3,8 +3,9 @@ package org.neogroup.warp.datasources.query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Select extends Query {
+public class SelectQuery extends RequestQuery {
 
+    private final String tableName;
     private final List<QueryField> returnFields;
     private final QueryConditionGroup whereConditionGroup;
     private final QueryConditionGroup havingConditionGroup;
@@ -14,8 +15,9 @@ public class Select extends Query {
     private Integer limit;
     private Integer offset;
 
-    public Select(String tableName) {
-        super(tableName);
+    public SelectQuery(String tableName) {
+
+        this.tableName = tableName;
         returnFields = new ArrayList<>();
         whereConditionGroup = new QueryConditionGroup();
         havingConditionGroup = new QueryConditionGroup();
@@ -24,39 +26,50 @@ public class Select extends Query {
         groupByFields = new ArrayList<>();
     }
 
-    public void clearReturnFields () {
+    public String getTableName() {
+        return tableName;
+    }
+
+    public SelectQuery clearReturnFields () {
         returnFields.clear();
+        return this;
     }
 
     public List<QueryField> getReturnFields() {
         return returnFields;
     }
 
-    public void addReturnField (String fieldName) {
+    public SelectQuery addReturnField (String fieldName) {
         addReturnField(fieldName, null);
+        return this;
     }
 
-    public void addReturnField (String fieldName, String fieldLabel) {
+    public SelectQuery addReturnField (String fieldName, String fieldLabel) {
         addReturnField(null, fieldName, fieldLabel);
+        return this;
     }
 
-    public void addReturnField (String fieldTableName, String fieldName, String fieldAlias) {
+    public SelectQuery addReturnField (String fieldTableName, String fieldName, String fieldAlias) {
         addReturnField(new QueryField(fieldTableName, fieldName, fieldAlias));
+        return this;
     }
 
-    public void addReturnField (QueryField field) {
+    public SelectQuery addReturnField (QueryField field) {
         returnFields.add(field);
+        return this;
     }
 
-    public void addReturnFields (String... fieldNames) {
+    public SelectQuery addReturnFields (String... fieldNames) {
         addReturnFields(fieldNames, null);
+        return this;
     }
 
-    public void addReturnFields (String[] fieldNames, String fieldsFormat) {
+    public SelectQuery addReturnFields (String[] fieldNames, String fieldsFormat) {
         addReturnFields(null, fieldNames, fieldsFormat);
+        return this;
     }
 
-    public void addReturnFields (String fieldsTableName, String[] fieldNames, String fieldsFormat) {
+    public SelectQuery addReturnFields (String fieldsTableName, String[] fieldNames, String fieldsFormat) {
         for (String fieldName : fieldNames) {
             String fieldAlias = null;
             if (fieldsFormat != null) {
@@ -64,125 +77,149 @@ public class Select extends Query {
             }
             addReturnField(fieldsTableName, fieldName, fieldAlias);
         }
+        return this;
     }
 
     public QueryConditionGroup getWhereConditionGroup() {
         return whereConditionGroup;
     }
 
-    public void addWhere (QueryCondition whereCondition) {
+    public SelectQuery addWhere (QueryCondition whereCondition) {
         whereConditionGroup.addCondition(whereCondition);
+        return this;
     }
 
-    public void addWhere (String fieldName, String operator, Object value) {
+    public SelectQuery addWhere (String fieldName, String operator, Object value) {
         whereConditionGroup.addCondition(new QueryFieldCondition(fieldName, operator, value));
+        return this;
     }
 
-    public void addWhere (QueryField field, String operator, Object value) {
+    public SelectQuery addWhere (QueryField field, String operator, Object value) {
         whereConditionGroup.addCondition(new QueryFieldCondition(field, operator, value));
+        return this;
     }
 
     public QueryConditionGroup getHavingConditionGroup() {
         return havingConditionGroup;
     }
 
-    public void addHaving (QueryCondition havingCondition) {
+    public SelectQuery addHaving (QueryCondition havingCondition) {
         havingConditionGroup.addCondition(havingCondition);
+        return this;
     }
 
-    public void addHaving (String fieldName, String operator, Object value) {
+    public SelectQuery addHaving (String fieldName, String operator, Object value) {
         havingConditionGroup.addCondition(new QueryFieldCondition(fieldName, operator, value));
+        return this;
     }
 
-    public void addHaving (QueryField field, String operator, Object value) {
+    public SelectQuery addHaving (QueryField field, String operator, Object value) {
         havingConditionGroup.addCondition(new QueryFieldCondition(field, operator, value));
+        return this;
     }
 
-    public void clearOrderByFields () {
+    public SelectQuery clearOrderByFields () {
         orderByFields.clear();
+        return this;
     }
 
     public List<QuerySortField> getOrderByFields() {
         return orderByFields;
     }
 
-    public void addOrderByField (QuerySortField orderByField) {
+    public SelectQuery addOrderByField (QuerySortField orderByField) {
         orderByFields.add(orderByField);
+        return this;
     }
 
-    public void addOrderByField (String fieldName) {
+    public SelectQuery addOrderByField (String fieldName) {
         orderByFields.add(new QuerySortField(fieldName));
+        return this;
     }
 
-    public void addOrderByField (QueryField field) {
+    public SelectQuery addOrderByField (QueryField field) {
         orderByFields.add(new QuerySortField(field));
+        return this;
     }
 
-    public void addOrderByField (String fieldName, QuerySortFieldDirection direction) {
+    public SelectQuery addOrderByField (String fieldName, QuerySortFieldDirection direction) {
         orderByFields.add(new QuerySortField(fieldName, direction));
+        return this;
     }
 
-    public void addOrderByField (QueryField field, QuerySortFieldDirection direction) {
+    public SelectQuery addOrderByField (QueryField field, QuerySortFieldDirection direction) {
         orderByFields.add(new QuerySortField(field, direction));
+        return this;
     }
 
-    public void clearGroupByFields () {
+    public SelectQuery clearGroupByFields () {
         groupByFields.clear();
+        return this;
     }
 
     public List<QueryField> getGroupByFields() {
         return groupByFields;
     }
 
-    public void addGroupByField (String fieldName) {
+    public SelectQuery addGroupByField (String fieldName) {
         addGroupByField(new QueryField(fieldName));
+        return this;
     }
 
-    public void addGroupByField (QueryField field) {
+    public SelectQuery addGroupByField (QueryField field) {
         groupByFields.add(field);
+        return this;
     }
 
-    public void clearJoins () {
+    public SelectQuery clearJoins () {
         joins.clear();
+        return this;
     }
 
     public List<QueryJoin> getJoins() {
         return joins;
     }
 
-    public void addJoin(QueryJoin join) {
+    public SelectQuery addJoin(QueryJoin join) {
         joins.add(join);
+        return this;
     }
 
-    public void addJoin(String tableName, String leftFieldName, String rightFieldName) {
+    public SelectQuery addJoin(String tableName, String leftFieldName, String rightFieldName) {
         joins.add(new QueryJoin(tableName, leftFieldName, rightFieldName));
+        return this;
     }
 
-    public void addJoin(String tableName, QueryField leftField, QueryField rightField) {
+    public SelectQuery addJoin(String tableName, QueryField leftField, QueryField rightField) {
         joins.add(new QueryJoin(tableName, leftField, rightField));
+        return this;
     }
 
-    public void addJoin(String tableName, QueryJoinType joinType, String leftFieldName, String rightFieldName) {
+    public SelectQuery addJoin(String tableName, QueryJoinType joinType, String leftFieldName, String rightFieldName) {
         joins.add(new QueryJoin(tableName, joinType, leftFieldName, rightFieldName));
+        return this;
     }
 
-    public void addJoin(String tableName, QueryJoinType joinType, QueryField leftField, QueryField rightField) {
+    public SelectQuery addJoin(String tableName, QueryJoinType joinType, QueryField leftField, QueryField rightField) {
         joins.add(new QueryJoin(tableName, joinType, leftField, rightField));
+        return this;
     }
 
     public Integer getLimit() {
         return limit;
     }
 
-    public void setLimit(Integer limit) {
+    public SelectQuery setLimit(Integer limit) {
         this.limit = limit;
+        return this;
     }
 
     public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(Integer offset) {
+    public SelectQuery setOffset(Integer offset) {
         this.offset = offset;
+        return this;
     }
 }
