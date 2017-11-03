@@ -3,6 +3,9 @@ package org.neogroup.warp;
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Controllers;
+import org.neogroup.warp.datasources.DataSource;
+import org.neogroup.warp.datasources.DataSourceComponent;
+import org.neogroup.warp.datasources.DataSources;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelManagerComponent;
 import org.neogroup.warp.models.ModelQuery;
@@ -28,6 +31,7 @@ public class WarpInstance {
     private final Controllers controllers;
     private final Models models;
     private final Views views;
+    private final DataSources dataSources;
 
     protected WarpInstance () {
 
@@ -35,6 +39,7 @@ public class WarpInstance {
         this.controllers = new Controllers();
         this.models = new Models();
         this.views = new Views();
+        this.dataSources = new DataSources();
     }
 
     protected void initialize (String basePackage) {
@@ -47,7 +52,7 @@ public class WarpInstance {
 
                     ControllerComponent controllerAnnotation = (ControllerComponent) cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
-                        Object controller = cls.newInstance();
+                        Object controller = cls.getConstructor().newInstance();
                         controllers.registerController(controller);
                         return true;
                     }
@@ -55,7 +60,7 @@ public class WarpInstance {
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
                         if (ModelManager.class.isAssignableFrom(cls)) {
-                            ModelManager modelManager = (ModelManager)cls.newInstance();
+                            ModelManager modelManager = (ModelManager)cls.getConstructor().newInstance();
                             models.registerModelManager(modelManager);
                             return true;
                         }
@@ -64,8 +69,17 @@ public class WarpInstance {
                     ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
                     if (viewFactoryComponent != null) {
                         if (ViewFactory.class.isAssignableFrom(cls)) {
-                            ViewFactory viewFactory = (ViewFactory) cls.newInstance();
+                            ViewFactory viewFactory = (ViewFactory) cls.getConstructor().newInstance();
                             views.registerViewFactory(viewFactory);
+                            return true;
+                        }
+                    }
+
+                    DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
+                    if (dataSourceComponent != null) {
+                        if (DataSource.class.isAssignableFrom(cls)) {
+                            DataSource dataSource = (DataSource) cls.getConstructor().newInstance();
+                            dataSources.registerDataSource(dataSource);
                             return true;
                         }
                     }

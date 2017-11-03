@@ -22,7 +22,7 @@ public class Views {
 
         Class viewFactoryClass = viewFactory.getClass();
         ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
-        viewFactories.put(viewFactory.getClass(), viewFactory);
+        viewFactories.put(viewFactoryClass, viewFactory);
         if (viewFactoryComponent != null) {
             viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
         }
