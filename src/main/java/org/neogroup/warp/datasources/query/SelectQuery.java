@@ -59,6 +59,21 @@ public class SelectQuery extends RequestQuery {
         return this;
     }
 
+    public SelectQuery addReturnFields (Object... fields) {
+        for (Object field : fields) {
+            if (field instanceof QueryReturnField) {
+                addReturnField((QueryReturnField)field);
+            }
+            else if (field instanceof String) {
+                addReturnField((String)field);
+            }
+            else {
+                addReturnField(field.toString());
+            }
+        }
+        return this;
+    }
+
     public SelectQuery addReturnFields (String... fieldNames) {
         addReturnFields(fieldNames, null);
         return this;
