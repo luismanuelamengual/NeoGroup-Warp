@@ -6,7 +6,7 @@ import java.util.List;
 public class SelectQuery extends RequestQuery {
 
     private final String tableName;
-    private final List<QueryField> returnFields;
+    private final List<QueryReturnField> returnFields;
     private final QueryConditionGroup whereConditionGroup;
     private final QueryConditionGroup havingConditionGroup;
     private final List<QuerySortField> orderByFields;
@@ -35,7 +35,7 @@ public class SelectQuery extends RequestQuery {
         return this;
     }
 
-    public List<QueryField> getReturnFields() {
+    public List<QueryReturnField> getReturnFields() {
         return returnFields;
     }
 
@@ -50,11 +50,11 @@ public class SelectQuery extends RequestQuery {
     }
 
     public SelectQuery addReturnField (String fieldTableName, String fieldName, String fieldAlias) {
-        addReturnField(new QueryField(fieldTableName, fieldName, fieldAlias));
+        addReturnField(new QueryReturnField(fieldTableName, fieldName, fieldAlias));
         return this;
     }
 
-    public SelectQuery addReturnField (QueryField field) {
+    public SelectQuery addReturnField (QueryReturnField field) {
         returnFields.add(field);
         return this;
     }
@@ -127,28 +127,18 @@ public class SelectQuery extends RequestQuery {
         return orderByFields;
     }
 
-    public SelectQuery addOrderByField (QuerySortField orderByField) {
-        orderByFields.add(orderByField);
-        return this;
-    }
-
     public SelectQuery addOrderByField (String fieldName) {
         orderByFields.add(new QuerySortField(fieldName));
         return this;
     }
 
-    public SelectQuery addOrderByField (QueryField field) {
-        orderByFields.add(new QuerySortField(field));
+    public SelectQuery addOrderByField (QuerySortField field) {
+        orderByFields.add(field);
         return this;
     }
 
     public SelectQuery addOrderByField (String fieldName, QuerySortFieldDirection direction) {
         orderByFields.add(new QuerySortField(fieldName, direction));
-        return this;
-    }
-
-    public SelectQuery addOrderByField (QueryField field, QuerySortFieldDirection direction) {
-        orderByFields.add(new QuerySortField(field, direction));
         return this;
     }
 

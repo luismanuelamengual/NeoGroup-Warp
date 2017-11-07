@@ -4,20 +4,14 @@ public class QueryField {
 
     private String fieldTableName;
     private String fieldName;
-    private String fieldAlias;
 
-    public QueryField(String fieldName) {
-        this(null, fieldName, null);
+    public QueryField(String fieldExpression) {
+        this(null, fieldExpression);
     }
 
-    public QueryField(String fieldName, String fieldAlias) {
-        this(null, fieldName, fieldAlias);
-    }
-
-    public QueryField(String fieldTableName, String fieldName, String fieldAlias) {
+    public QueryField(String fieldTableName, String fieldName) {
         this.fieldTableName = fieldTableName;
         this.fieldName = fieldName;
-        this.fieldAlias = fieldAlias;
     }
 
     public void setFieldTableName(String fieldTableName) {
@@ -28,19 +22,11 @@ public class QueryField {
         this.fieldName = fieldName;
     }
 
-    public void setFieldAlias(String fieldAlias) {
-        this.fieldAlias = fieldAlias;
-    }
-
     public String getFieldTableName() {
         return fieldTableName;
     }
 
     public String getFieldName() {
         return fieldName;
-    }
-
-    public String getFieldAlias() {
-        return fieldAlias;
     }
 }
