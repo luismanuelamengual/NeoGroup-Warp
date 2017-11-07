@@ -18,13 +18,19 @@ public class Views {
         this.viewFactoriesByName = new HashMap<>();
     }
 
-    public void registerViewFactory (ViewFactory viewFactory) {
+    public void registerViewFactory (Class<? extends ViewFactory> viewFactoryClass) {
 
-        Class viewFactoryClass = viewFactory.getClass();
-        ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
-        viewFactories.put(viewFactoryClass, viewFactory);
-        if (viewFactoryComponent != null) {
-            viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
+        try {
+            ViewFactory viewFactory = viewFactoryClass.getConstructor().newInstance();
+            viewFactories.put(viewFactoryClass, viewFactory);
+
+            ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent) viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
+            if (viewFactoryComponent != null) {
+                viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
+            }
+        }
+        catch (Exception ex) {
+            throw new RuntimeException ("Error registering view factory \"" + viewFactoryClass.getName() + "\" !!", ex);
         }
     }
 

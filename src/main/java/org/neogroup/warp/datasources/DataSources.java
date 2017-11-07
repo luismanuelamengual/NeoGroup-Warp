@@ -18,13 +18,19 @@ public class DataSources {
         dataSourcesByName = new HashMap<>();
     }
 
-    public void registerDataSource(DataSource dataSource) {
+    public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
 
-        Class dataSourceClass = dataSource.getClass();
-        DataSourceComponent dataSourceComponent = (DataSourceComponent)dataSourceClass.getAnnotation(DataSourceComponent.class);
-        dataSources.put(dataSourceClass, dataSource);
-        if (dataSourceComponent != null) {
-            dataSourcesByName.put(dataSourceComponent.name(), dataSource);
+        try {
+            DataSource dataSource = dataSourceClass.getConstructor().newInstance();
+            dataSources.put(dataSourceClass, dataSource);
+
+            DataSourceComponent dataSourceComponent = (DataSourceComponent) dataSourceClass.getAnnotation(DataSourceComponent.class);
+            if (dataSourceComponent != null) {
+                dataSourcesByName.put(dataSourceComponent.name(), dataSource);
+            }
+        }
+        catch (Exception ex) {
+            throw new RuntimeException ("Error registering data source \"" + dataSourceClass.getName() + "\" !!", ex);
         }
     }
 

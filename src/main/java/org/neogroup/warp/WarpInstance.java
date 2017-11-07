@@ -50,18 +50,16 @@ public class WarpInstance {
 
                 try {
 
-                    ControllerComponent controllerAnnotation = (ControllerComponent) cls.getAnnotation(ControllerComponent.class);
+                    ControllerComponent controllerAnnotation = (ControllerComponent)cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
-                        Object controller = cls.getConstructor().newInstance();
-                        controllers.registerController(controller);
+                        controllers.registerController(cls);
                         return true;
                     }
 
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
                         if (ModelManager.class.isAssignableFrom(cls)) {
-                            ModelManager modelManager = (ModelManager)cls.getConstructor().newInstance();
-                            models.registerModelManager(modelManager);
+                            models.registerModelManager(cls);
                             return true;
                         }
                     }
@@ -69,8 +67,7 @@ public class WarpInstance {
                     ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
                     if (viewFactoryComponent != null) {
                         if (ViewFactory.class.isAssignableFrom(cls)) {
-                            ViewFactory viewFactory = (ViewFactory) cls.getConstructor().newInstance();
-                            views.registerViewFactory(viewFactory);
+                            views.registerViewFactory(cls);
                             return true;
                         }
                     }
@@ -78,8 +75,7 @@ public class WarpInstance {
                     DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
                     if (dataSourceComponent != null) {
                         if (DataSource.class.isAssignableFrom(cls)) {
-                            DataSource dataSource = (DataSource) cls.getConstructor().newInstance();
-                            dataSources.registerDataSource(dataSource);
+                            dataSources.registerDataSource(cls);
                             return true;
                         }
                     }

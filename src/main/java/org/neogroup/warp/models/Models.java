@@ -16,17 +16,22 @@ public class Models {
         this.managersByModelClass = new HashMap<>();
     }
 
-    public void registerModelManager (ModelManager modelManager) {
+    public void registerModelManager (Class<? extends ModelManager> modelManagerClass) {
 
-        Class modelManagerClass = modelManager.getClass();
-        Type type = modelManagerClass.getGenericSuperclass();
-        if(type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
-            Class modelClass = (Class)fieldArgTypes[0];
-            managersByModelClass.put(modelClass, modelManager);
+        try {
+            ModelManager modelManager = modelManagerClass.getConstructor().newInstance();
+            Type type = modelManagerClass.getGenericSuperclass();
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
+                Class modelClass = (Class) fieldArgTypes[0];
+                managersByModelClass.put(modelClass, modelManager);
+            }
+            managers.put(modelManagerClass, modelManager);
         }
-        managers.put(modelManagerClass, modelManager);
+        catch (Exception ex) {
+            throw new RuntimeException ("Error registering model manager \"" + modelManagerClass.getName() + "\" !!", ex);
+        }
     }
 
     public <M extends ModelManager> M getModelManager (Class<? extends M> modelManagerClass) {
