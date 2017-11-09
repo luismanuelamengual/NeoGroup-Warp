@@ -23,7 +23,11 @@ public class Views {
         try {
             ViewFactory viewFactory = viewFactoryClass.getConstructor().newInstance();
             viewFactories.put(viewFactoryClass, viewFactory);
-            viewFactoriesByName.put(viewFactory.getName(), viewFactory);
+
+            ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent) viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
+            if (viewFactoryComponent != null) {
+                viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
+            }
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering view factory \"" + viewFactoryClass.getName() + "\" !!", ex);
