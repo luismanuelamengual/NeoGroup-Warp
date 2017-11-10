@@ -46,18 +46,43 @@ public class DataSources {
     public DataSource getDefaultDataSource() {
 
         DataSource dataSource = null;
-        if (dataSources.isEmpty()) {
-            throw new RuntimeException("No data sourcess where registered !!");
-        }
-        else if (dataSources.size() == 1) {
-            dataSource = dataSources.values().iterator().next();
-        }
-        else if (Warp.hasProperty(DATA_SOURCES_DEFAULT_DATA_SOURCE_PROPERTY_NAME)) {
-            dataSource = getDataSource((String)Warp.getProperty(DATA_SOURCES_DEFAULT_DATA_SOURCE_PROPERTY_NAME));
-        }
-        else {
-            throw new RuntimeException ("Default data source property \"" + DATA_SOURCES_DEFAULT_DATA_SOURCE_PROPERTY_NAME + "\" not set !!");
+        if (!dataSources.isEmpty()) {
+
+            if (Warp.hasProperty(DATA_SOURCES_DEFAULT_DATA_SOURCE_PROPERTY_NAME)) {
+                dataSource = dataSourcesByName.get(Warp.getProperty(DATA_SOURCES_DEFAULT_DATA_SOURCE_PROPERTY_NAME));
+            }
+            else {
+                dataSource = dataSources.values().iterator().next();
+            }
         }
         return dataSource;
+    }
+
+    public DataConnection getDataConnection () {
+
+        DataSource dataSource = getDefaultDataSource();
+        if (dataSource == null) {
+            throw new RuntimeException("No default data source was registered");
+        }
+        return getDataConnection(dataSource);
+    }
+
+    public DataConnection getDataConnection (String dataSourceName) {
+
+        DataSource dataSource = getDataSource(dataSourceName);
+        if (dataSource == null) {
+            throw new RuntimeException("Data source with name \"" + dataSourceName + "\" was not registered");
+        }
+        return getDataConnection(dataSource);
+    }
+
+    public DataConnection getDataConnection (DataSource dataSource) {
+
+        try {
+            return new DataConnection(dataSource.getConnection());
+        }
+        catch (Exception exception) {
+            throw new RuntimeException("Error retrieving data connection !!", exception);
+        }
     }
 }
