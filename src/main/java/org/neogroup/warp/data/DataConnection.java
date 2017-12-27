@@ -2,12 +2,15 @@ package org.neogroup.warp.data;
 
 import org.neogroup.warp.data.query.Select;
 import org.neogroup.warp.data.query.Select.SelectField;
+import org.neogroup.warp.data.query.conditions.*;
 import org.neogroup.warp.data.query.fields.ColumnField;
 import org.neogroup.warp.data.query.fields.Field;
 import org.neogroup.warp.data.query.fields.RawField;
+import org.neogroup.warp.data.query.joins.Join;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,10 +21,24 @@ public abstract class DataConnection {
         public static final String SEPARATOR = " ";
         public static final String SCOPE_SEPARATOR = ".";
         public static final String FIELDS_SEPARATOR = ",";
+        public static final String ARRAY_SEPARATOR = ",";
+        public static final String GROUP_BEGIN = "(";
+        public static final String GROUP_END = ")";
+        public static final String PARAMETER = "?";
+        public static final String CONTAINS_WILDCARD = "%";
 
         public static final String SELECT = "SELECT";
         public static final String AS = "AS";
         public static final String FROM = "FROM";
+        public static final String AND = "AND";
+        public static final String OR = "OR";
+        public static final String ON = "ON";
+        public static final String WHERE = "WHERE";
+        public static final String JOIN = "JOIN";
+        public static final String INNER_JOIN = "INNER JOIN";
+        public static final String LEFT_JOIN = "LEFT JOIN";
+        public static final String RIGHT_JOIN = "RIGHT JOIN";
+        public static final String OUTER_JOIN = "OUTER JOIN";
     }
 
     public abstract Connection getConnection();
@@ -98,7 +115,7 @@ public abstract class DataConnection {
 
         StringBuilder sql = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
-        buildSQL(selectQuery, sql, parameters);
+        buildSelectSQL(selectQuery, sql, parameters);
         return executeQuery(sql.toString(), parameters.toArray(new Object[0]));
     }
 
@@ -106,7 +123,7 @@ public abstract class DataConnection {
 
         StringBuilder sql = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
-        buildSQL(selectQuery, sql, parameters);
+        buildSelectSQL(selectQuery, sql, parameters);
         return executeQuery(resultType, sql.toString(), parameters.toArray(new Object[0]));
     }
 
@@ -128,20 +145,19 @@ public abstract class DataConnection {
         }
     }
 
-    protected void buildSQL (Select select, StringBuilder sql, List<Object> parameters) {
+    protected void buildSelectSQL(Select select, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.SELECT);
 
         if (select.getSelectFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHILDCARD);
-        }
-        else {
+        } else {
             Iterator<SelectField> selectFieldsIterator = select.getSelectFields().iterator();
             while (selectFieldsIterator.hasNext()) {
                 SelectField selectField = selectFieldsIterator.next();
                 sql.append(SQL.SEPARATOR);
-                buildSQL(selectField, sql, parameters);
+                buildSelectFieldSQL(selectField, sql, parameters);
                 if (selectFieldsIterator.hasNext()) {
                     sql.append(SQL.FIELDS_SEPARATOR);
                 }
@@ -152,11 +168,25 @@ public abstract class DataConnection {
         sql.append(SQL.FROM);
         sql.append(SQL.SEPARATOR);
         sql.append(select.getTableName());
+
+        if (!select.getJoins().isEmpty()) {
+            sql.append(SQL.SEPARATOR);
+            for (Join join : select.getJoins()) {
+                buildJoinSQL(join, sql, parameters);
+            }
+        }
+
+        if (!select.getWhere().getConditions().isEmpty()) {
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.WHERE);
+            sql.append(SQL.SEPARATOR);
+            buildConditionSQL(select.getWhere(), sql, parameters);
+        }
     }
 
-    protected void buildSQL (SelectField selectField, StringBuilder sql, List<Object> parameters) {
+    protected void buildSelectFieldSQL(SelectField selectField, StringBuilder sql, List<Object> parameters) {
 
-        buildSQL(selectField.getField(), sql, parameters);
+        buildFieldSQL(selectField.getField(), sql, parameters);
         if (selectField.getAlias() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.AS);
@@ -165,7 +195,7 @@ public abstract class DataConnection {
         }
     }
 
-    protected void buildSQL (Field field, StringBuilder sql, List<Object> parameters) {
+    protected void buildFieldSQL(Field field, StringBuilder sql, List<Object> parameters) {
 
         if (field instanceof RawField) {
             sql.append(((RawField) field).getValue());
@@ -177,6 +207,146 @@ public abstract class DataConnection {
                 sql.append(SQL.SCOPE_SEPARATOR);
             }
             sql.append(columnField.getColumnName());
+        }
+    }
+
+    protected void buildJoinSQL(Join join, StringBuilder sql, List<Object> parameters) {
+
+        switch (join.getJoinType()) {
+            case JOIN:
+                sql.append(SQL.JOIN);
+                break;
+            case INNER_JOIN:
+                sql.append(SQL.INNER_JOIN);
+                break;
+            case LEFT_JOIN:
+                sql.append(SQL.LEFT_JOIN);
+                break;
+            case RIGHT_JOIN:
+                sql.append(SQL.RIGHT_JOIN);
+                break;
+            case OUTER_JOIN:
+                sql.append(SQL.OUTER_JOIN);
+                break;
+        }
+        sql.append(SQL.SEPARATOR);
+        sql.append(join.getTableName());
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.ON);
+        sql.append(SQL.SEPARATOR);
+        buildConditionSQL(join.getConditions(), sql, parameters);
+    }
+
+    protected void buildConditionSQL(Condition condition, StringBuilder sql, List<Object> parameters) {
+
+        if (condition instanceof RawCondition) {
+            sql.append(((RawCondition) condition).getCondition());
+        }
+        else if (condition instanceof ConditionGroup) {
+            buildConditionGroupSQL((ConditionGroup)condition, sql, parameters);
+        }
+        else if (condition instanceof OperationCondition) {
+            buildOperationConditionSQL((OperationCondition)condition, sql, parameters);
+        }
+    }
+
+    protected void buildOperationConditionSQL(OperationCondition operationCondition, StringBuilder sql, List<Object> parameters) {
+
+        buildOperandSQL(operationCondition.getOperandA(), operationCondition.getOperator(), sql, parameters);
+        sql.append(SQL.SEPARATOR);
+        switch (operationCondition.getOperator()) {
+            case EQUALS:
+                sql.append("=");
+                break;
+            case NOT_EQUALS:
+                sql.append("!=");
+                break;
+            case GREATER_THAN:
+                sql.append(">");
+                break;
+            case GREATER_OR_EQUALS_THAN:
+                sql.append(">=");
+                break;
+            case LOWER_THAN:
+                sql.append("<");
+                break;
+            case LOWER_OR_EQUALS_THAN:
+                sql.append("<=");
+                break;
+            case CONTAINS:
+                sql.append("LIKE");
+                break;
+            case NOT_CONTAINS:
+                sql.append("NOT LIKE");
+                break;
+            case IN:
+                sql.append("IN");
+                break;
+            case NOT_IN:
+                sql.append("NOT IN");
+                break;
+        }
+        sql.append(SQL.SEPARATOR);
+        buildOperandSQL(operationCondition.getOperandA(), operationCondition.getOperator(), sql, parameters);
+    }
+
+    protected void buildOperandSQL(Object operand, Operator operator, StringBuilder sql, List<Object> parameters) {
+
+        if (operand instanceof Field) {
+            buildFieldSQL((Field)operand, sql, parameters);
+        }
+        else if (operand instanceof Collection) {
+            sql.append(SQL.GROUP_BEGIN);
+            Iterator iterator = ((Collection)operand).iterator();
+            while (iterator.hasNext()) {
+                Object childElement = iterator.next();
+                sql.append(SQL.PARAMETER);
+                parameters.add(childElement);
+                if (iterator.hasNext()) {
+                    sql.append(SQL.ARRAY_SEPARATOR);
+                }
+            }
+            sql.append(SQL.GROUP_END);
+        }
+        else if (operand instanceof Select) {
+            sql.append(SQL.GROUP_BEGIN);
+            buildSelectSQL((Select)operand, sql, parameters);
+            sql.append(SQL.GROUP_END);
+        }
+        else if (operand instanceof String) {
+            sql.append(SQL.PARAMETER);
+            if (operator.equals(Operator.CONTAINS) || operator.equals(Operator.NOT_CONTAINS)) {
+                parameters.add(SQL.CONTAINS_WILDCARD + operand + SQL.CONTAINS_WILDCARD);
+            }
+            else {
+                parameters.add(operand);
+            }
+        }
+        else {
+            sql.append(SQL.PARAMETER);
+            parameters.add(operand);
+        }
+    }
+
+    protected void buildConditionGroupSQL(ConditionGroup conditionGroup, StringBuilder sql, List<Object> parameters) {
+
+        List<Condition> conditions = conditionGroup.getConditions();
+        Iterator<Condition> conditionsIterator = conditions.iterator();
+        while (conditionsIterator.hasNext()) {
+            Condition childrenCondition = conditionsIterator.next();
+            if (conditionsIterator.hasNext()) {
+                buildConditionSQL(childrenCondition, sql, parameters);
+                sql.append(SQL.SEPARATOR);
+                switch (conditionGroup.getConnector()) {
+                    case AND:
+                        sql.append(SQL.AND);
+                        break;
+                    case OR:
+                        sql.append(SQL.OR);
+                        break;
+                }
+                sql.append(SQL.SEPARATOR);
+            }
         }
     }
 }

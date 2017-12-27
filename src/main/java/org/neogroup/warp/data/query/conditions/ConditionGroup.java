@@ -28,6 +28,10 @@ public class ConditionGroup extends Condition {
         this.connector = connector;
     }
 
+    public List<Condition> getConditions() {
+        return conditions;
+    }
+
     public void clearConditions () {
         conditions.clear();
     }
