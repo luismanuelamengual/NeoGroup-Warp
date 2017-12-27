@@ -211,4 +211,16 @@ public class WarpInstance {
     public <V extends View> V createView(String viewFactoryName, String viewName, Map<String, Object> viewParameters) {
         return views.createView(viewFactoryName, viewName, viewParameters);
     }
+
+    public <D extends DataManager> D getDataManager() {
+        return dataManagers.getDataManager();
+    }
+
+    public <D extends DataManager> D getDataManager(String dataManagerName) {
+        return dataManagers.getDataManager(dataManagerName);
+    }
+
+    public <D extends DataManager> D getDataManager(Class<? extends DataManager> dataManagerClass) {
+        return dataManagers.getDataManager(dataManagerClass);
+    }
 }

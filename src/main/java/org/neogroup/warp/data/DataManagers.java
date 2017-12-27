@@ -2,7 +2,6 @@ package org.neogroup.warp.data;
 
 import org.neogroup.warp.Warp;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,16 +33,7 @@ public class DataManagers {
         }
     }
 
-    public DataManager getDataManager(String dataManagerName) {
-
-        return dataManagersByName.get(dataManagerName);
-    }
-
-    public DataManager getDataManager(Class<? extends DataManager> dataManagerClass) {
-        return dataManagers.get(dataManagerClass);
-    }
-
-    public DataManager getDefaultDataManager() {
+    public <D extends DataManager> D getDataManager() {
 
         DataManager dataManager = null;
         if (!dataManagers.isEmpty()) {
@@ -55,34 +45,15 @@ public class DataManagers {
                 dataManager = dataManagers.values().iterator().next();
             }
         }
-        return dataManager;
+        return (D)dataManager;
     }
 
-    public Connection getConnection () {
+    public <D extends DataManager> D getDataManager(String dataManagerName) {
 
-        DataManager dataManager = getDefaultDataManager();
-        if (dataManager == null) {
-            throw new DataException("No default data manager was registered");
-        }
-        return getConnection(dataManager);
+        return (D)dataManagersByName.get(dataManagerName);
     }
 
-    public Connection getConnection (String dataManagerName) {
-
-        DataManager dataManager = getDataManager(dataManagerName);
-        if (dataManager == null) {
-            throw new DataException("Data manager with name \"" + dataManagerName + "\" was not registered");
-        }
-        return getConnection(dataManager);
-    }
-
-    public Connection getConnection (DataManager dataManager) {
-
-        try {
-            return dataManager.getConnection();
-        }
-        catch (Exception exception) {
-            throw new DataException("Error retrieving data connection !!", exception);
-        }
+    public <D extends DataManager> D getDataManager(Class<? extends DataManager> dataManagerClass) {
+        return (D)dataManagers.get(dataManagerClass);
     }
 }

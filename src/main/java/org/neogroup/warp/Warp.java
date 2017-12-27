@@ -1,5 +1,6 @@
 package org.neogroup.warp;
 
+import org.neogroup.warp.data.DataManager;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelQuery;
 import org.neogroup.warp.views.View;
@@ -147,5 +148,17 @@ public class Warp {
 
     public static <V extends View> V createView(String viewFactoryName, String viewName, Map<String, Object> viewParameters) {
         return getInstance().createView(viewFactoryName, viewName, viewParameters);
+    }
+
+    public static <D extends DataManager> D getDataManager() {
+        return getInstance().getDataManager();
+    }
+
+    public static <D extends DataManager> D getDataManager(String dataManagerName) {
+        return getInstance().getDataManager(dataManagerName);
+    }
+
+    public static <D extends DataManager> D getDataManager(Class<? extends DataManager> dataManagerClass) {
+        return getInstance().getDataManager(dataManagerClass);
     }
 }
