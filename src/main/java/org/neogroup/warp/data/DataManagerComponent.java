@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface DataSourceComponent {
+public @interface DataManagerComponent {
 
     public String name() default "";
 }

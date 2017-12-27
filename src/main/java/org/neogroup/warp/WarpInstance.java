@@ -3,8 +3,9 @@ package org.neogroup.warp;
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Controllers;
-import org.neogroup.warp.data.DataSourceComponent;
-import org.neogroup.warp.data.DataSources;
+import org.neogroup.warp.data.DataManager;
+import org.neogroup.warp.data.DataManagerComponent;
+import org.neogroup.warp.data.DataManagers;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelManagerComponent;
 import org.neogroup.warp.models.ModelQuery;
@@ -17,7 +18,6 @@ import org.neogroup.warp.views.Views;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ public class WarpInstance {
     private final Controllers controllers;
     private final Models models;
     private final Views views;
-    private final DataSources dataSources;
+    private final DataManagers dataManagers;
 
     protected WarpInstance () {
 
@@ -39,7 +39,7 @@ public class WarpInstance {
         this.controllers = new Controllers();
         this.models = new Models();
         this.views = new Views();
-        this.dataSources = new DataSources();
+        this.dataManagers = new DataManagers();
     }
 
     protected void initialize (String basePackage) {
@@ -72,10 +72,10 @@ public class WarpInstance {
                         }
                     }
 
-                    DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
-                    if (dataSourceComponent != null) {
-                        if (DataSource.class.isAssignableFrom(cls)) {
-                            dataSources.registerDataSource(cls);
+                    DataManagerComponent dataManagerComponent = (DataManagerComponent)cls.getAnnotation(DataManagerComponent.class);
+                    if (dataManagerComponent != null) {
+                        if (DataManager.class.isAssignableFrom(cls)) {
+                            dataManagers.registerDataManager(cls);
                             return true;
                         }
                     }
