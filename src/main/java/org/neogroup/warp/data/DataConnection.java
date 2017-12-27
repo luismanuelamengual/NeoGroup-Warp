@@ -96,18 +96,18 @@ public abstract class DataConnection {
 
     public List<DataObject> executeQuery (Select selectQuery) {
 
-        StringBuilder sqlBuilder = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
-        String sql = buildSQL(selectQuery, sqlBuilder, parameters);
-        return executeQuery(sql, parameters.toArray(new Object[0]));
+        buildSQL(selectQuery, sql, parameters);
+        return executeQuery(sql.toString(), parameters.toArray(new Object[0]));
     }
 
     public <T extends Object> List<T> executeQuery (Class<T> resultType, Select selectQuery) {
 
-        StringBuilder sqlBuilder = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
-        String sql = buildSQL(selectQuery, sqlBuilder, parameters);
-        return executeQuery(resultType, sql, parameters.toArray(new Object[0]));
+        buildSQL(selectQuery, sql, parameters);
+        return executeQuery(resultType, sql.toString(), parameters.toArray(new Object[0]));
     }
 
     public int executeUpdate (String sql, Object... parameters) {
@@ -128,7 +128,7 @@ public abstract class DataConnection {
         }
     }
 
-    protected String buildSQL (Select select, StringBuilder sql, List<Object> parameters) {
+    protected void buildSQL (Select select, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.SELECT);
 
@@ -141,7 +141,7 @@ public abstract class DataConnection {
             while (selectFieldsIterator.hasNext()) {
                 SelectField selectField = selectFieldsIterator.next();
                 sql.append(SQL.SEPARATOR);
-                sql.append(buildSQL(selectField, sql, parameters));
+                buildSQL(selectField, sql, parameters);
                 if (selectFieldsIterator.hasNext()) {
                     sql.append(SQL.FIELDS_SEPARATOR);
                 }
@@ -152,22 +152,20 @@ public abstract class DataConnection {
         sql.append(SQL.FROM);
         sql.append(SQL.SEPARATOR);
         sql.append(select.getTableName());
-        return sql.toString();
     }
 
-    protected String buildSQL (SelectField selectField, StringBuilder sql, List<Object> parameters) {
+    protected void buildSQL (SelectField selectField, StringBuilder sql, List<Object> parameters) {
 
-        sql.append(buildSQL(selectField.getField(), sql, parameters));
+        buildSQL(selectField.getField(), sql, parameters);
         if (selectField.getAlias() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.AS);
             sql.append(SQL.SEPARATOR);
             sql.append(selectField.getAlias());
         }
-        return sql.toString();
     }
 
-    protected String buildSQL (Field field, StringBuilder sql, List<Object> parameters) {
+    protected void buildSQL (Field field, StringBuilder sql, List<Object> parameters) {
 
         if (field instanceof RawField) {
             sql.append(((RawField) field).getValue());
@@ -180,6 +178,5 @@ public abstract class DataConnection {
             }
             sql.append(columnField.getColumnName());
         }
-        return sql.toString();
     }
 }
