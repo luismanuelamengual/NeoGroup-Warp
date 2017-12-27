@@ -83,6 +83,11 @@ public class Join {
         return this;
     }
 
+    public Join addCondition(String rawCondition) {
+        conditionGroup.addCondition(rawCondition);
+        return this;
+    }
+
     public Join addCondition(Condition condition) {
         conditionGroup.addCondition(condition);
         return this;

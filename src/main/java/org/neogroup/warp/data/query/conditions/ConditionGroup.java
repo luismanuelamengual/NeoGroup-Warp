@@ -48,6 +48,10 @@ public class ConditionGroup extends Condition {
         return addCondition(new OperationCondition(field, operator, value));
     }
 
+    public ConditionGroup addCondition (String rawCondition) {
+        return addCondition(new RawCondition(rawCondition));
+    }
+
     public ConditionGroup addCondition (Condition condition) {
         conditions.add(condition);
         return this;

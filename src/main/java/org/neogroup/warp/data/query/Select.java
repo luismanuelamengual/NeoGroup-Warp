@@ -137,6 +137,11 @@ public class Select extends Query {
         return this;
     }
 
+    public Select addWhere (String rawWhereCondition) {
+        whereConditionGroup.addCondition(rawWhereCondition);
+        return this;
+    }
+
     public Select addWhere (Condition whereCondition) {
         whereConditionGroup.addCondition(whereCondition);
         return this;
@@ -177,6 +182,11 @@ public class Select extends Query {
 
     public Select addHaving(Field field, Operator operator, Object value) {
         havingConditionGroup.addCondition(field, operator, value);
+        return this;
+    }
+
+    public Select addHaving (String rawHavingCondition) {
+        havingConditionGroup.addCondition(rawHavingCondition);
         return this;
     }
 
