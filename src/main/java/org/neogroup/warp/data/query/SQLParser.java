@@ -1,5 +1,8 @@
 package org.neogroup.warp.data.query;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 public class SQLParser {
 /*
     public static final String WHILDCARD = "*";
@@ -108,7 +111,7 @@ public class SQLParser {
     }
     */
 
-/*
+    /*
     private void buildFilerSQL(QueryCondition condition, StringBuilder sql, Map<String, Object> parameters) {
 
         if (filter instanceof EntityFilterGroup) {
@@ -131,20 +134,7 @@ public class SQLParser {
                 }
             }
             sql.append(")");
-        }@Override
-    public String toString(Map<String, Object> parameters) {
-
-        StringBuilder sql = new StringBuilder();
-        Iterator<SelectQuery> iterator = selectQueries.iterator();
-        while (iterator.hasNext()) {
-            SelectQuery query = iterator.next();
-            sql.append(query.toString(parameters));
-            if (iterator.hasNext()) {
-                sql.append(SQL.UNION);
-            }
         }
-        return sql.toString();
-    }
         else if (filter instanceof EntityPropertyFilter) {
             EntityPropertyFilter resourcePropertyFilter = (EntityPropertyFilter)filter;
             for (Field field : entityClass.getDeclaredFields()) {

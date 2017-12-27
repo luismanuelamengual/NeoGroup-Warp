@@ -1,11 +1,28 @@
 package org.neogroup.warp.data;
 
-import java.lang.reflect.Field;
+import org.neogroup.warp.data.query.Select;
+import org.neogroup.warp.data.query.Select.SelectField;
+import org.neogroup.warp.data.query.fields.ColumnField;
+import org.neogroup.warp.data.query.fields.Field;
+import org.neogroup.warp.data.query.fields.RawField;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class DataConnection {
+
+    public class SQL {
+        public static final String WHILDCARD = "*";
+        public static final String SEPARATOR = " ";
+        public static final String SCOPE_SEPARATOR = ".";
+        public static final String FIELDS_SEPARATOR = ",";
+
+        public static final String SELECT = "SELECT";
+        public static final String AS = "AS";
+        public static final String FROM = "FROM";
+    }
 
     public abstract Connection getConnection();
 
@@ -62,7 +79,7 @@ public abstract class DataConnection {
                 for (int column = 1; column <= columnCount; column++) {
                     String columnName = resultSetMetaData.getColumnName(column);
                     Object value = resultSet.getObject(column);
-                    Field property = resultType.getField(columnName);
+                    java.lang.reflect.Field property = resultType.getField(columnName);
                     if (property != null) {
                         property.setAccessible(true);
                         property.set(result, value);
@@ -75,6 +92,22 @@ public abstract class DataConnection {
         catch (Exception exception) {
             throw new DataException(exception);
         }
+    }
+
+    public List<DataObject> executeQuery (Select selectQuery) {
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        List<Object> parameters = new ArrayList<>();
+        String sql = buildSQL(selectQuery, sqlBuilder, parameters);
+        return executeQuery(sql, parameters.toArray(new Object[0]));
+    }
+
+    public <T extends Object> List<T> executeQuery (Class<T> resultType, Select selectQuery) {
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        List<Object> parameters = new ArrayList<>();
+        String sql = buildSQL(selectQuery, sqlBuilder, parameters);
+        return executeQuery(resultType, sql, parameters.toArray(new Object[0]));
     }
 
     public int executeUpdate (String sql, Object... parameters) {
@@ -93,5 +126,60 @@ public abstract class DataConnection {
         catch (SQLException exception) {
             throw new DataException(exception);
         }
+    }
+
+    protected String buildSQL (Select select, StringBuilder sql, List<Object> parameters) {
+
+        sql.append(SQL.SELECT);
+
+        if (select.getSelectFields().isEmpty()) {
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.WHILDCARD);
+        }
+        else {
+            Iterator<SelectField> selectFieldsIterator = select.getSelectFields().iterator();
+            while (selectFieldsIterator.hasNext()) {
+                SelectField selectField = selectFieldsIterator.next();
+                sql.append(SQL.SEPARATOR);
+                sql.append(buildSQL(selectField, sql, parameters));
+                if (selectFieldsIterator.hasNext()) {
+                    sql.append(SQL.FIELDS_SEPARATOR);
+                }
+            }
+        }
+
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.FROM);
+        sql.append(SQL.SEPARATOR);
+        sql.append(select.getTableName());
+        return sql.toString();
+    }
+
+    protected String buildSQL (SelectField selectField, StringBuilder sql, List<Object> parameters) {
+
+        sql.append(buildSQL(selectField.getField(), sql, parameters));
+        if (selectField.getAlias() != null) {
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.AS);
+            sql.append(SQL.SEPARATOR);
+            sql.append(selectField.getAlias());
+        }
+        return sql.toString();
+    }
+
+    protected String buildSQL (Field field, StringBuilder sql, List<Object> parameters) {
+
+        if (field instanceof RawField) {
+            sql.append(((RawField) field).getValue());
+        }
+        else if (field instanceof ColumnField) {
+            ColumnField columnField = (ColumnField)field;
+            if (columnField.getTableName() != null) {
+                sql.append(columnField.getTableName());
+                sql.append(SQL.SCOPE_SEPARATOR);
+            }
+            sql.append(columnField.getColumnName());
+        }
+        return sql.toString();
     }
 }

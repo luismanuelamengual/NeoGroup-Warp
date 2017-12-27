@@ -289,4 +289,71 @@ public class Select extends Query {
         this.offset = offset;
         return this;
     }
+
+    public static class SelectField {
+
+        private final Field field;
+        private final String alias;
+
+        public SelectField (String rawField) {
+            this(new RawField(rawField));
+        }
+
+        public SelectField (String rawField, String alias) {
+            this(new RawField(rawField), alias);
+        }
+
+        public SelectField(Field field) {
+            this(field, null);
+        }
+
+        public SelectField(Field field, String alias) {
+            this.field = field;
+            this.alias = alias;
+        }
+
+        public Field getField() {
+            return field;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+    }
+
+    public static class OrderByField {
+
+        private final Field field;
+        private final Direction direction;
+
+        public OrderByField (String rawField) {
+            this(new RawField(rawField));
+        }
+
+        public OrderByField (String rawField, Direction direction) {
+            this(new RawField(rawField), direction);
+        }
+
+        public OrderByField (Field field) {
+            this(field, Direction.ASC);
+        }
+
+        public OrderByField (Field field, Direction direction) {
+            this.field = field;
+            this.direction = direction;
+        }
+
+        public Field getField() {
+            return field;
+        }
+
+        public Direction getDirection() {
+            return direction;
+        }
+
+        public enum Direction {
+            ASC,
+            DESC
+        }
+    }
 }
