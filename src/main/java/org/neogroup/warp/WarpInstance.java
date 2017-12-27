@@ -3,9 +3,9 @@ package org.neogroup.warp;
 import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Controllers;
-import org.neogroup.warp.data.DataManager;
-import org.neogroup.warp.data.DataManagerComponent;
-import org.neogroup.warp.data.DataManagers;
+import org.neogroup.warp.data.DataConnection;
+import org.neogroup.warp.data.DataConnectionComponent;
+import org.neogroup.warp.data.DataConnections;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelManagerComponent;
 import org.neogroup.warp.models.ModelQuery;
@@ -31,7 +31,7 @@ public class WarpInstance {
     private final Controllers controllers;
     private final Models models;
     private final Views views;
-    private final DataManagers dataManagers;
+    private final DataConnections dataConnections;
 
     protected WarpInstance () {
 
@@ -39,7 +39,7 @@ public class WarpInstance {
         this.controllers = new Controllers();
         this.models = new Models();
         this.views = new Views();
-        this.dataManagers = new DataManagers();
+        this.dataConnections = new DataConnections();
     }
 
     protected void initialize (String basePackage) {
@@ -72,10 +72,10 @@ public class WarpInstance {
                         }
                     }
 
-                    DataManagerComponent dataManagerComponent = (DataManagerComponent)cls.getAnnotation(DataManagerComponent.class);
-                    if (dataManagerComponent != null) {
-                        if (DataManager.class.isAssignableFrom(cls)) {
-                            dataManagers.registerDataManager(cls);
+                    DataConnectionComponent dataConnectionComponent = (DataConnectionComponent)cls.getAnnotation(DataConnectionComponent.class);
+                    if (dataConnectionComponent != null) {
+                        if (DataConnection.class.isAssignableFrom(cls)) {
+                            dataConnections.registerConnection(cls);
                             return true;
                         }
                     }
@@ -212,15 +212,15 @@ public class WarpInstance {
         return views.createView(viewFactoryName, viewName, viewParameters);
     }
 
-    public <D extends DataManager> D getDataManager() {
-        return dataManagers.getDataManager();
+    public <D extends DataConnection> D getConnection() {
+        return dataConnections.getConnection();
     }
 
-    public <D extends DataManager> D getDataManager(String dataManagerName) {
-        return dataManagers.getDataManager(dataManagerName);
+    public <D extends DataConnection> D getConnection(String dataConnectionName) {
+        return dataConnections.getConnection(dataConnectionName);
     }
 
-    public <D extends DataManager> D getDataManager(Class<? extends DataManager> dataManagerClass) {
-        return dataManagers.getDataManager(dataManagerClass);
+    public <D extends DataConnection> D getConnection(Class<? extends DataConnection> dataConnectionClass) {
+        return dataConnections.getConnection(dataConnectionClass);
     }
 }

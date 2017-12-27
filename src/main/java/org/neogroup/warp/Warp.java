@@ -1,6 +1,6 @@
 package org.neogroup.warp;
 
-import org.neogroup.warp.data.DataManager;
+import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelQuery;
 import org.neogroup.warp.views.View;
@@ -150,15 +150,15 @@ public class Warp {
         return getInstance().createView(viewFactoryName, viewName, viewParameters);
     }
 
-    public static <D extends DataManager> D getDataManager() {
-        return getInstance().getDataManager();
+    public static <D extends DataConnection> D getConnection() {
+        return getInstance().getConnection();
     }
 
-    public static <D extends DataManager> D getDataManager(String dataManagerName) {
-        return getInstance().getDataManager(dataManagerName);
+    public static <D extends DataConnection> D getConnection(String dataConnectionName) {
+        return getInstance().getConnection(dataConnectionName);
     }
 
-    public static <D extends DataManager> D getDataManager(Class<? extends DataManager> dataManagerClass) {
-        return getInstance().getDataManager(dataManagerClass);
+    public static <D extends DataConnection> D getConnection(Class<? extends DataConnection> dataConnectionClass) {
+        return getInstance().getConnection(dataConnectionClass);
     }
 }
