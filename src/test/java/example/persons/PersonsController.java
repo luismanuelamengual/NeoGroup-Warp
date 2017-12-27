@@ -1,9 +1,10 @@
 package example.persons;
 
-import org.neogroup.warp.Warp;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Route;
+import org.neogroup.warp.data.query.Select;
+import org.neogroup.warp.data.query.conditions.Operator;
 
 import java.util.Map;
 
@@ -39,6 +40,16 @@ public class PersonsController {
         }
         catch (Exception ex) {}
 */
+
+        Select personsQuery = new Select("person");
+        personsQuery.addSelectFields("nombre", "apellido", "dirección");
+        personsQuery.addWhere("nombre", "Luis");
+        personsQuery.addWhere("apellido", "Amengual");
+        personsQuery.addWhere("age", Operator.GREATER_THAN, 10);
+        personsQuery.addJoin("usuario", "persona.usuarioid", "usuario.usuarioid");
+
+
+
 
         return "rama";
     };
