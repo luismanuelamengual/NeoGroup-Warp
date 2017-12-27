@@ -1,6 +1,6 @@
-package org.neogroup.warp.datasources.query;
+package org.neogroup.warp.data.query.joins;
 
-public enum QueryJoinType {
+public enum JoinType {
     JOIN,
     LEFT_JOIN,
     RIGHT_JOIN,

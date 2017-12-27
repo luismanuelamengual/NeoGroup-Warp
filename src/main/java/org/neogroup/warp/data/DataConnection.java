@@ -1,4 +1,4 @@
-package org.neogroup.warp.datasources;
+package org.neogroup.warp.data;
 
 import java.sql.*;
 import java.util.Map;
@@ -14,12 +14,12 @@ public class DataConnection implements Connection {
     }
 
     @Override
-    public Statement createStatement() throws SQLException {
+    public Statement createStatement() {
         try {
             return connection.createStatement();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -29,7 +29,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -39,7 +39,7 @@ public class DataConnection implements Connection {
             return connection.prepareCall(sql);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -49,7 +49,7 @@ public class DataConnection implements Connection {
             return connection.nativeSQL(sql);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -59,7 +59,7 @@ public class DataConnection implements Connection {
             connection.setAutoCommit(autoCommit);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -69,7 +69,7 @@ public class DataConnection implements Connection {
             return connection.getAutoCommit();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -79,7 +79,7 @@ public class DataConnection implements Connection {
             connection.commit();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -89,7 +89,7 @@ public class DataConnection implements Connection {
             connection.rollback();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -99,7 +99,7 @@ public class DataConnection implements Connection {
             connection.close();
         }
         catch (Exception ex ) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -109,7 +109,7 @@ public class DataConnection implements Connection {
             return connection.isClosed();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -119,7 +119,7 @@ public class DataConnection implements Connection {
             return connection.getMetaData();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -129,7 +129,7 @@ public class DataConnection implements Connection {
             connection.setReadOnly(readOnly);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -139,7 +139,7 @@ public class DataConnection implements Connection {
             return connection.isReadOnly();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -149,7 +149,7 @@ public class DataConnection implements Connection {
             connection.setCatalog(catalog);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -159,7 +159,7 @@ public class DataConnection implements Connection {
             return connection.getCatalog();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -169,7 +169,7 @@ public class DataConnection implements Connection {
             connection.setTransactionIsolation(level);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -179,7 +179,7 @@ public class DataConnection implements Connection {
             return connection.getTransactionIsolation();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -189,7 +189,7 @@ public class DataConnection implements Connection {
             return connection.getWarnings();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -199,7 +199,7 @@ public class DataConnection implements Connection {
             connection.clearWarnings();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -209,7 +209,7 @@ public class DataConnection implements Connection {
             return connection.createStatement(resultSetType, resultSetConcurrency);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -219,7 +219,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql, resultSetType, resultSetConcurrency);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -229,7 +229,7 @@ public class DataConnection implements Connection {
             return connection.prepareCall(sql, resultSetType, resultSetConcurrency);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -239,7 +239,7 @@ public class DataConnection implements Connection {
             return connection.getTypeMap();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -249,7 +249,7 @@ public class DataConnection implements Connection {
             connection.setTypeMap(map);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -259,7 +259,7 @@ public class DataConnection implements Connection {
             connection.setHoldability(holdability);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -269,7 +269,7 @@ public class DataConnection implements Connection {
             return connection.getHoldability();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -279,7 +279,7 @@ public class DataConnection implements Connection {
             return connection.setSavepoint();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -289,7 +289,7 @@ public class DataConnection implements Connection {
             return connection.setSavepoint(name);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -299,7 +299,7 @@ public class DataConnection implements Connection {
             connection.rollback(savepoint);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -309,7 +309,7 @@ public class DataConnection implements Connection {
             connection.releaseSavepoint(savepoint);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -319,7 +319,7 @@ public class DataConnection implements Connection {
             return connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -329,7 +329,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -339,7 +339,7 @@ public class DataConnection implements Connection {
             return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -349,7 +349,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql, autoGeneratedKeys);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -359,7 +359,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql, columnIndexes);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -369,7 +369,7 @@ public class DataConnection implements Connection {
             return connection.prepareStatement(sql, columnNames);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -379,7 +379,7 @@ public class DataConnection implements Connection {
             return connection.createClob();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -389,7 +389,7 @@ public class DataConnection implements Connection {
             return connection.createBlob();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -399,7 +399,7 @@ public class DataConnection implements Connection {
             return connection.createNClob();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -409,7 +409,7 @@ public class DataConnection implements Connection {
             return connection.createSQLXML();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -419,7 +419,7 @@ public class DataConnection implements Connection {
             return connection.isValid(timeout);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -429,7 +429,7 @@ public class DataConnection implements Connection {
             connection.setClientInfo(name, value);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -439,7 +439,7 @@ public class DataConnection implements Connection {
             connection.setClientInfo(properties);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -449,7 +449,7 @@ public class DataConnection implements Connection {
             return connection.getClientInfo(name);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -459,7 +459,7 @@ public class DataConnection implements Connection {
             return connection.getClientInfo();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -469,7 +469,7 @@ public class DataConnection implements Connection {
             return connection.createArrayOf(typeName, elements);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -479,7 +479,7 @@ public class DataConnection implements Connection {
             return connection.createStruct(typeName, attributes);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -489,7 +489,7 @@ public class DataConnection implements Connection {
             connection.setSchema(schema);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -499,7 +499,7 @@ public class DataConnection implements Connection {
             return connection.getSchema();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -509,7 +509,7 @@ public class DataConnection implements Connection {
             connection.abort(executor);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -519,7 +519,7 @@ public class DataConnection implements Connection {
             connection.setNetworkTimeout(executor, milliseconds);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -529,7 +529,7 @@ public class DataConnection implements Connection {
             return connection.getNetworkTimeout();
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -539,7 +539,7 @@ public class DataConnection implements Connection {
             return connection.unwrap(iface);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 
@@ -549,7 +549,7 @@ public class DataConnection implements Connection {
             return connection.isWrapperFor(iface);
         }
         catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new DataException(ex);
         }
     }
 }

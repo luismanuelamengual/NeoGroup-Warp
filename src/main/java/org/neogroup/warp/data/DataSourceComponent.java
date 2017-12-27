@@ -1,4 +1,4 @@
-package org.neogroup.warp.datasources;
+package org.neogroup.warp.data;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
