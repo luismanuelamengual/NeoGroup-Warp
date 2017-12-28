@@ -1,53 +1,564 @@
 package org.neogroup.warp.data;
 
-import org.neogroup.warp.data.query.Select;
-import org.neogroup.warp.data.query.Select.SelectField;
-import org.neogroup.warp.data.query.conditions.*;
-import org.neogroup.warp.data.query.fields.ColumnField;
-import org.neogroup.warp.data.query.fields.Field;
-import org.neogroup.warp.data.query.fields.RawField;
-import org.neogroup.warp.data.query.joins.Join;
-
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Executor;
 
-public abstract class DataConnection {
+public class DataConnection implements Connection {
 
-    public class SQL {
-        public static final String WHILDCARD = "*";
-        public static final String SEPARATOR = " ";
-        public static final String SCOPE_SEPARATOR = ".";
-        public static final String FIELDS_SEPARATOR = ",";
-        public static final String ARRAY_SEPARATOR = ",";
-        public static final String GROUP_BEGIN = "(";
-        public static final String GROUP_END = ")";
-        public static final String PARAMETER = "?";
-        public static final String CONTAINS_WILDCARD = "%";
+    private final Connection connection;
 
-        public static final String SELECT = "SELECT";
-        public static final String AS = "AS";
-        public static final String FROM = "FROM";
-        public static final String AND = "AND";
-        public static final String OR = "OR";
-        public static final String ON = "ON";
-        public static final String WHERE = "WHERE";
-        public static final String JOIN = "JOIN";
-        public static final String INNER_JOIN = "INNER JOIN";
-        public static final String LEFT_JOIN = "LEFT JOIN";
-        public static final String RIGHT_JOIN = "RIGHT JOIN";
-        public static final String OUTER_JOIN = "OUTER JOIN";
+    protected DataConnection(Connection connection) {
+        this.connection = connection;
     }
 
-    public abstract Connection getConnection();
+    @Override
+    public Statement createStatement() {
+        try {
+            return connection.createStatement();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql) {
+        try {
+            return connection.prepareStatement(sql);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql) {
+        try {
+            return connection.prepareCall(sql);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public String nativeSQL(String sql) {
+        try {
+            return connection.nativeSQL(sql);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setAutoCommit(boolean autoCommit) {
+        try {
+            connection.setAutoCommit(autoCommit);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public boolean getAutoCommit() {
+        try {
+            return connection.getAutoCommit();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void commit() {
+        try {
+            connection.commit();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void rollback() {
+        try {
+            connection.rollback();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            connection.close();
+        }
+        catch (Exception ex ) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public boolean isClosed() {
+        try {
+            return connection.isClosed();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public DatabaseMetaData getMetaData() {
+        try {
+            return connection.getMetaData();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        try {
+            connection.setReadOnly(readOnly);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        try {
+            return connection.isReadOnly();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setCatalog(String catalog) {
+        try {
+            connection.setCatalog(catalog);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public String getCatalog() {
+        try {
+            return connection.getCatalog();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) {
+        try {
+            connection.setTransactionIsolation(level);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public int getTransactionIsolation() {
+        try {
+            return connection.getTransactionIsolation();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public SQLWarning getWarnings() {
+        try {
+            return connection.getWarnings();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void clearWarnings() {
+        try {
+            connection.clearWarnings();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType, int resultSetConcurrency) {
+        try {
+            return connection.createStatement(resultSetType, resultSetConcurrency);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) {
+        try {
+            return connection.prepareStatement(sql, resultSetType, resultSetConcurrency);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) {
+        try {
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Map<String, Class<?>> getTypeMap() {
+        try {
+            return connection.getTypeMap();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setTypeMap(Map<String, Class<?>> map) {
+        try {
+            connection.setTypeMap(map);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setHoldability(int holdability) {
+        try {
+            connection.setHoldability(holdability);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public int getHoldability() {
+        try {
+            return connection.getHoldability();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Savepoint setSavepoint() {
+        try {
+            return connection.setSavepoint();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Savepoint setSavepoint(String name) {
+        try {
+            return connection.setSavepoint(name);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void rollback(Savepoint savepoint) {
+        try {
+            connection.rollback(savepoint);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void releaseSavepoint(Savepoint savepoint) {
+        try {
+            connection.releaseSavepoint(savepoint);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
+        try {
+            return connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
+        try {
+            return connection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
+        try {
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) {
+        try {
+            return connection.prepareStatement(sql, autoGeneratedKeys);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) {
+        try {
+            return connection.prepareStatement(sql, columnIndexes);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, String[] columnNames) {
+        try {
+            return connection.prepareStatement(sql, columnNames);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Clob createClob() {
+        try {
+            return connection.createClob();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Blob createBlob() {
+        try {
+            return connection.createBlob();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public NClob createNClob() {
+        try {
+            return connection.createNClob();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public SQLXML createSQLXML() {
+        try {
+            return connection.createSQLXML();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public boolean isValid(int timeout) {
+        try {
+            return connection.isValid(timeout);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setClientInfo(String name, String value) {
+        try {
+            connection.setClientInfo(name, value);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setClientInfo(Properties properties) {
+        try {
+            connection.setClientInfo(properties);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public String getClientInfo(String name) {
+        try {
+            return connection.getClientInfo(name);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Properties getClientInfo() {
+        try {
+            return connection.getClientInfo();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Array createArrayOf(String typeName, Object[] elements) {
+        try {
+            return connection.createArrayOf(typeName, elements);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public Struct createStruct(String typeName, Object[] attributes) {
+        try {
+            return connection.createStruct(typeName, attributes);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setSchema(String schema) {
+        try {
+            connection.setSchema(schema);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public String getSchema() {
+        try {
+            return connection.getSchema();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void abort(Executor executor) {
+        try {
+            connection.abort(executor);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) {
+        try {
+            connection.setNetworkTimeout(executor, milliseconds);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public int getNetworkTimeout() {
+        try {
+            return connection.getNetworkTimeout();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) {
+        try {
+            return connection.unwrap(iface);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) {
+        try {
+            return connection.isWrapperFor(iface);
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
 
     public List<DataObject> executeQuery (String sql, Object... parameters) {
 
-        try (Connection connection = getConnection()) {
-
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try {
+            PreparedStatement statement = prepareStatement(sql);
             if (parameters.length > 0) {
                 int parameterIndex = 1;
                 for (Object parameter : parameters) {
@@ -64,22 +575,22 @@ public abstract class DataConnection {
                 for (int column = 1; column <= columnCount; column++) {
                     String columnName = resultSetMetaData.getColumnName(column);
                     Object value = resultSet.getObject(column);
-                    result.set(columnName, value);
+                    result.setField(columnName, value);
                 }
                 results.add(result);
             }
             return results;
         }
-        catch (SQLException exception) {
-            throw new DataException(exception);
+        catch (Exception ex) {
+            throw new DataException (ex);
         }
     }
 
     public <T extends Object> List<T> executeQuery (Class<T> resultType, String sql, Object... parameters) {
 
-        try (Connection connection = getConnection()) {
+        try {
 
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = prepareStatement(sql);
             if (parameters.length > 0) {
                 int parameterIndex = 1;
                 for (Object parameter : parameters) {
@@ -106,31 +617,14 @@ public abstract class DataConnection {
             }
             return results;
         }
-        catch (Exception exception) {
-            throw new DataException(exception);
+        catch (Exception ex) {
+            throw new DataException(ex);
         }
-    }
-
-    public List<DataObject> executeQuery (Select selectQuery) {
-
-        StringBuilder sql = new StringBuilder();
-        List<Object> parameters = new ArrayList<>();
-        buildSelectSQL(selectQuery, sql, parameters);
-        return executeQuery(sql.toString(), parameters.toArray(new Object[0]));
-    }
-
-    public <T extends Object> List<T> executeQuery (Class<T> resultType, Select selectQuery) {
-
-        StringBuilder sql = new StringBuilder();
-        List<Object> parameters = new ArrayList<>();
-        buildSelectSQL(selectQuery, sql, parameters);
-        return executeQuery(resultType, sql.toString(), parameters.toArray(new Object[0]));
     }
 
     public int executeUpdate (String sql, Object... parameters) {
 
-        try (Connection connection = getConnection()) {
-
+        try {
             PreparedStatement statement = connection.prepareStatement(sql.toString());
 
             int parameterIndex = 1;
@@ -140,213 +634,12 @@ public abstract class DataConnection {
 
             return statement.executeUpdate();
         }
-        catch (SQLException exception) {
-            throw new DataException(exception);
+        catch (Exception ex) {
+            throw new DataException(ex);
         }
     }
 
-    protected void buildSelectSQL(Select select, StringBuilder sql, List<Object> parameters) {
-
-        sql.append(SQL.SELECT);
-
-        if (select.getSelectFields().isEmpty()) {
-            sql.append(SQL.SEPARATOR);
-            sql.append(SQL.WHILDCARD);
-        } else {
-            Iterator<SelectField> selectFieldsIterator = select.getSelectFields().iterator();
-            while (selectFieldsIterator.hasNext()) {
-                SelectField selectField = selectFieldsIterator.next();
-                sql.append(SQL.SEPARATOR);
-                buildSelectFieldSQL(selectField, sql, parameters);
-                if (selectFieldsIterator.hasNext()) {
-                    sql.append(SQL.FIELDS_SEPARATOR);
-                }
-            }
-        }
-
-        sql.append(SQL.SEPARATOR);
-        sql.append(SQL.FROM);
-        sql.append(SQL.SEPARATOR);
-        sql.append(select.getTableName());
-
-        if (!select.getJoins().isEmpty()) {
-            sql.append(SQL.SEPARATOR);
-            for (Join join : select.getJoins()) {
-                buildJoinSQL(join, sql, parameters);
-            }
-        }
-
-        if (!select.getWhere().getConditions().isEmpty()) {
-            sql.append(SQL.SEPARATOR);
-            sql.append(SQL.WHERE);
-            sql.append(SQL.SEPARATOR);
-            buildConditionSQL(select.getWhere(), sql, parameters);
-        }
-    }
-
-    protected void buildSelectFieldSQL(SelectField selectField, StringBuilder sql, List<Object> parameters) {
-
-        buildFieldSQL(selectField.getField(), sql, parameters);
-        if (selectField.getAlias() != null) {
-            sql.append(SQL.SEPARATOR);
-            sql.append(SQL.AS);
-            sql.append(SQL.SEPARATOR);
-            sql.append(selectField.getAlias());
-        }
-    }
-
-    protected void buildFieldSQL(Field field, StringBuilder sql, List<Object> parameters) {
-
-        if (field instanceof RawField) {
-            sql.append(((RawField) field).getValue());
-        }
-        else if (field instanceof ColumnField) {
-            ColumnField columnField = (ColumnField)field;
-            if (columnField.getTableName() != null) {
-                sql.append(columnField.getTableName());
-                sql.append(SQL.SCOPE_SEPARATOR);
-            }
-            sql.append(columnField.getColumnName());
-        }
-    }
-
-    protected void buildJoinSQL(Join join, StringBuilder sql, List<Object> parameters) {
-
-        switch (join.getJoinType()) {
-            case JOIN:
-                sql.append(SQL.JOIN);
-                break;
-            case INNER_JOIN:
-                sql.append(SQL.INNER_JOIN);
-                break;
-            case LEFT_JOIN:
-                sql.append(SQL.LEFT_JOIN);
-                break;
-            case RIGHT_JOIN:
-                sql.append(SQL.RIGHT_JOIN);
-                break;
-            case OUTER_JOIN:
-                sql.append(SQL.OUTER_JOIN);
-                break;
-        }
-        sql.append(SQL.SEPARATOR);
-        sql.append(join.getTableName());
-        sql.append(SQL.SEPARATOR);
-        sql.append(SQL.ON);
-        sql.append(SQL.SEPARATOR);
-        buildConditionSQL(join.getConditions(), sql, parameters);
-    }
-
-    protected void buildConditionSQL(Condition condition, StringBuilder sql, List<Object> parameters) {
-
-        if (condition instanceof RawCondition) {
-            sql.append(((RawCondition) condition).getCondition());
-        }
-        else if (condition instanceof ConditionGroup) {
-            buildConditionGroupSQL((ConditionGroup)condition, sql, parameters);
-        }
-        else if (condition instanceof OperationCondition) {
-            buildOperationConditionSQL((OperationCondition)condition, sql, parameters);
-        }
-    }
-
-    protected void buildOperationConditionSQL(OperationCondition operationCondition, StringBuilder sql, List<Object> parameters) {
-
-        buildOperandSQL(operationCondition.getOperandA(), operationCondition.getOperator(), sql, parameters);
-        sql.append(SQL.SEPARATOR);
-        switch (operationCondition.getOperator()) {
-            case EQUALS:
-                sql.append("=");
-                break;
-            case NOT_EQUALS:
-                sql.append("!=");
-                break;
-            case GREATER_THAN:
-                sql.append(">");
-                break;
-            case GREATER_OR_EQUALS_THAN:
-                sql.append(">=");
-                break;
-            case LOWER_THAN:
-                sql.append("<");
-                break;
-            case LOWER_OR_EQUALS_THAN:
-                sql.append("<=");
-                break;
-            case CONTAINS:
-                sql.append("LIKE");
-                break;
-            case NOT_CONTAINS:
-                sql.append("NOT LIKE");
-                break;
-            case IN:
-                sql.append("IN");
-                break;
-            case NOT_IN:
-                sql.append("NOT IN");
-                break;
-        }
-        sql.append(SQL.SEPARATOR);
-        buildOperandSQL(operationCondition.getOperandA(), operationCondition.getOperator(), sql, parameters);
-    }
-
-    protected void buildOperandSQL(Object operand, Operator operator, StringBuilder sql, List<Object> parameters) {
-
-        if (operand instanceof Field) {
-            buildFieldSQL((Field)operand, sql, parameters);
-        }
-        else if (operand instanceof Collection) {
-            sql.append(SQL.GROUP_BEGIN);
-            Iterator iterator = ((Collection)operand).iterator();
-            while (iterator.hasNext()) {
-                Object childElement = iterator.next();
-                sql.append(SQL.PARAMETER);
-                parameters.add(childElement);
-                if (iterator.hasNext()) {
-                    sql.append(SQL.ARRAY_SEPARATOR);
-                }
-            }
-            sql.append(SQL.GROUP_END);
-        }
-        else if (operand instanceof Select) {
-            sql.append(SQL.GROUP_BEGIN);
-            buildSelectSQL((Select)operand, sql, parameters);
-            sql.append(SQL.GROUP_END);
-        }
-        else if (operand instanceof String) {
-            sql.append(SQL.PARAMETER);
-            if (operator.equals(Operator.CONTAINS) || operator.equals(Operator.NOT_CONTAINS)) {
-                parameters.add(SQL.CONTAINS_WILDCARD + operand + SQL.CONTAINS_WILDCARD);
-            }
-            else {
-                parameters.add(operand);
-            }
-        }
-        else {
-            sql.append(SQL.PARAMETER);
-            parameters.add(operand);
-        }
-    }
-
-    protected void buildConditionGroupSQL(ConditionGroup conditionGroup, StringBuilder sql, List<Object> parameters) {
-
-        List<Condition> conditions = conditionGroup.getConditions();
-        Iterator<Condition> conditionsIterator = conditions.iterator();
-        while (conditionsIterator.hasNext()) {
-            Condition childrenCondition = conditionsIterator.next();
-            if (conditionsIterator.hasNext()) {
-                buildConditionSQL(childrenCondition, sql, parameters);
-                sql.append(SQL.SEPARATOR);
-                switch (conditionGroup.getConnector()) {
-                    case AND:
-                        sql.append(SQL.AND);
-                        break;
-                    case OR:
-                        sql.append(SQL.OR);
-                        break;
-                }
-                sql.append(SQL.SEPARATOR);
-            }
-        }
+    public DataTable getDataTable(String tableName) {
+        return new DataTable(this, tableName);
     }
 }

@@ -1,4 +1,4 @@
-package org.neogroup.warp.data.query.conditions;
+package org.neogroup.warp.data.conditions;
 
 public enum Operator {
 

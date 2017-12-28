@@ -4,8 +4,9 @@ import org.neogroup.util.Scanner;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.data.DataConnection;
-import org.neogroup.warp.data.DataConnectionComponent;
-import org.neogroup.warp.data.DataConnections;
+import org.neogroup.warp.data.DataSource;
+import org.neogroup.warp.data.DataSourceComponent;
+import org.neogroup.warp.data.DataSources;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelManagerComponent;
 import org.neogroup.warp.models.ModelQuery;
@@ -31,7 +32,7 @@ public class WarpInstance {
     private final Controllers controllers;
     private final Models models;
     private final Views views;
-    private final DataConnections dataConnections;
+    private final DataSources dataSources;
 
     protected WarpInstance () {
 
@@ -39,7 +40,7 @@ public class WarpInstance {
         this.controllers = new Controllers();
         this.models = new Models();
         this.views = new Views();
-        this.dataConnections = new DataConnections();
+        this.dataSources = new DataSources();
     }
 
     protected void initialize (String basePackage) {
@@ -72,10 +73,10 @@ public class WarpInstance {
                         }
                     }
 
-                    DataConnectionComponent dataConnectionComponent = (DataConnectionComponent)cls.getAnnotation(DataConnectionComponent.class);
-                    if (dataConnectionComponent != null) {
-                        if (DataConnection.class.isAssignableFrom(cls)) {
-                            dataConnections.registerConnection(cls);
+                    DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
+                    if (dataSourceComponent != null) {
+                        if (DataSource.class.isAssignableFrom(cls)) {
+                            dataSources.registerDataSource(cls);
                             return true;
                         }
                     }
@@ -212,15 +213,11 @@ public class WarpInstance {
         return views.createView(viewFactoryName, viewName, viewParameters);
     }
 
-    public <D extends DataConnection> D getConnection() {
-        return dataConnections.getConnection();
+    public DataConnection getConnection() {
+        return dataSources.getConnection();
     }
 
-    public <D extends DataConnection> D getConnection(String dataConnectionName) {
-        return dataConnections.getConnection(dataConnectionName);
-    }
-
-    public <D extends DataConnection> D getConnection(Class<? extends DataConnection> dataConnectionClass) {
-        return dataConnections.getConnection(dataConnectionClass);
+    public DataConnection getConnection(String dataConnectionName) {
+        return dataSources.getConnection(dataConnectionName);
     }
 }

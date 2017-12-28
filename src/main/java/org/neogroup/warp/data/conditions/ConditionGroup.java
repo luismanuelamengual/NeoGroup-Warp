@@ -1,7 +1,4 @@
-package org.neogroup.warp.data.query.conditions;
-
-import org.neogroup.warp.data.query.fields.Field;
-import org.neogroup.warp.data.query.fields.RawField;
+package org.neogroup.warp.data.conditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,20 +33,12 @@ public class ConditionGroup extends Condition {
         conditions.clear();
     }
 
-    public ConditionGroup addCondition (String rawField, Object value) {
-        return addCondition(new RawField(rawField), value);
+    public ConditionGroup addCondition (String field, Object value) {
+        return addCondition(new FieldOperationCondition(field, value));
     }
 
-    public ConditionGroup addCondition (String rawField, Operator operator, Object value) {
-        return addCondition(new RawField(rawField), operator, value);
-    }
-
-    public ConditionGroup addCondition (Field field, Object value) {
-        return addCondition(new OperationCondition(field, value));
-    }
-
-    public ConditionGroup addCondition (Field field, Operator operator, Object value) {
-        return addCondition(new OperationCondition(field, operator, value));
+    public ConditionGroup addCondition (String field, Operator operator, Object value) {
+        return addCondition(new FieldOperationCondition(field, operator, value));
     }
 
     public ConditionGroup addCondition (String rawCondition) {

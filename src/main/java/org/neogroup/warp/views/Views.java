@@ -60,7 +60,7 @@ public class Views {
             viewFactoryName = (String)Warp.getProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME);
         }
         else {
-            throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please set the property \"" + VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME + "\" !!");
+            throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please setField the property \"" + VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME + "\" !!");
         }
         return createView(viewFactoryName, name, viewParameters);
     }

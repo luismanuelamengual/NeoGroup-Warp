@@ -1,8 +1,9 @@
-package org.neogroup.warp.data.query.joins;
+package org.neogroup.warp.data.joins;
 
-import org.neogroup.warp.data.query.conditions.*;
-import org.neogroup.warp.data.query.fields.Field;
-import org.neogroup.warp.data.query.fields.RawField;
+import org.neogroup.warp.data.conditions.Condition;
+import org.neogroup.warp.data.conditions.ConditionGroup;
+import org.neogroup.warp.data.conditions.ConditionGroupConnector;
+import org.neogroup.warp.data.conditions.EqualFieldsCondition;
 
 public class Join {
 
@@ -24,17 +25,9 @@ public class Join {
         this(tableName, JoinType.INNER_JOIN, rawLeftField, rawRightField);
     }
 
-    public Join(String tableName, Field leftField, Field rightField) {
-        this(tableName, JoinType.INNER_JOIN, leftField, rightField);
-    }
-
     public Join(String tableName, JoinType joinType, String rawLeftField, String rawRightField) {
-        this(tableName, joinType, new RawField(rawLeftField), new RawField(rawRightField));
-    }
-
-    public Join(String tableName, JoinType joinType, Field leftField, Field rightField) {
         this(tableName, joinType);
-        conditionGroup.addCondition(new OperationCondition(leftField, rightField));
+        addCondition(new EqualFieldsCondition(rawLeftField, rawRightField));
     }
 
     public JoinType getJoinType() {
@@ -60,31 +53,6 @@ public class Join {
 
     public Join clearConditions() {
         conditionGroup.clearConditions();
-        return this;
-    }
-
-    public Join addCondition(String rawField, Object value) {
-        conditionGroup.addCondition(rawField, value);
-        return this;
-    }
-
-    public Join addCondition(String rawField, Operator operator, Object value) {
-        conditionGroup.addCondition(rawField, operator, value);
-        return this;
-    }
-
-    public Join addCondition(Field field, Object value) {
-        conditionGroup.addCondition(field, value);
-        return this;
-    }
-
-    public Join addCondition(Field field, Operator operator, Object value) {
-        conditionGroup.addCondition(field, operator, value);
-        return this;
-    }
-
-    public Join addCondition(String rawCondition) {
-        conditionGroup.addCondition(rawCondition);
         return this;
     }
 

@@ -150,15 +150,11 @@ public class Warp {
         return getInstance().createView(viewFactoryName, viewName, viewParameters);
     }
 
-    public static <D extends DataConnection> D getConnection() {
+    public static DataConnection getConnection() {
         return getInstance().getConnection();
     }
 
-    public static <D extends DataConnection> D getConnection(String dataConnectionName) {
+    public static DataConnection getConnection(String dataConnectionName) {
         return getInstance().getConnection(dataConnectionName);
-    }
-
-    public static <D extends DataConnection> D getConnection(Class<? extends DataConnection> dataConnectionClass) {
-        return getInstance().getConnection(dataConnectionClass);
     }
 }
