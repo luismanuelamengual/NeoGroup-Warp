@@ -295,8 +295,14 @@ public class DataTable extends DataObject {
         List<Object> parameters = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         buildSelectSQL(this, sql, parameters);
-        System.out.println (sql);
         return connection.executeQuery(sql.toString(), parameters.toArray(new Object[0]));
+    }
+
+    public <T> List<T> findAll (Class<T> resultType) {
+        List<Object> parameters = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        buildSelectSQL(this, sql, parameters);
+        return connection.executeQuery(resultType, sql.toString(), parameters.toArray(new Object[0]));
     }
 
     protected void buildSelectSQL(DataTable dataTable, StringBuilder sql, List<Object> parameters) {
