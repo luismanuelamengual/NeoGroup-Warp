@@ -4,6 +4,9 @@ import org.neogroup.warp.data.conditions.*;
 import org.neogroup.warp.data.joins.Join;
 import org.neogroup.warp.data.joins.JoinType;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -44,7 +47,9 @@ public class DataTable extends DataObject {
     }
 
     private final DataConnection connection;
-    private final String tableName;
+    private ResultSet resultSet;
+    private ResultSetMetaData resultSetMetaData;
+    private String tableName;
     private final List<SelectField> selectFields;
     private final ConditionGroup whereConditionGroup;
     private final ConditionGroup havingConditionGroup;
@@ -289,6 +294,55 @@ public class DataTable extends DataObject {
     public DataTable setOffset(Integer offset) {
         this.offset = offset;
         return this;
+    }
+
+    public DataTable find() {
+        return find(false);
+    }
+
+    public DataTable find(boolean autoFetch) {
+
+        try {
+            List<Object> parameters = new ArrayList<>();
+            StringBuilder sql = new StringBuilder();
+            buildSelectSQL(this, sql, parameters);
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
+            if (parameters.size() > 0) {
+                int parameterIndex = 1;
+                for (Object parameter : parameters) {
+                    statement.setObject(parameterIndex++, parameter);
+                }
+            }
+
+            this.resultSet = statement.executeQuery();
+            this.resultSetMetaData = this.resultSet.getMetaData();
+            if (autoFetch) {
+                fetch();
+            }
+            return this;
+        }
+        catch (Exception ex) {
+            throw new DataException (ex);
+        }
+    }
+
+    public boolean fetch() {
+
+        try {
+            clearFields();
+            boolean fetched = resultSet.next();
+            if (fetched) {
+                for (int column = 1; column <= resultSetMetaData.getColumnCount(); column++) {
+                    String columnName = resultSetMetaData.getColumnName(column);
+                    Object value = resultSet.getObject(column);
+                    setField(columnName, value);
+                }
+            }
+            return fetched;
+        }
+        catch (Exception ex) {
+            throw new DataException (ex);
+        }
     }
 
     public List<DataObject> findAll () {
