@@ -4,6 +4,7 @@ import org.neogroup.warp.data.conditions.*;
 import org.neogroup.warp.data.joins.Join;
 import org.neogroup.warp.data.joins.JoinType;
 
+import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -297,11 +298,11 @@ public class DataTable extends DataObject {
     }
 
     public DataTable find() {
-        return find(false);
+        find(false);
+        return this;
     }
 
-    public DataTable find(boolean autoFetch) {
-
+    public boolean find(boolean autoFetch) {
         try {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
@@ -316,10 +317,11 @@ public class DataTable extends DataObject {
 
             this.resultSet = statement.executeQuery();
             this.resultSetMetaData = this.resultSet.getMetaData();
+            boolean fetched = false;
             if (autoFetch) {
-                fetch();
+                fetched = fetch();
             }
-            return this;
+            return fetched;
         }
         catch (Exception ex) {
             throw new DataException (ex);
@@ -345,18 +347,66 @@ public class DataTable extends DataObject {
         }
     }
 
+    public DataObject fetchObject () {
+
+        try {
+            DataObject result = null;
+            if (resultSet.next()) {
+                result = new DataObject();
+                for (int column = 1; column <= resultSetMetaData.getColumnCount(); column++) {
+                    String columnName = resultSetMetaData.getColumnName(column);
+                    Object value = resultSet.getObject(column);
+                    result.setField(columnName, value);
+                }
+            }
+            return result;
+        }
+        catch (Exception ex) {
+            throw new DataException (ex);
+        }
+    }
+
+    public <T> T fetchObject(Class<T> resultType) {
+
+        try {
+            T result = null;
+            if (resultSet.next()) {
+                result = resultType.getConstructor().newInstance();
+                for (int column = 1; column <= resultSetMetaData.getColumnCount(); column++) {
+                    String columnName = resultSetMetaData.getColumnName(column);
+                    Object value = resultSet.getObject(column);
+                    Field property = resultType.getField(columnName);
+                    if (property != null) {
+                        property.setAccessible(true);
+                        property.set(result, value);
+                    }
+                }
+            }
+            return result;
+        }
+        catch (Exception ex) {
+            throw new DataException (ex);
+        }
+    }
+
     public List<DataObject> findAll () {
-        List<Object> parameters = new ArrayList<>();
-        StringBuilder sql = new StringBuilder();
-        buildSelectSQL(this, sql, parameters);
-        return connection.executeQuery(sql.toString(), parameters.toArray(new Object[0]));
+        find();
+        DataObject item = null;
+        List<DataObject> results = new ArrayList<>();
+        while ((item = fetchObject()) != null) {
+            results.add(item);
+        }
+        return results;
     }
 
     public <T> List<T> findAll (Class<T> resultType) {
-        List<Object> parameters = new ArrayList<>();
-        StringBuilder sql = new StringBuilder();
-        buildSelectSQL(this, sql, parameters);
-        return connection.executeQuery(resultType, sql.toString(), parameters.toArray(new Object[0]));
+        find();
+        T item = null;
+        List<T> results = new ArrayList<>();
+        while ((item = fetchObject(resultType)) != null) {
+            results.add(item);
+        }
+        return results;
     }
 
     protected void buildSelectSQL(DataTable dataTable, StringBuilder sql, List<Object> parameters) {
