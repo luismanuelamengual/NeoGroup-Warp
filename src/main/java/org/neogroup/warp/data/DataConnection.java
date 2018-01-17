@@ -1,8 +1,6 @@
 package org.neogroup.warp.data;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -555,7 +553,7 @@ public class DataConnection implements Connection {
         }
     }
 
-    public DataTable getDataTable(String tableName) {
-        return new DataTable(this, tableName);
+    public DataObject getDataObject(String tableName) {
+        return new DataObject(this, tableName);
     }
 }
