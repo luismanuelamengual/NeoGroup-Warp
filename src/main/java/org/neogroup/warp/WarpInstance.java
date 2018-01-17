@@ -155,6 +155,7 @@ public class WarpInstance {
 
     public void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         controllers.handle(servletRequest, servletResponse);
+        dataSources.releaseConnections();
     }
 
     public <C> C getController(Class<? extends C> controllerClass) {
