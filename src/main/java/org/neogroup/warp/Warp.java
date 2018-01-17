@@ -18,52 +18,27 @@ import java.util.Properties;
 public class Warp {
 
     private static WarpInstance instance;
-    private static Map<Long, WarpInstance> instances;
-
-    static {
-        instances = new HashMap<>();
-    }
 
     protected Warp() {
     }
 
     public static WarpInstance createInstance () {
-        return createInstance(null);
+        return new WarpInstance();
     }
 
-    public static WarpInstance createInstance (String basePackage) {
-        WarpInstance backupWarpInstance = Warp.instance;
-        WarpInstance instance =  new WarpInstance();
+    public static void setInstance (WarpInstance instance) {
         Warp.instance = instance;
-        instance.initialize(basePackage);
-        Warp.instance = backupWarpInstance;
-        return instance;
     }
 
-    protected static void setCurrentInstance (WarpInstance instance) {
-        long currentThreadId = Thread.currentThread().getId();
-        if (instance != null) {
-            instances.put(currentThreadId, instance);
-        }
-        else {
-            instances.remove(currentThreadId);
-        }
-    }
-
-    protected static WarpInstance getCurrentInstance () {
-        return instances.get(Thread.currentThread().getId());
-    }
-
-    public static WarpInstance getInstance() {
-        WarpInstance instance = getCurrentInstance();
+    public static WarpInstance getInstance () {
         if (instance == null) {
-            instance = Warp.instance;
-            if (instance == null) {
-                instance = createInstance();
-                Warp.instance = instance;
-            }
+            instance = createInstance();
         }
         return instance;
+    }
+
+    public static void initialize(String basePackage) {
+        getInstance().initialize(basePackage);
     }
 
     public static Properties getProperties() {
