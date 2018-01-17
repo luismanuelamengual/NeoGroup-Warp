@@ -1,9 +1,10 @@
 package org.neogroup.warp.data.joins;
 
+import org.neogroup.warp.data.RawValue;
 import org.neogroup.warp.data.conditions.Condition;
 import org.neogroup.warp.data.conditions.ConditionGroup;
 import org.neogroup.warp.data.conditions.ConditionGroupConnector;
-import org.neogroup.warp.data.conditions.EqualFieldsCondition;
+import org.neogroup.warp.data.conditions.FieldOperationCondition;
 
 public class Join {
 
@@ -27,7 +28,7 @@ public class Join {
 
     public Join(String tableName, JoinType joinType, String rawLeftField, String rawRightField) {
         this(tableName, joinType);
-        addCondition(new EqualFieldsCondition(rawLeftField, rawRightField));
+        addCondition(new FieldOperationCondition(rawLeftField, new RawValue(rawRightField)));
     }
 
     public JoinType getJoinType() {

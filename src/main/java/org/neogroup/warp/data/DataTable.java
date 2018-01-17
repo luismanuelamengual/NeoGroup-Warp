@@ -454,14 +454,7 @@ public class DataTable extends DataObject {
 
     protected void buildFieldConditionSQL(FieldCondition fieldCondition, StringBuilder sql, List<Object> parameters) {
 
-        if (fieldCondition instanceof EqualFieldsCondition) {
-            sql.append(fieldCondition.getField());
-            sql.append(SQL.SEPARATOR);
-            sql.append("=");
-            sql.append(SQL.SEPARATOR);
-            sql.append(((EqualFieldsCondition) fieldCondition).getField2());
-        }
-        else if (fieldCondition instanceof FieldOperationCondition) {
+        if (fieldCondition instanceof FieldOperationCondition) {
             FieldOperationCondition fieldOperationCondition = (FieldOperationCondition)fieldCondition;
             sql.append(fieldCondition.getField());
             sql.append(SQL.SEPARATOR);
@@ -506,7 +499,10 @@ public class DataTable extends DataObject {
             }
             sql.append(SQL.SEPARATOR);
 
-            if (value instanceof Collection) {
+            if (value instanceof RawValue) {
+                sql.append(((RawValue) value).getValue());
+            }
+            else if (value instanceof Collection) {
                 sql.append(SQL.GROUP_BEGIN);
                 Iterator iterator = ((Collection)value).iterator();
                 while (iterator.hasNext()) {
