@@ -27,6 +27,9 @@ public class DataObject extends DataItem {
         public static final String CONTAINS_WILDCARD = "%";
 
         public static final String SELECT = "SELECT";
+        public static final String INSERT_INTO = "INSERT INTO";
+        public static final String VALUES = "VALUES";
+        public static final String SET = "SET";
         public static final String AS = "AS";
         public static final String FROM = "FROM";
         public static final String AND = "AND";
@@ -297,6 +300,24 @@ public class DataObject extends DataItem {
         return this;
     }
 
+    public boolean insert() {
+        try {
+            List<Object> parameters = new ArrayList<>();
+            StringBuilder sql = new StringBuilder();
+            buildInsertSQL(sql, parameters);
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
+            int parameterIndex = 1;
+            for (Object parameter : parameters) {
+                statement.setObject(parameterIndex++, parameter);
+            }
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
     public DataObject find() {
         find(false);
         return this;
@@ -306,7 +327,7 @@ public class DataObject extends DataItem {
         try {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
-            buildSelectSQL(this, sql, parameters);
+            buildSelectSQL(sql, parameters);
             PreparedStatement statement = connection.prepareStatement(sql.toString());
             if (parameters.size() > 0) {
                 int parameterIndex = 1;
@@ -409,15 +430,48 @@ public class DataObject extends DataItem {
         return results;
     }
 
-    protected void buildSelectSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
+    protected void buildInsertSQL(StringBuilder sql, List<Object> parameters) {
+
+        sql.append(SQL.INSERT_INTO);
+        sql.append(SQL.SEPARATOR);
+        sql.append(getTableName());
+
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.GROUP_BEGIN);
+        Iterator<String> columnsIterator = getFields().keySet().iterator();
+        while (columnsIterator.hasNext()) {
+            sql.append(columnsIterator.next());
+            if (columnsIterator.hasNext()) {
+                sql.append(SQL.FIELDS_SEPARATOR);
+                sql.append(SQL.SEPARATOR);
+            }
+        }
+        sql.append(SQL.GROUP_END);
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.VALUES);
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.GROUP_BEGIN);
+        Iterator valuesIterator = getFields().values().iterator();
+        while (valuesIterator.hasNext()) {
+            parameters.add(valuesIterator.next());
+            sql.append(SQL.PARAMETER);
+            if (valuesIterator.hasNext()) {
+                sql.append(SQL.FIELDS_SEPARATOR);
+                sql.append(SQL.SEPARATOR);
+            }
+        }
+        sql.append(SQL.GROUP_END);
+    }
+
+    protected void buildSelectSQL(StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.SELECT);
 
-        if (dataObject.getSelectFields().isEmpty()) {
+        if (getSelectFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHILDCARD);
         } else {
-            Iterator<SelectField> selectFieldsIterator = dataObject.getSelectFields().iterator();
+            Iterator<SelectField> selectFieldsIterator = getSelectFields().iterator();
             while (selectFieldsIterator.hasNext()) {
                 SelectField selectField = selectFieldsIterator.next();
                 sql.append(SQL.SEPARATOR);
@@ -431,26 +485,26 @@ public class DataObject extends DataItem {
         sql.append(SQL.SEPARATOR);
         sql.append(SQL.FROM);
         sql.append(SQL.SEPARATOR);
-        sql.append(dataObject.getTableName());
+        sql.append(getTableName());
 
-        if (!dataObject.getJoins().isEmpty()) {
+        if (!getJoins().isEmpty()) {
             sql.append(SQL.SEPARATOR);
-            for (Join join : dataObject.getJoins()) {
+            for (Join join : getJoins()) {
                 buildJoinSQL(join, sql, parameters);
             }
         }
 
-        if (!dataObject.getWhere().getConditions().isEmpty()) {
+        if (!getWhere().getConditions().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHERE);
             sql.append(SQL.SEPARATOR);
-            buildConditionSQL(dataObject.getWhere(), sql, parameters);
+            buildConditionSQL(getWhere(), sql, parameters);
         }
 
-        if (!dataObject.getGroupByFields().isEmpty()) {
+        if (!getGroupByFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.GROUP_BY);
-            Iterator<String> groupByFieldsIterator = dataObject.getGroupByFields().iterator();
+            Iterator<String> groupByFieldsIterator = getGroupByFields().iterator();
             while (groupByFieldsIterator.hasNext()) {
                 sql.append(groupByFieldsIterator.next());
                 if (groupByFieldsIterator.hasNext()) {
@@ -460,10 +514,10 @@ public class DataObject extends DataItem {
             }
         }
 
-        if (!dataObject.getOrderByFields().isEmpty()) {
+        if (!getOrderByFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.ORDER_BY);
-            Iterator<OrderByField> orderByFieldsIterator = dataObject.getOrderByFields().iterator();
+            Iterator<OrderByField> orderByFieldsIterator = getOrderByFields().iterator();
             while (orderByFieldsIterator.hasNext()) {
                 OrderByField orderByField = orderByFieldsIterator.next();
                 sql.append(orderByField.getField());
@@ -483,25 +537,25 @@ public class DataObject extends DataItem {
             }
         }
 
-        if (!dataObject.getHaving().getConditions().isEmpty()) {
+        if (!getHaving().getConditions().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.HAVING);
             sql.append(SQL.SEPARATOR);
-            buildConditionSQL(dataObject.getHaving(), sql, parameters);
+            buildConditionSQL(getHaving(), sql, parameters);
         }
 
-        if (dataObject.getOffset() != null) {
+        if (getOffset() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.OFFSET);
             sql.append(SQL.SEPARATOR);
-            sql.append(dataObject.getOffset());
+            sql.append(getOffset());
         }
 
-        if (dataObject.getLimit() != null) {
+        if (getLimit() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.LIMIT);
             sql.append(SQL.SEPARATOR);
-            sql.append(dataObject.getLimit());
+            sql.append(getLimit());
         }
     }
 
@@ -621,7 +675,7 @@ public class DataObject extends DataItem {
             }
             else if (value instanceof DataObject) {
                 sql.append(SQL.GROUP_BEGIN);
-                buildSelectSQL((DataObject)value, sql, parameters);
+                ((DataObject)value).buildSelectSQL(sql, parameters);
                 sql.append(SQL.GROUP_END);
             }
             else {
