@@ -11,10 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @todo Ver la posibilidad de mover los buildXXX de DataObject al Datasource para que sean sobrecargables
+ * @todo Agregar traducciónes
+ * @todo Agregar logs
+ * @todo Permitir a las vistas setear parametros por defecto
+ * @todo Agregar logs a todas las consultas SQL
+ * @todo Agregar comentarios
+ * @todo Hacer la documentación
+ * @todo Agregar eventos (Puede quedar para siguiente version)
+ */
 public class Warp {
 
     private static WarpInstance instance;
