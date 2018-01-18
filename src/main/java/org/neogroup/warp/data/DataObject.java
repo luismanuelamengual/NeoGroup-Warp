@@ -9,10 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class DataObject extends DataItem {
 
@@ -26,10 +23,12 @@ public class DataObject extends DataItem {
         public static final String GROUP_END = ")";
         public static final String PARAMETER = "?";
         public static final String CONTAINS_WILDCARD = "%";
+        public static final String ASSIGNATION = "=";
 
         public static final String SELECT = "SELECT";
         public static final String INSERT_INTO = "INSERT INTO";
         public static final String VALUES = "VALUES";
+        public static final String UPDATE = "UPDATE";
         public static final String SET = "SET";
         public static final String AS = "AS";
         public static final String FROM = "FROM";
@@ -332,6 +331,26 @@ public class DataObject extends DataItem {
         }
     }
 
+    public int update() {
+        try {
+            List<Object> parameters = new ArrayList<>();
+            StringBuilder sql = new StringBuilder();
+            buildUpdateSQL(sql, parameters);
+
+            System.out.println (sql);
+
+            PreparedStatement statement = connection.prepareStatement(sql.toString());
+            int parameterIndex = 1;
+            for (Object parameter : parameters) {
+                statement.setObject(parameterIndex++, parameter);
+            }
+            return statement.executeUpdate();
+        }
+        catch (Exception ex) {
+            throw new DataException(ex);
+        }
+    }
+
     public DataObject find() {
         find(false);
         return this;
@@ -475,6 +494,38 @@ public class DataObject extends DataItem {
             }
         }
         sql.append(SQL.GROUP_END);
+    }
+
+    protected void buildUpdateSQL(StringBuilder sql, List<Object> parameters) {
+
+        sql.append(SQL.UPDATE);
+        sql.append(SQL.SEPARATOR);
+        sql.append(getTableName());
+
+        sql.append(SQL.SEPARATOR);
+        sql.append(SQL.SET);
+        sql.append(SQL.SEPARATOR);
+        Iterator<Map.Entry<String, Object>> iterator = getFields().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> entry = iterator.next();
+            parameters.add(entry.getValue());
+            sql.append(entry.getKey());
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.ASSIGNATION);
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.PARAMETER);
+            if (iterator.hasNext()) {
+                sql.append(SQL.FIELDS_SEPARATOR);
+                sql.append(SQL.SEPARATOR);
+            }
+        }
+
+        if (!getWhere().getConditions().isEmpty()) {
+            sql.append(SQL.SEPARATOR);
+            sql.append(SQL.WHERE);
+            sql.append(SQL.SEPARATOR);
+            buildConditionSQL(getWhere(), sql, parameters);
+        }
     }
 
     protected void buildSelectSQL(StringBuilder sql, List<Object> parameters) {
