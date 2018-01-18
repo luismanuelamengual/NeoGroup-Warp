@@ -1,14 +1,11 @@
 package example.persons;
 
-import org.neogroup.warp.Warp;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Route;
 import org.neogroup.warp.data.DataObject;
-import org.neogroup.warp.data.DataTable;
-import org.neogroup.warp.data.conditions.Operator;
 
-import java.util.List;
+import static org.neogroup.warp.Warp.getConnection;
 
 @ControllerComponent
 public class PersonsController {
@@ -16,15 +13,21 @@ public class PersonsController {
     @Get("persons")
     protected Route showPersons = (req, res) -> {
 
-        //List<DataObject> users = Warp.getConnection().executeQuery("SELECT * FROM usuario WHERE accesonombre = ? LIMIT 10", "lamengual");
+        /*DataObject doUsers = getConnection().getDataObject("usuario");
+        doUsers.addSelectField("accesonombre", "nombresuli");
+        doUsers.addWhere("accesonombre", Operator.CONTAINS,  "amen");
+        doUsers.addJoin("persona", "usuario.personaid", "persona.personaid");
+        doUsers.setOffset(10);
+        doUsers.setLimit(10);
+        doUsers.find();
+        while (doUsers.fetch()) {
+            System.out.println ("Accessname: " + doUsers.getField("nombresuli"));
+        }*/
 
-        DataTable usersTable = Warp.getConnection().getDataTable("usuario");
-        usersTable.addWhere("accesonombre", Operator.CONTAINS,  "gua");
-        usersTable.addJoin("persona", "usuario.personaid", "persona.personaid");
-        usersTable.setOffset(10);
-        usersTable.setLimit(10);
-        List<DataObject> users = usersTable.findAll();
-
+        DataObject doPerson = getConnection().getDataObject("person");
+        doPerson.setField("name", "Vane");
+        doPerson.addWhere("personid", 44);
+        doPerson.update();
         return "rama";
     };
 }

@@ -16,6 +16,11 @@ public class MainDataSource extends DataSource {
     public MainDataSource() {
 
         dataSource = new PGSimpleDataSource();
+        dataSource.setServerName("localhost");
+        dataSource.setPortNumber(5432);
+        dataSource.setDatabaseName("testdb");
+        dataSource.setUser("postgres");
+        dataSource.setPassword("postgres");
     }
 
     @Override
