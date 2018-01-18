@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -305,12 +306,25 @@ public class DataObject extends DataItem {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
             buildInsertSQL(sql, parameters);
-            PreparedStatement statement = connection.prepareStatement(sql.toString());
+            PreparedStatement statement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             int parameterIndex = 1;
             for (Object parameter : parameters) {
                 statement.setObject(parameterIndex++, parameter);
             }
             int affectedRows = statement.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    ResultSetMetaData generatedKeysMetaData = generatedKeys.getMetaData();
+                    while (generatedKeys.next()) {
+                        for (int column = 1; column <= generatedKeysMetaData.getColumnCount(); column++) {
+                            String columnName = generatedKeysMetaData.getColumnName(column);
+                            setField(columnName, generatedKeys.getObject(column));
+                        }
+                    }
+                }
+            }
+
             return affectedRows > 0;
         }
         catch (Exception ex) {
