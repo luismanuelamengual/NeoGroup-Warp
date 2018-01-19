@@ -19,7 +19,6 @@ import java.util.Properties;
  * @todo Inicialización de propiedades desde un archivo
  * @todo Ver la posibilidad de mover los buildXXX de DataObject al Datasource para que sean sobrecargables
  * @todo Agregar traducciónes
- * @todo Agregar logs
  * @todo Permitir a las vistas setear parametros por defecto
  * @todo Agregar logs a todas las consultas SQL
  * @todo Crear una enumeración para operaciones con modelos

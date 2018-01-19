@@ -304,7 +304,7 @@ public class DataObject extends DataItem {
         try {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
-            buildInsertSQL(sql, parameters);
+            buildInsertSQL(this, sql, parameters);
             PreparedStatement statement = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
             int parameterIndex = 1;
             for (Object parameter : parameters) {
@@ -335,7 +335,7 @@ public class DataObject extends DataItem {
         try {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
-            buildUpdateSQL(sql, parameters);
+            buildUpdateSQL(this, sql, parameters);
             PreparedStatement statement = connection.prepareStatement(sql.toString());
             int parameterIndex = 1;
             for (Object parameter : parameters) {
@@ -357,7 +357,7 @@ public class DataObject extends DataItem {
         try {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
-            buildSelectSQL(sql, parameters);
+            buildSelectSQL(this, sql, parameters);
             PreparedStatement statement = connection.prepareStatement(sql.toString());
             if (parameters.size() > 0) {
                 int parameterIndex = 1;
@@ -460,15 +460,15 @@ public class DataObject extends DataItem {
         return results;
     }
 
-    protected void buildInsertSQL(StringBuilder sql, List<Object> parameters) {
+    protected void buildInsertSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.INSERT_INTO);
         sql.append(SQL.SEPARATOR);
-        sql.append(getTableName());
+        sql.append(dataObject.getTableName());
 
         sql.append(SQL.SEPARATOR);
         sql.append(SQL.GROUP_BEGIN);
-        Iterator<String> columnsIterator = getFields().keySet().iterator();
+        Iterator<String> columnsIterator = dataObject.getFields().keySet().iterator();
         while (columnsIterator.hasNext()) {
             sql.append(columnsIterator.next());
             if (columnsIterator.hasNext()) {
@@ -481,7 +481,7 @@ public class DataObject extends DataItem {
         sql.append(SQL.VALUES);
         sql.append(SQL.SEPARATOR);
         sql.append(SQL.GROUP_BEGIN);
-        Iterator valuesIterator = getFields().values().iterator();
+        Iterator valuesIterator = dataObject.getFields().values().iterator();
         while (valuesIterator.hasNext()) {
             parameters.add(valuesIterator.next());
             sql.append(SQL.PARAMETER);
@@ -493,16 +493,16 @@ public class DataObject extends DataItem {
         sql.append(SQL.GROUP_END);
     }
 
-    protected void buildUpdateSQL(StringBuilder sql, List<Object> parameters) {
+    protected void buildUpdateSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.UPDATE);
         sql.append(SQL.SEPARATOR);
-        sql.append(getTableName());
+        sql.append(dataObject.getTableName());
 
         sql.append(SQL.SEPARATOR);
         sql.append(SQL.SET);
         sql.append(SQL.SEPARATOR);
-        Iterator<Map.Entry<String, Object>> iterator = getFields().entrySet().iterator();
+        Iterator<Map.Entry<String, Object>> iterator = dataObject.getFields().entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Object> entry = iterator.next();
             parameters.add(entry.getValue());
@@ -517,15 +517,15 @@ public class DataObject extends DataItem {
             }
         }
 
-        if (!getWhere().getConditions().isEmpty()) {
+        if (!dataObject.getWhere().getConditions().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHERE);
             sql.append(SQL.SEPARATOR);
-            buildConditionSQL(getWhere(), sql, parameters);
+            buildConditionSQL(dataObject.getWhere(), sql, parameters);
         }
     }
 
-    protected void buildSelectSQL(StringBuilder sql, List<Object> parameters) {
+    protected void buildSelectSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.SELECT);
 
@@ -533,7 +533,7 @@ public class DataObject extends DataItem {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHILDCARD);
         } else {
-            Iterator<SelectField> selectFieldsIterator = getSelectFields().iterator();
+            Iterator<SelectField> selectFieldsIterator = dataObject.getSelectFields().iterator();
             while (selectFieldsIterator.hasNext()) {
                 SelectField selectField = selectFieldsIterator.next();
                 sql.append(SQL.SEPARATOR);
@@ -547,26 +547,26 @@ public class DataObject extends DataItem {
         sql.append(SQL.SEPARATOR);
         sql.append(SQL.FROM);
         sql.append(SQL.SEPARATOR);
-        sql.append(getTableName());
+        sql.append(dataObject.getTableName());
 
-        if (!getJoins().isEmpty()) {
+        if (!dataObject.getJoins().isEmpty()) {
             sql.append(SQL.SEPARATOR);
-            for (Join join : getJoins()) {
+            for (Join join : dataObject.getJoins()) {
                 buildJoinSQL(join, sql, parameters);
             }
         }
 
-        if (!getWhere().getConditions().isEmpty()) {
+        if (!dataObject.getWhere().getConditions().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.WHERE);
             sql.append(SQL.SEPARATOR);
-            buildConditionSQL(getWhere(), sql, parameters);
+            buildConditionSQL(dataObject.getWhere(), sql, parameters);
         }
 
-        if (!getGroupByFields().isEmpty()) {
+        if (!dataObject.getGroupByFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.GROUP_BY);
-            Iterator<String> groupByFieldsIterator = getGroupByFields().iterator();
+            Iterator<String> groupByFieldsIterator = dataObject.getGroupByFields().iterator();
             while (groupByFieldsIterator.hasNext()) {
                 sql.append(groupByFieldsIterator.next());
                 if (groupByFieldsIterator.hasNext()) {
@@ -576,10 +576,10 @@ public class DataObject extends DataItem {
             }
         }
 
-        if (!getOrderByFields().isEmpty()) {
+        if (!dataObject.getOrderByFields().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.ORDER_BY);
-            Iterator<OrderByField> orderByFieldsIterator = getOrderByFields().iterator();
+            Iterator<OrderByField> orderByFieldsIterator = dataObject.getOrderByFields().iterator();
             while (orderByFieldsIterator.hasNext()) {
                 OrderByField orderByField = orderByFieldsIterator.next();
                 sql.append(orderByField.getField());
@@ -599,25 +599,25 @@ public class DataObject extends DataItem {
             }
         }
 
-        if (!getHaving().getConditions().isEmpty()) {
+        if (!dataObject.getHaving().getConditions().isEmpty()) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.HAVING);
             sql.append(SQL.SEPARATOR);
-            buildConditionSQL(getHaving(), sql, parameters);
+            buildConditionSQL(dataObject.getHaving(), sql, parameters);
         }
 
-        if (getOffset() != null) {
+        if (dataObject.getOffset() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.OFFSET);
             sql.append(SQL.SEPARATOR);
-            sql.append(getOffset());
+            sql.append(dataObject.getOffset());
         }
 
-        if (getLimit() != null) {
+        if (dataObject.getLimit() != null) {
             sql.append(SQL.SEPARATOR);
             sql.append(SQL.LIMIT);
             sql.append(SQL.SEPARATOR);
-            sql.append(getLimit());
+            sql.append(dataObject.getLimit());
         }
     }
 
@@ -737,7 +737,7 @@ public class DataObject extends DataItem {
             }
             else if (value instanceof DataObject) {
                 sql.append(SQL.GROUP_BEGIN);
-                ((DataObject)value).buildSelectSQL(sql, parameters);
+                buildSelectSQL((DataObject)value, sql, parameters);
                 sql.append(SQL.GROUP_END);
             }
             else {
