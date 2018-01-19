@@ -5,6 +5,7 @@ import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelQuery;
 import org.neogroup.warp.views.View;
 import org.neogroup.warp.views.ViewFactory;
+import org.slf4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * @todo Inicialización de propiedades desde un archivo
  * @todo Ver la posibilidad de mover los buildXXX de DataObject al Datasource para que sean sobrecargables
  * @todo Agregar traducciónes
  * @todo Agregar logs
@@ -73,6 +75,18 @@ public class Warp {
 
     public static void loadPropertiesFromFile(String filename) {
         getInstance().loadPropertiesFromFile(filename);
+    }
+
+    public static Logger getLogger() {
+        return getInstance().getLogger();
+    }
+
+    public static Logger getLogger(String name) {
+        return getInstance().getLogger(name);
+    }
+
+    public static Logger getLogger(Class<?> clazz) {
+        return getInstance().getLogger(clazz);
     }
 
     public static void handleRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {

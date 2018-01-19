@@ -15,6 +15,8 @@ import org.neogroup.warp.views.View;
 import org.neogroup.warp.views.ViewFactory;
 import org.neogroup.warp.views.ViewFactoryComponent;
 import org.neogroup.warp.views.Views;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -151,6 +153,18 @@ public class WarpInstance {
         catch (IOException exception) {
             throw new RuntimeException("Error reading properties file", exception);
         }
+    }
+
+    public Logger getLogger() {
+        return LoggerFactory.getLogger(Warp.class);
+    }
+
+    public Logger getLogger(String name) {
+        return LoggerFactory.getLogger(name);
+    }
+
+    public Logger getLogger(Class<?> clazz) {
+        return LoggerFactory.getLogger(clazz);
     }
 
     public void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
