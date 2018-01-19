@@ -30,7 +30,8 @@ import java.util.Properties;
 
 public class WarpInstance {
 
-    private static final String MAIN_LOGGER_NAME = "Warp";
+    private static final String DEFAULT_LOGGER_NAME = "Warp";
+    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
 
     private final Properties properties;
     private final Controllers controllers;
@@ -48,6 +49,17 @@ public class WarpInstance {
     }
 
     protected void initialize (String basePackage) {
+        initialize(basePackage, DEFAULT_PROPERTIES_RESOURCE_NAME);
+    }
+
+    protected void initialize (String basePackage, String propertiesResourceName) {
+
+        try {
+            loadPropertiesFromResource(propertiesResourceName);
+        }
+        catch (Exception ex) {
+            getLogger().warn("Unable to load properties from resource \"" + propertiesResourceName + "\" !!", ex);
+        }
 
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
@@ -158,7 +170,7 @@ public class WarpInstance {
     }
 
     public Logger getLogger() {
-        return LoggerFactory.getLogger(MAIN_LOGGER_NAME);
+        return LoggerFactory.getLogger(DEFAULT_LOGGER_NAME);
     }
 
     public Logger getLogger(String name) {

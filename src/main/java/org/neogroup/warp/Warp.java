@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @todo Inicialización de propiedades desde un archivo
  * @todo Agregar traducciónes
  * @todo Permitir a las vistas setear parametros por defecto
  * @todo Crear una enumeración para operaciones con modelos
