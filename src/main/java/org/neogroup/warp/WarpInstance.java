@@ -31,7 +31,6 @@ import java.util.Properties;
 public class WarpInstance {
 
     private static final String DEFAULT_LOGGER_NAME = "Warp";
-    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
 
     private final Properties properties;
     private final Controllers controllers;
@@ -48,19 +47,7 @@ public class WarpInstance {
         this.dataSources = new DataSources();
     }
 
-    protected void initialize (String basePackage) {
-        initialize(basePackage, DEFAULT_PROPERTIES_RESOURCE_NAME);
-    }
-
-    protected void initialize (String basePackage, String propertiesResourceName) {
-
-        try {
-            loadPropertiesFromResource(propertiesResourceName);
-        }
-        catch (Exception ex) {
-            getLogger().warn("Unable to load properties from resource \"" + propertiesResourceName + "\" !!", ex);
-        }
-
+    public void registerComponents(String basePackage) {
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
@@ -69,14 +56,14 @@ public class WarpInstance {
 
                     ControllerComponent controllerAnnotation = (ControllerComponent)cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
-                        controllers.registerController(cls);
+                        registerController(cls);
                         return true;
                     }
 
                     ModelManagerComponent managerAnnotation = (ModelManagerComponent)cls.getAnnotation(ModelManagerComponent.class);
                     if (managerAnnotation != null) {
                         if (ModelManager.class.isAssignableFrom(cls)) {
-                            models.registerModelManager(cls);
+                            registerModelManager(cls);
                             return true;
                         }
                     }
@@ -84,7 +71,7 @@ public class WarpInstance {
                     ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
                     if (viewFactoryComponent != null) {
                         if (ViewFactory.class.isAssignableFrom(cls)) {
-                            views.registerViewFactory(cls);
+                            registerViewFactory(cls);
                             return true;
                         }
                     }
@@ -92,7 +79,7 @@ public class WarpInstance {
                     DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
                     if (dataSourceComponent != null) {
                         if (DataSource.class.isAssignableFrom(cls)) {
-                            dataSources.registerDataSource(cls);
+                            registerDataSource(cls);
                             return true;
                         }
                     }
@@ -103,6 +90,22 @@ public class WarpInstance {
             }
             return false;
         });
+    }
+
+    public void registerController(Class controllerClass) {
+        controllers.registerController(controllerClass);
+    }
+
+    public void registerModelManager(Class<? extends ModelManager> modelManagerClass) {
+        models.registerModelManager(modelManagerClass);
+    }
+
+    public void registerViewFactory(Class<? extends ViewFactory> viewFactoryClass) {
+        views.registerViewFactory(viewFactoryClass);
+    }
+
+    public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
+        dataSources.registerDataSource(dataSourceClass);
     }
 
     /**

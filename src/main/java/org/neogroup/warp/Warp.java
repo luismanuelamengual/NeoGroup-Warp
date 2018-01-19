@@ -1,6 +1,7 @@
 package org.neogroup.warp;
 
 import org.neogroup.warp.data.DataConnection;
+import org.neogroup.warp.data.DataSource;
 import org.neogroup.warp.models.ModelManager;
 import org.neogroup.warp.models.ModelQuery;
 import org.neogroup.warp.views.View;
@@ -45,8 +46,24 @@ public class Warp {
         return instance;
     }
 
-    public static void initialize(String basePackage) {
-        getInstance().initialize(basePackage);
+    public static void registerComponents(String basePackage) {
+        getInstance().registerComponents(basePackage);
+    }
+
+    public static void registerController(Class controllerClass) {
+        getInstance().registerController(controllerClass);
+    }
+
+    public static void registerModelManager(Class<? extends ModelManager> modelManagerClass) {
+        getInstance().registerModelManager(modelManagerClass);
+    }
+
+    public static void registerViewFactory(Class<? extends ViewFactory> viewFactoryClass) {
+        getInstance().registerViewFactory(viewFactoryClass);
+    }
+
+    public static void registerDataSource(Class<? extends DataSource> dataSourceClass) {
+        getInstance().registerDataSource(dataSourceClass);
     }
 
     public static Properties getProperties() {
