@@ -336,9 +336,6 @@ public class DataObject extends DataItem {
             List<Object> parameters = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
             buildUpdateSQL(sql, parameters);
-
-            System.out.println (sql);
-
             PreparedStatement statement = connection.prepareStatement(sql.toString());
             int parameterIndex = 1;
             for (Object parameter : parameters) {

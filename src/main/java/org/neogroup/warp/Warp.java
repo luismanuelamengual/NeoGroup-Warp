@@ -20,6 +20,7 @@ import java.util.Properties;
  * @todo Agregar logs
  * @todo Permitir a las vistas setear parametros por defecto
  * @todo Agregar logs a todas las consultas SQL
+ * @todo Crear una enumeración para operaciones con modelos
  * @todo Agregar comentarios
  * @todo Hacer la documentación
  * @todo Agregar eventos (Puede quedar para siguiente version)

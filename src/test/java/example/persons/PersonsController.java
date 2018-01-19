@@ -28,6 +28,7 @@ public class PersonsController {
         doPerson.setField("name", "Vane");
         doPerson.addWhere("personid", 44);
         doPerson.update();
+
         return "rama";
     };
 }

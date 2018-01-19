@@ -31,15 +31,17 @@
     </licenses>
 
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
-        </dependency>
+
+        <!-- MAIN DEPENDENCIES -->
         <dependency>
             <groupId>com.github.luismanuelamengual</groupId>
             <artifactId>NeoGroup-Utils</artifactId>
             <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -52,11 +54,19 @@
             <version>9.4.6.v20170531</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <!-- TEST DEPENDENCIES -->
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.0.0</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <scm>
