@@ -34,6 +34,7 @@ public class PersonsController {
         */
 
         DataObject doPerson = getConnection().getDataObject("person");
+        doPerson.addWhere("name", "Vane");
         doPerson.find();
         StringBuilder data = new StringBuilder();
         while (doPerson.fetch()) {

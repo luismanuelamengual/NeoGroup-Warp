@@ -26,7 +26,7 @@ public class DataConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(String sql) {
         try {
-            return connection.prepareStatement(sql);
+            return new DataStatement(connection.prepareStatement(sql));
         }
         catch (Exception ex) {
             throw new DataException(ex);

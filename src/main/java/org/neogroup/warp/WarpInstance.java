@@ -30,6 +30,8 @@ import java.util.Properties;
 
 public class WarpInstance {
 
+    private static final String MAIN_LOGGER_NAME = "Warp";
+
     private final Properties properties;
     private final Controllers controllers;
     private final Models models;
@@ -156,7 +158,7 @@ public class WarpInstance {
     }
 
     public Logger getLogger() {
-        return LoggerFactory.getLogger(Warp.class);
+        return LoggerFactory.getLogger(MAIN_LOGGER_NAME);
     }
 
     public Logger getLogger(String name) {
