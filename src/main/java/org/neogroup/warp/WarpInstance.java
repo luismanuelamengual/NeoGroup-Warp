@@ -27,6 +27,10 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.*;
 
+/**
+ * Warp instance with the base framework functionality
+ * @author Luis Manuel Amengual
+ */
 public class WarpInstance {
 
     private static final String DEFAULT_LOGGER_NAME = "Warp";
@@ -38,6 +42,9 @@ public class WarpInstance {
     private final DataSources dataSources;
     private final Map<Long, WarpContext> contexts;
 
+    /**
+     * Base constructor for the warp instance
+     */
     protected WarpInstance () {
 
         this.properties = new Properties();
@@ -48,6 +55,10 @@ public class WarpInstance {
         this.contexts = new HashMap<>();
     }
 
+    /**
+     * Register all components in the given package
+     * @param basePackage base package to scan for components
+     */
     public void registerComponents(String basePackage) {
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
@@ -93,25 +104,42 @@ public class WarpInstance {
         });
     }
 
+    /**
+     * Registers a controller class. Basically registers
+     * all the routes that resides in the controller
+     * @param controllerClass Controller class
+     */
     public void registerController(Class controllerClass) {
         controllers.registerController(controllerClass);
     }
 
+    /**
+     * Registers a model manager
+     * @param modelManagerClass model manager class
+     */
     public void registerModelManager(Class<? extends ModelManager> modelManagerClass) {
         models.registerModelManager(modelManagerClass);
     }
 
+    /**
+     * Registers a view factory
+     * @param viewFactoryClass view factory class
+     */
     public void registerViewFactory(Class<? extends ViewFactory> viewFactoryClass) {
         views.registerViewFactory(viewFactoryClass);
     }
 
+    /**
+     * Registers a new data source
+     * @param dataSourceClass data source class
+     */
     public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
         dataSources.registerDataSource(dataSourceClass);
     }
 
     /**
      * Get the properties of the context
-     * @return
+     * @return Properties
      */
     public Properties getProperties() {
         return properties;
@@ -173,14 +201,28 @@ public class WarpInstance {
         }
     }
 
+    /**
+     * Get the main warp logger
+     * @return Logger
+     */
     public Logger getLogger() {
         return LoggerFactory.getLogger(DEFAULT_LOGGER_NAME);
     }
 
+    /**
+     * Get a logger with a given name
+     * @param name name of the logger
+     * @return Logger
+     */
     public Logger getLogger(String name) {
         return LoggerFactory.getLogger(name);
     }
 
+    /**
+     * Get a logger with a given class
+     * @param clazz class to obtain the logger
+     * @return Logger
+     */
     public Logger getLogger(Class<?> clazz) {
         return LoggerFactory.getLogger(clazz);
     }
@@ -206,7 +248,14 @@ public class WarpInstance {
         return value;
     }
 
-    public void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
+    /**
+     * Handles a new request from a servlet
+     * @param servletRequest servlet request
+     * @param servletResponse servlet response
+     * @throws ServletException exception
+     * @throws IOException exception
+     */
+    protected void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
 
         long threadId = Thread.currentThread().getId();
         try {
@@ -222,78 +271,195 @@ public class WarpInstance {
         }
     }
 
+    /**
+     * Obtains the warp context for a given http servlet thread
+     * @return warp context for the servlet thread
+     */
     public WarpContext getContext() {
         return contexts.get(Thread.currentThread().getId());
     }
 
+    /**
+     * Obtains the current thread request
+     * @return Request
+     */
     public Request getRequest() {
         return getContext().getRequest();
     }
 
+    /**
+     * Obtains the current thread response
+     * @return Response
+     */
     public Response getResponse() {
         return getContext().getResponse();
     }
 
+    /**
+     * Get an instance of the controller for a given controller class
+     * @param controllerClass controller class
+     * @param <C> Type of controller
+     * @return instance of a controller
+     */
     public <C> C getController(Class<? extends C> controllerClass) {
         return controllers.getController(controllerClass);
     }
 
+    /**
+     * Obtains a model manager for a given model manager class
+     * @param modelManagerClass class of a model manager
+     * @param <M> Type of model manager
+     * @return instance of model manager
+     */
     public <M extends ModelManager> M getModelManager(Class<? extends M> modelManagerClass) {
         return models.getModelManager(modelManagerClass);
     }
 
+    /**
+     * Creates a model
+     * @param model model to create
+     * @param params paramters
+     * @param <M> type of model
+     * @return created model
+     */
     public <M> M createModel(M model, Object... params) {
         return models.createModel(model, params);
     }
 
+    /**
+     * Updates a model
+     * @param model model to update
+     * @param params parameters
+     * @param <M> type of model
+     * @return updated model
+     */
     public <M> M updateModel(M model, Object... params) {
         return models.updateModel(model, params);
     }
 
+    /**
+     * Deletes a model
+     * @param model model to delete
+     * @param params parameters
+     * @param <M> type of model
+     * @return deleted model
+     */
     public <M> M deleteModel(M model, Object... params) {
         return models.deleteModel(model, params);
     }
 
+    /**
+     * Retrieves model by its id
+     * @param modelClass Model class to retrieve
+     * @param id id of the model
+     * @param params parameters
+     * @param <M> type of model
+     * @return model to retrieve
+     */
     public <M> M retrieveModel(Class<? extends M> modelClass, Object id, Object... params) {
         return models.retrieveModel(modelClass, id, params);
     }
 
+    /**
+     * Retrieves all models
+     * @param modelClass Model class to retrieve
+     * @param params parameters
+     * @param <M> type of model
+     * @return collection of models
+     */
     public <M> Collection<M> retrieveModels(Class<? extends M> modelClass, Object... params) {
         return models.retrieveModels(modelClass, params);
     }
 
+    /**
+     * Retrieve models by a query
+     * @param modelClass Model class
+     * @param query query for models
+     * @param params parameters
+     * @param <M> type of model
+     * @return collection of models
+     */
     public <M> Collection<M> retrieveModels(Class<? extends M> modelClass, ModelQuery query, Object... params) {
         return models.retrieveModels(modelClass, query, params);
     }
 
+    /**
+     * Retrieve a view factory
+     * @param viewFactoryClass view factory class
+     * @param <F> type of view factory
+     * @return instance of a view factory
+     */
     public <F extends ViewFactory> F getViewFactory(Class<? extends F> viewFactoryClass) {
         return views.getViewFactory(viewFactoryClass);
     }
 
+    /**
+     * Retrieve a view factory by its name
+     * @param name name of view factory
+     * @param <F> type of view factory
+     * @return instance of a view factory
+     */
     public <F extends ViewFactory> F getViewFactory(String name) {
         return views.getViewFactory(name);
     }
 
+    /**
+     * Creates a view
+     * @param name name of the view
+     * @param <V> type of view
+     * @return instance of view
+     */
     public <V extends View> V createView(String name) {
         return views.createView(name);
     }
 
+    /**
+     * Creates a view from a certain view factory
+     * @param viewFactoryName view factory name
+     * @param viewName name of the view
+     * @param <V> type of view
+     * @return instance of view
+     */
     public <V extends View> V createView(String viewFactoryName, String viewName) {
         return views.createView(viewFactoryName, viewName);
     }
 
+    /**
+     * Creates a view by a name and parameters
+     * @param name name of the view
+     * @param viewParameters parameters to pass to the view
+     * @param <V> type of view
+     * @return instance of a view
+     */
     public <V extends View> V createView(String name, Map<String, Object> viewParameters) {
         return views.createView(name, viewParameters);
     }
 
+    /**
+     * Creates a view by a factory name and parameters
+     * @param viewFactoryName name of view factory
+     * @param viewName name of view
+     * @param viewParameters parameters to pass to the view
+     * @param <V> type of view
+     * @return instance of a view
+     */
     public <V extends View> V createView(String viewFactoryName, String viewName, Map<String, Object> viewParameters) {
         return views.createView(viewFactoryName, viewName, viewParameters);
     }
 
+    /**
+     * Get a connection
+     * @return connection
+     */
     public DataConnection getConnection() {
         return dataSources.getConnection();
     }
 
+    /**
+     * Get a connection from a given data source name
+     * @param dataSourceName name of data source
+     * @return data connection
+     */
     public DataConnection getConnection(String dataSourceName) {
         return dataSources.getConnection(dataSourceName);
     }
