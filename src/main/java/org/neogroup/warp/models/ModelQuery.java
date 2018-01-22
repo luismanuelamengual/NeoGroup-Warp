@@ -114,7 +114,7 @@ public class ModelQuery {
      * @param value value of property
      * @return EntityPropertyFilter created filter
      */
-    public ModelPropertyFilter addFilter (String property, String operator, Object value) {
+    public ModelPropertyFilter addFilter (String property, ModelPropertyOperator operator, Object value) {
         ModelPropertyFilter filter = new ModelPropertyFilter(property, operator, value);
         addFilter(filter);
         return filter;

@@ -19,7 +19,6 @@ import java.util.Properties;
 /**
  * @todo Agregar traducciónes
  * @todo Permitir a las vistas setear parametros por defecto
- * @todo Crear una enumeración para operaciones con modelos
  * @todo Agregar comentarios
  * @todo Hacer la documentación
  * @todo Agregar eventos (Puede quedar para siguiente version)

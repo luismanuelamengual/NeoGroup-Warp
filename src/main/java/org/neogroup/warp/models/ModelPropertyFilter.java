@@ -7,7 +7,7 @@ package org.neogroup.warp.models;
 public class ModelPropertyFilter extends ModelFilter {
 
     private final String property;
-    private final String operator;
+    private final ModelPropertyOperator operator;
     private final Object value;
 
     /**
@@ -25,7 +25,7 @@ public class ModelPropertyFilter extends ModelFilter {
      * @param operator operator
      * @param value value
      */
-    public ModelPropertyFilter(String property, String operator, Object value) {
+    public ModelPropertyFilter(String property, ModelPropertyOperator operator, Object value) {
         this.property = property;
         this.operator = operator;
         this.value = value;
@@ -43,7 +43,7 @@ public class ModelPropertyFilter extends ModelFilter {
      * Get the operator of the filter
      * @return String name of operator
      */
-    public String getOperator() {
+    public ModelPropertyOperator getOperator() {
         return operator;
     }
 
