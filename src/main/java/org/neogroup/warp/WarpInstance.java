@@ -48,7 +48,7 @@ public class WarpInstance {
         this.contexts = new HashMap<>();
 
         //Initialize properties
-        this.properties.setProperty(WarpProperties.DEFAULT_LOCALIZATION_BUNDLE_NAME, "messages");
+        this.properties.setProperty(WarpProperties.DEFAULT_LOCALIZATION_BUNDLE_NAME, "localization/messages");
     }
 
     public void registerComponents(String basePackage) {
@@ -110,6 +110,22 @@ public class WarpInstance {
 
     public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
         dataSources.registerDataSource(dataSourceClass);
+    }
+
+    public Locale getLocale() {
+        return getContext().getLocale();
+    }
+
+    public void setLocale(Locale locale) {
+        getContext().setLocale(locale);
+    }
+
+    public TimeZone getTimeZone() {
+        return getContext().getTimeZone();
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        getContext().setTimeZone(timeZone);
     }
 
     /**
@@ -195,7 +211,7 @@ public class WarpInstance {
      * @return String value of the bundle
      */
     public String getMessage(String key, Object... args) {
-        return getMessage(Locale.getDefault(), key, args);
+        return getMessage(getContext().getLocale(), key, args);
     }
 
     /**
@@ -221,7 +237,7 @@ public class WarpInstance {
      * @return String value of the bundle
      */
     public String getBundleMessage(String bundleName, String key, Object... args) {
-        return getBundleMessage(bundleName, Locale.getDefault(), key, args);
+        return getBundleMessage(bundleName, getContext().getLocale(), key, args);
     }
 
     /**

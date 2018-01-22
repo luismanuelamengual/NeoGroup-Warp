@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @todo Agregar traducciónes
+ * @todo Ver tema de propiedades en otros proyectos de warp
+ * @todo Permitir controladores estaticos
  * @todo Permitir a las vistas setear parametros por defecto
  * @todo Agregar comentarios
  * @todo Hacer la documentación
