@@ -24,10 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.text.MessageFormat;
+import java.util.*;
 
 public class WarpInstance {
 
@@ -48,6 +46,9 @@ public class WarpInstance {
         this.views = new Views(this);
         this.dataSources = new DataSources(this);
         this.contexts = new HashMap<>();
+
+        //Initialize properties
+        this.properties.setProperty(WarpProperties.DEFAULT_LOCALIZATION_BUNDLE_NAME, "messages");
     }
 
     public void registerComponents(String basePackage) {
@@ -185,6 +186,63 @@ public class WarpInstance {
 
     public Logger getLogger(Class<?> clazz) {
         return LoggerFactory.getLogger(clazz);
+    }
+
+    /**
+     * Get a bundle string with the default locale
+     * @param key key of the bundle
+     * @param args replacement arguments
+     * @return String value of the bundle
+     */
+    public String getMessage(String key, Object... args) {
+        return getMessage(Locale.getDefault(), key, args);
+    }
+
+    /**
+     * Get a bundle string
+     * @param locale Locale
+     * @param key key of the bundle
+     * @param args replacement arguments
+     * @return String value of the bundle
+     */
+    public String getMessage(Locale locale, String key, Object... args) {
+        String value = null;
+        if (hasProperty(WarpProperties.DEFAULT_LOCALIZATION_BUNDLE_NAME)) {
+            value = getBundleMessage(getProperty(WarpProperties.DEFAULT_LOCALIZATION_BUNDLE_NAME), locale, key, args);
+        }
+        return value;
+    }
+
+    /**
+     * Get a bundle string
+     * @param bundleName name of bundle
+     * @param key key of the bundle
+     * @param args replacement arguments
+     * @return String value of the bundle
+     */
+    public String getBundleMessage(String bundleName, String key, Object... args) {
+        return getBundleMessage(bundleName, Locale.getDefault(), key, args);
+    }
+
+    /**
+     * Get a bundle string
+     * @param bundleName name of bundle
+     * @param locale Locale
+     * @param key key of the bundle
+     * @param args replacement arguments
+     * @return String value of the bundle
+     */
+    public String getBundleMessage(String bundleName, Locale locale, String key, Object... args) {
+        String value = null;
+        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+        if (bundle != null && bundle.containsKey(key)) {
+            value = MessageFormat.format(bundle.getString(key), args);
+        }
+        else {
+            value = "{" + key + "}";
+            getLogger().warn("Message key \"" + key + "\" not found in bundle \"" + bundleName + "\" and locale \"" + locale + "\"");
+        }
+        return value;
     }
 
     public void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -100,6 +101,22 @@ public class Warp {
 
     public static Logger getLogger(Class<?> clazz) {
         return getInstance().getLogger(clazz);
+    }
+
+    public static String getMessage(String key, Object... args) {
+        return getInstance().getMessage(key, args);
+    }
+
+    public static String getMessage(Locale locale, String key, Object... args) {
+        return getInstance().getMessage(locale, key, args);
+    }
+
+    public static String getBundleMessage(String bundleName, String key, Object... args) {
+        return getInstance().getBundleMessage(bundleName, key, args);
+    }
+
+    public static String getBundleMessage(String bundleName, Locale locale, String key, Object... args) {
+        return getInstance().getBundleMessage(bundleName, locale, key, args);
     }
 
     public static WarpContext getContext() {
