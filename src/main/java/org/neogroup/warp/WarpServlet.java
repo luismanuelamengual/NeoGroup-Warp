@@ -8,14 +8,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ *
+ */
 public class WarpServlet extends HttpServlet {
 
     public static final String SCAN_BASE_PACKAGE_PARAMETER_NAME = "scan_base_package";
     private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
 
+    /**
+     *
+     */
     public WarpServlet() {
     }
 
+    /**
+     *
+     * @param config
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         String propertiesResourceName = DEFAULT_PROPERTIES_RESOURCE_NAME;
@@ -29,6 +40,13 @@ public class WarpServlet extends HttpServlet {
         Warp.registerComponents(scanBasePackage);
     }
 
+    /**
+     *
+     * @param servletRequest
+     * @param servletResponse
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         Warp.handleRequest(servletRequest, servletResponse);

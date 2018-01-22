@@ -22,6 +22,7 @@ import java.util.Properties;
  * @author Luis Manuel Amengual
  *
  * @todo Agregar comentarios
+ * @todo Agregar folder o resource contexts
  * @todo Hacer la documentación
  * @todo Hacer metodos halt redirect como sparks (puede quedar para la siguiente version)
  * @todo Agregar eventos (Puede quedar para siguiente version)
