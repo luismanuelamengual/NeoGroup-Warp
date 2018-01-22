@@ -104,20 +104,8 @@ public class Warp {
         return getInstance().getLogger(clazz);
     }
 
-    public static String getMessage(String key, Object... args) {
-        return getInstance().getMessage(key, args);
-    }
-
-    public static String getMessage(Locale locale, String key, Object... args) {
-        return getInstance().getMessage(locale, key, args);
-    }
-
-    public static String getBundleMessage(String bundleName, String key, Object... args) {
-        return getInstance().getBundleMessage(bundleName, key, args);
-    }
-
-    public static String getBundleMessage(String bundleName, Locale locale, String key, Object... args) {
-        return getInstance().getBundleMessage(bundleName, locale, key, args);
+    public static String getMessage(String bundleName, Locale locale, String key, Object... args) {
+        return getInstance().getMessage(bundleName, locale, key, args);
     }
 
     public static WarpContext getContext() {
