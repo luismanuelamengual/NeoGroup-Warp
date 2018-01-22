@@ -1,5 +1,8 @@
 package org.neogroup.warp.data.joins;
 
+/**
+ *
+ */
 public enum JoinType {
     JOIN,
     LEFT_JOIN,
