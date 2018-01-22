@@ -1,12 +1,13 @@
 package org.neogroup.warp.data;
 
 import org.neogroup.warp.WarpInstance;
-import org.neogroup.warp.WarpProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DataSources {
+
+    public static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "default.datasource.name";
 
     private final WarpInstance warpInstance;
     private final Map<Class, DataSource> dataSources;
@@ -43,11 +44,11 @@ public class DataSources {
         if (dataSourcesByName.size() == 1) {
             dataSourceName = dataSourcesByName.keySet().iterator().next();
         }
-        else if (warpInstance.hasProperty(WarpProperties.DEFAULT_DATA_SOURCE_NAME)) {
-            dataSourceName = warpInstance.getProperty(WarpProperties.DEFAULT_DATA_SOURCE_NAME);
+        else if (warpInstance.hasProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY)) {
+            dataSourceName = warpInstance.getProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY);
         }
         else {
-            throw new DataException("More than 1 data source is registered. Please set the property \"" + WarpProperties.DEFAULT_DATA_SOURCE_NAME + "\" !!");
+            throw new DataException("More than 1 data source is registered. Please set the property \"" + DEFAULT_DATA_SOURCE_NAME_PROPERTY + "\" !!");
         }
 
         return getConnection(dataSourceName);

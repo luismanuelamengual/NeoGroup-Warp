@@ -1,4 +1,4 @@
-package example.sources;
+package example;
 
 import org.neogroup.warp.data.DataException;
 import org.neogroup.warp.data.DataSource;
