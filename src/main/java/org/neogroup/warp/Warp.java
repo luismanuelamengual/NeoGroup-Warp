@@ -20,9 +20,9 @@ import java.util.Properties;
 /**
  * @todo Ver tema de propiedades en otros proyectos de warp
  * @todo Permitir controladores estaticos
- * @todo Permitir a las vistas setear parametros por defecto
  * @todo Agregar comentarios
  * @todo Hacer la documentación
+ * @todo Hacer metodos halt redirect como sparks (puede quedar para la siguiente version)
  * @todo Agregar eventos (Puede quedar para siguiente version)
  * @todo Crear un ModelManager con una implementación usando DataSources usando Attribute y Entity (siguiente version)
  */

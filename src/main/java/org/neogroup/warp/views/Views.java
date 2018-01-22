@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class Views {
 
+    private static final String DEFAULT_WARP_PARAMETER_NAME = "warp";
+
     private final WarpInstance warpInstance;
     private final Map<Class, ViewFactory> viewFactories;
     private final Map<String, ViewFactory> viewFactoriesByName;
@@ -84,6 +86,8 @@ public class Views {
         if (view == null) {
             throw new ViewNotFoundException(MessageFormat.format("View \"" + viewName + " not found !!", viewName));
         }
+
+        view.setParameter(DEFAULT_WARP_PARAMETER_NAME, warpInstance);
         for (String key : viewParameters.keySet()) {
             view.setParameter(key, viewParameters.get(key));
         }
