@@ -5,6 +5,9 @@ import org.neogroup.warp.WarpInstance;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ */
 public class DataSources {
 
     public static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "default.datasource.name";
@@ -13,12 +16,20 @@ public class DataSources {
     private final Map<Class, DataSource> dataSources;
     private final Map<String, DataSource> dataSourcesByName;
 
+    /**
+     *
+     * @param warpInstance
+     */
     public DataSources(WarpInstance warpInstance) {
         this.warpInstance = warpInstance;
         dataSources = new HashMap<>();
         dataSourcesByName = new HashMap<>();
     }
 
+    /**
+     *
+     * @param dataSourceClass
+     */
     public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
 
         try {
@@ -34,6 +45,10 @@ public class DataSources {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public DataConnection getConnection() {
 
         String dataSourceName = null;
@@ -54,6 +69,11 @@ public class DataSources {
         return getConnection(dataSourceName);
     }
 
+    /**
+     *
+     * @param dataSourceName
+     * @return
+     */
     public DataConnection getConnection(String dataSourceName) {
 
         Map<String, DataConnection> connections = warpInstance.getContext().getConnections();

@@ -11,6 +11,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.*;
 
+/**
+ *
+ */
 public class DataObject extends DataItem {
 
     public class SQL {
@@ -63,6 +66,11 @@ public class DataObject extends DataItem {
     private Integer limit;
     private Integer offset;
 
+    /**
+     *
+     * @param connection
+     * @param tableName
+     */
     public DataObject(DataConnection connection, String tableName) {
 
         this.connection = connection;
@@ -75,39 +83,79 @@ public class DataObject extends DataItem {
         groupByFields = new ArrayList<>();
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTableName() {
         return tableName;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearSelectFields() {
         selectFields.clear();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<SelectField> getSelectFields() {
         return selectFields;
     }
 
+    /**
+     *
+     * @param rawField
+     * @return
+     */
     public DataObject addSelectField (String rawField) {
         addSelectField(rawField, null);
         return this;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param alias
+     * @return
+     */
     public DataObject addSelectField (String rawField, String alias) {
         addSelectField(new SelectField(rawField, alias));
         return this;
     }
 
+    /**
+     *
+     * @param tableName
+     * @param columnName
+     * @param alias
+     * @return
+     */
     public DataObject addSelectField (String tableName, String columnName, String alias) {
         addSelectField(new SelectField(tableName + SQL.SCOPE_SEPARATOR + columnName, alias));
         return this;
     }
 
+    /**
+     *
+     * @param field
+     * @return
+     */
     public DataObject addSelectField (SelectField field) {
         selectFields.add(field);
         return this;
     }
 
+    /**
+     *
+     * @param fields
+     * @return
+     */
     public DataObject addSelectFields (Object... fields) {
         for (Object field : fields) {
             if (field instanceof SelectField) {
@@ -123,16 +171,34 @@ public class DataObject extends DataItem {
         return this;
     }
 
+    /**
+     *
+     * @param rawFields
+     * @return
+     */
     public DataObject addSelectFields (String... rawFields) {
         addSelectFields(rawFields, null);
         return this;
     }
 
+    /**
+     *
+     * @param fieldColumnNames
+     * @param fieldsFormat
+     * @return
+     */
     public DataObject addSelectFields (String[] fieldColumnNames, String fieldsFormat) {
         addSelectFields(null, fieldColumnNames, fieldsFormat);
         return this;
     }
 
+    /**
+     *
+     * @param fieldsTableName
+     * @param fieldColumnNames
+     * @param fieldsFormat
+     * @return
+     */
     public DataObject addSelectFields (String fieldsTableName, String[] fieldColumnNames, String fieldsFormat) {
         for (String fieldName : fieldColumnNames) {
             String fieldAlias = null;
@@ -144,162 +210,329 @@ public class DataObject extends DataItem {
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConditionGroupConnector getWhereConnector() {
         return whereConditionGroup.getConnector();
     }
 
+    /**
+     *
+     * @param connector
+     * @return
+     */
     public DataObject setWhereConnector(ConditionGroupConnector connector) {
         whereConditionGroup.setConnector(connector);
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearWhere() {
         whereConditionGroup.clearConditions();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConditionGroup getWhere() {
         return whereConditionGroup;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param value
+     * @return
+     */
     public DataObject addWhere(String rawField, Object value) {
         whereConditionGroup.addCondition(rawField, value);
         return this;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param operator
+     * @param value
+     * @return
+     */
     public DataObject addWhere(String rawField, Operator operator, Object value) {
         whereConditionGroup.addCondition(rawField, operator, value);
         return this;
     }
 
+    /**
+     *
+     * @param rawWhereCondition
+     * @return
+     */
     public DataObject addWhere (String rawWhereCondition) {
         whereConditionGroup.addCondition(rawWhereCondition);
         return this;
     }
 
+    /**
+     *
+     * @param whereCondition
+     * @return
+     */
     public DataObject addWhere (Condition whereCondition) {
         whereConditionGroup.addCondition(whereCondition);
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConditionGroupConnector getHavingConnector() {
         return havingConditionGroup.getConnector();
     }
 
+    /**
+     *
+     * @param connector
+     * @return
+     */
     public DataObject setHavingConnector(ConditionGroupConnector connector) {
         havingConditionGroup.setConnector(connector);
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearHaving() {
         havingConditionGroup.clearConditions();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public ConditionGroup getHaving() {
         return havingConditionGroup;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param value
+     * @return
+     */
     public DataObject addHaving(String rawField, Object value) {
         havingConditionGroup.addCondition(rawField, value);
         return this;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param operator
+     * @param value
+     * @return
+     */
     public DataObject addHaving(String rawField, Operator operator, Object value) {
         havingConditionGroup.addCondition(rawField, operator, value);
         return this;
     }
 
+    /**
+     *
+     * @param rawHavingCondition
+     * @return
+     */
     public DataObject addHaving (String rawHavingCondition) {
         havingConditionGroup.addCondition(rawHavingCondition);
         return this;
     }
 
+    /**
+     *
+     * @param havingCondition
+     * @return
+     */
     public DataObject addHaving (Condition havingCondition) {
         havingConditionGroup.addCondition(havingCondition);
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearOrderByFields () {
         orderByFields.clear();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<OrderByField> getOrderByFields() {
         return orderByFields;
     }
 
+    /**
+     *
+     * @param rawField
+     * @return
+     */
     public DataObject addOrderByField (String rawField) {
         orderByFields.add(new OrderByField(rawField));
         return this;
     }
 
+    /**
+     *
+     * @param field
+     * @return
+     */
     public DataObject addOrderByField (OrderByField field) {
         orderByFields.add(field);
         return this;
     }
 
+    /**
+     *
+     * @param rawField
+     * @param direction
+     * @return
+     */
     public DataObject addOrderByField (String rawField, OrderByField.Direction direction) {
         orderByFields.add(new OrderByField(rawField, direction));
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearGroupByFields () {
         groupByFields.clear();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<String> getGroupByFields() {
         return groupByFields;
     }
 
+    /**
+     *
+     * @param field
+     * @return
+     */
     public DataObject addGroupByField (String field) {
         groupByFields.add(field);
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject clearJoins () {
         joins.clear();
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Join> getJoins() {
         return joins;
     }
 
+    /**
+     *
+     * @param join
+     * @return
+     */
     public DataObject addJoin(Join join) {
         joins.add(join);
         return this;
     }
 
+    /**
+     *
+     * @param tableName
+     * @param rawLeftField
+     * @param rawRightField
+     * @return
+     */
     public DataObject addJoin(String tableName, String rawLeftField, String rawRightField) {
         joins.add(new Join(tableName, rawLeftField, rawRightField));
         return this;
     }
 
+    /**
+     *
+     * @param tableName
+     * @param joinType
+     * @param rawLeftField
+     * @param rawRightField
+     * @return
+     */
     public DataObject addJoin(String tableName, JoinType joinType, String rawLeftField, String rawRightField) {
         joins.add(new Join(tableName, joinType, rawLeftField, rawRightField));
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getLimit() {
         return limit;
     }
 
+    /**
+     *
+     * @param limit
+     * @return
+     */
     public DataObject setLimit(Integer limit) {
         this.limit = limit;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public Integer getOffset() {
         return offset;
     }
 
+    /**
+     *
+     * @param offset
+     * @return
+     */
     public DataObject setOffset(Integer offset) {
         this.offset = offset;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean insert() {
         try {
             List<Object> parameters = new ArrayList<>();
@@ -331,6 +564,10 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public int update() {
         try {
             List<Object> parameters = new ArrayList<>();
@@ -348,11 +585,20 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public DataObject find() {
         find(false);
         return this;
     }
 
+    /**
+     *
+     * @param autoFetch
+     * @return
+     */
     public boolean find(boolean autoFetch) {
         try {
             List<Object> parameters = new ArrayList<>();
@@ -379,6 +625,10 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean fetch() {
 
         try {
@@ -398,6 +648,10 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public DataItem fetchObject () {
 
         try {
@@ -417,6 +671,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param resultType
+     * @param <T>
+     * @return
+     */
     public <T> T fetchObject(Class<T> resultType) {
 
         try {
@@ -440,6 +700,10 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public List<DataItem> findAll () {
         find();
         DataItem item = null;
@@ -450,6 +714,12 @@ public class DataObject extends DataItem {
         return results;
     }
 
+    /**
+     *
+     * @param resultType
+     * @param <T>
+     * @return
+     */
     public <T> List<T> findAll (Class<T> resultType) {
         find();
         T item = null;
@@ -460,6 +730,12 @@ public class DataObject extends DataItem {
         return results;
     }
 
+    /**
+     *
+     * @param dataObject
+     * @param sql
+     * @param parameters
+     */
     protected void buildInsertSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.INSERT_INTO);
@@ -493,6 +769,12 @@ public class DataObject extends DataItem {
         sql.append(SQL.GROUP_END);
     }
 
+    /**
+     *
+     * @param dataObject
+     * @param sql
+     * @param parameters
+     */
     protected void buildUpdateSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.UPDATE);
@@ -525,6 +807,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param dataObject
+     * @param sql
+     * @param parameters
+     */
     protected void buildSelectSQL(DataObject dataObject, StringBuilder sql, List<Object> parameters) {
 
         sql.append(SQL.SELECT);
@@ -621,6 +909,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param selectField
+     * @param sql
+     * @param parameters
+     */
     protected void buildSelectFieldSQL(SelectField selectField, StringBuilder sql, List<Object> parameters) {
 
         sql.append(selectField.getField());
@@ -632,6 +926,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param join
+     * @param sql
+     * @param parameters
+     */
     protected void buildJoinSQL(Join join, StringBuilder sql, List<Object> parameters) {
 
         switch (join.getJoinType()) {
@@ -659,6 +959,12 @@ public class DataObject extends DataItem {
         buildConditionSQL(join.getConditions(), sql, parameters);
     }
 
+    /**
+     *
+     * @param condition
+     * @param sql
+     * @param parameters
+     */
     protected void buildConditionSQL(Condition condition, StringBuilder sql, List<Object> parameters) {
 
         if (condition instanceof RawCondition) {
@@ -672,6 +978,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param fieldCondition
+     * @param sql
+     * @param parameters
+     */
     protected void buildFieldConditionSQL(FieldCondition fieldCondition, StringBuilder sql, List<Object> parameters) {
 
         if (fieldCondition instanceof FieldOperationCondition) {
@@ -747,6 +1059,12 @@ public class DataObject extends DataItem {
         }
     }
 
+    /**
+     *
+     * @param conditionGroup
+     * @param sql
+     * @param parameters
+     */
     protected void buildConditionGroupSQL(ConditionGroup conditionGroup, StringBuilder sql, List<Object> parameters) {
 
         List<Condition> conditions = conditionGroup.getConditions();

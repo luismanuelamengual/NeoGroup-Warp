@@ -3,6 +3,10 @@ package org.neogroup.warp.controllers.routing;
 
 import org.neogroup.warp.Request;
 
+/**
+ * Collection of routes
+ * @author Luis Manuel Amengual
+ */
 public class Routes {
 
     private static final String ROUTE_GENERIC_PATH = "*";
@@ -12,6 +16,9 @@ public class Routes {
 
     private final RouteIndex routeIndex;
 
+    /**
+     *
+     */
     public Routes() {
         routeIndex = new RouteIndex();
     }

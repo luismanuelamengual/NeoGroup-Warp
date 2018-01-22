@@ -10,6 +10,10 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that controls the logic controllers
+ * @author Luis Manuel Amengual
+ */
 public class Controllers {
 
     private final Map<Class, Object> controllers;
@@ -19,6 +23,9 @@ public class Controllers {
     private final Routes notFoundRoutes;
     private final Routes errorRoutes;
 
+    /**
+     *
+     */
     public Controllers() {
         this.controllers = new HashMap<>();
         this.routes = new Routes();
@@ -28,6 +35,10 @@ public class Controllers {
         this.errorRoutes = new Routes();
     }
 
+    /**
+     *
+     * @param controllerClass
+     */
     public void registerController (Class controllerClass) {
 
         try {
@@ -87,6 +98,12 @@ public class Controllers {
         }
     }
 
+    /**
+     *
+     * @param method
+     * @param path
+     * @param route
+     */
     public void registerRoute (String method, String path, AbstractRoute route) {
 
         Routes routesCollection = null;
@@ -107,10 +124,21 @@ public class Controllers {
         }
     }
 
+    /**
+     *
+     * @param controllerClass
+     * @param <C>
+     * @return
+     */
     public <C extends Object> C getController (Class<? extends C> controllerClass) {
         return (C)controllers.get(controllerClass);
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     */
     public void handle(Request request, Response response) {
 
         try {

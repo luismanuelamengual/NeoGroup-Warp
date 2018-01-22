@@ -5,14 +5,25 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+/**
+ *
+ */
 public class DataConnection implements Connection {
 
     private final Connection connection;
 
+    /**
+     *
+     * @param connection
+     */
     protected DataConnection(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Statement createStatement() {
         try {
@@ -23,6 +34,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql) {
         try {
@@ -33,6 +49,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @return
+     */
     @Override
     public CallableStatement prepareCall(String sql) {
         try {
@@ -43,6 +64,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @return
+     */
     @Override
     public String nativeSQL(String sql) {
         try {
@@ -53,6 +79,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param autoCommit
+     */
     @Override
     public void setAutoCommit(boolean autoCommit) {
         try {
@@ -63,6 +93,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean getAutoCommit() {
         try {
@@ -73,6 +107,9 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void commit() {
         try {
@@ -83,6 +120,9 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void rollback() {
         try {
@@ -93,6 +133,9 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void close() {
         try {
@@ -103,6 +146,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isClosed() {
         try {
@@ -113,6 +160,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public DatabaseMetaData getMetaData() {
         try {
@@ -123,6 +174,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param readOnly
+     */
     @Override
     public void setReadOnly(boolean readOnly) {
         try {
@@ -133,6 +188,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isReadOnly() {
         try {
@@ -143,6 +202,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param catalog
+     */
     @Override
     public void setCatalog(String catalog) {
         try {
@@ -153,6 +216,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getCatalog() {
         try {
@@ -163,6 +230,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param level
+     */
     @Override
     public void setTransactionIsolation(int level) {
         try {
@@ -173,6 +244,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getTransactionIsolation() {
         try {
@@ -183,6 +258,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public SQLWarning getWarnings() {
         try {
@@ -193,6 +272,9 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void clearWarnings() {
         try {
@@ -203,6 +285,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @return
+     */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) {
         try {
@@ -213,6 +301,13 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) {
         try {
@@ -223,6 +318,13 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @return
+     */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) {
         try {
@@ -233,6 +335,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Map<String, Class<?>> getTypeMap() {
         try {
@@ -243,6 +349,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param map
+     */
     @Override
     public void setTypeMap(Map<String, Class<?>> map) {
         try {
@@ -253,6 +363,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param holdability
+     */
     @Override
     public void setHoldability(int holdability) {
         try {
@@ -263,6 +377,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getHoldability() {
         try {
@@ -273,6 +391,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Savepoint setSavepoint() {
         try {
@@ -283,6 +405,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     @Override
     public Savepoint setSavepoint(String name) {
         try {
@@ -293,6 +420,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param savepoint
+     */
     @Override
     public void rollback(Savepoint savepoint) {
         try {
@@ -303,6 +434,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param savepoint
+     */
     @Override
     public void releaseSavepoint(Savepoint savepoint) {
         try {
@@ -313,6 +448,13 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @param resultSetHoldability
+     * @return
+     */
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
         try {
@@ -323,6 +465,14 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @param resultSetHoldability
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
         try {
@@ -333,6 +483,14 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param resultSetType
+     * @param resultSetConcurrency
+     * @param resultSetHoldability
+     * @return
+     */
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
         try {
@@ -343,6 +501,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param autoGeneratedKeys
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) {
         try {
@@ -353,6 +517,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param columnIndexes
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) {
         try {
@@ -363,6 +533,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param sql
+     * @param columnNames
+     * @return
+     */
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) {
         try {
@@ -373,6 +549,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Clob createClob() {
         try {
@@ -383,6 +563,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Blob createBlob() {
         try {
@@ -393,6 +577,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public NClob createNClob() {
         try {
@@ -403,6 +591,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public SQLXML createSQLXML() {
         try {
@@ -413,6 +605,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param timeout
+     * @return
+     */
     @Override
     public boolean isValid(int timeout) {
         try {
@@ -423,6 +620,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @param value
+     */
     @Override
     public void setClientInfo(String name, String value) {
         try {
@@ -433,6 +635,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param properties
+     */
     @Override
     public void setClientInfo(Properties properties) {
         try {
@@ -443,6 +649,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     @Override
     public String getClientInfo(String name) {
         try {
@@ -453,6 +664,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Properties getClientInfo() {
         try {
@@ -463,6 +678,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param typeName
+     * @param elements
+     * @return
+     */
     @Override
     public Array createArrayOf(String typeName, Object[] elements) {
         try {
@@ -473,6 +694,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param typeName
+     * @param attributes
+     * @return
+     */
     @Override
     public Struct createStruct(String typeName, Object[] attributes) {
         try {
@@ -483,6 +710,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param schema
+     */
     @Override
     public void setSchema(String schema) {
         try {
@@ -493,6 +724,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String getSchema() {
         try {
@@ -503,6 +738,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param executor
+     */
     @Override
     public void abort(Executor executor) {
         try {
@@ -513,6 +752,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param executor
+     * @param milliseconds
+     */
     @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) {
         try {
@@ -523,6 +767,10 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getNetworkTimeout() {
         try {
@@ -533,6 +781,12 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param iface
+     * @param <T>
+     * @return
+     */
     @Override
     public <T> T unwrap(Class<T> iface) {
         try {
@@ -543,6 +797,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param iface
+     * @return
+     */
     @Override
     public boolean isWrapperFor(Class<?> iface) {
         try {
@@ -553,6 +812,11 @@ public class DataConnection implements Connection {
         }
     }
 
+    /**
+     *
+     * @param tableName
+     * @return
+     */
     public DataObject getDataObject(String tableName) {
         return new DataObject(this, tableName);
     }
