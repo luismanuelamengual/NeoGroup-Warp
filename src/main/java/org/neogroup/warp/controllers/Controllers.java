@@ -6,6 +6,7 @@ import org.neogroup.warp.controllers.routing.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,12 @@ public class Controllers {
     public void registerController (Class controllerClass) {
 
         try {
-            Object controller = controllerClass.getConstructor().newInstance();
-            controllers.put(controllerClass, controller);
+            Object controller = null;
+
+            if (!Modifier.isAbstract(controllerClass.getModifiers())) {
+                controller = controllerClass.getConstructor().newInstance();
+                controllers.put(controllerClass, controller);
+            }
 
             for (Field controllerField : controllerClass.getDeclaredFields()) {
 
@@ -40,52 +45,38 @@ public class Controllers {
                     try {
                         controllerField.setAccessible(true);
                         AbstractRoute route = (AbstractRoute) controllerField.get(controller);
-                        Routes routesCollection = null;
 
-                        if (route instanceof Route) {
-                            routesCollection = routes;
-                        } else if (route instanceof BeforeRoute) {
-                            routesCollection = beforeRoutes;
-                        } else if (route instanceof AfterRoute) {
-                            routesCollection = afterRoutes;
-                        } else if (route instanceof NotFoundRoute) {
-                            routesCollection = notFoundRoutes;
-                        } else if (route instanceof ErrorRoute) {
-                            routesCollection = errorRoutes;
-                        }
-
-                        if (routesCollection != null) {
-                            Get getAnnotation = controllerField.getAnnotation(Get.class);
-                            if (getAnnotation != null) {
-                                for (String path : getAnnotation.value()) {
-                                    routesCollection.addRoute(new RouteEntry("GET", path, route));
-                                }
-                            }
-                            Post postAnnotation = controllerField.getAnnotation(Post.class);
-                            if (postAnnotation != null) {
-                                for (String path : postAnnotation.value()) {
-                                    routesCollection.addRoute(new RouteEntry("POST", path, route));
-                                }
-                            }
-                            Put putAnnotation = controllerField.getAnnotation(Put.class);
-                            if (putAnnotation != null) {
-                                for (String path : putAnnotation.value()) {
-                                    routesCollection.addRoute(new RouteEntry("PUT", path, route));
-                                }
-                            }
-                            Delete deleteAnnotation = controllerField.getAnnotation(Delete.class);
-                            if (deleteAnnotation != null) {
-                                for (String path : deleteAnnotation.value()) {
-                                    routesCollection.addRoute(new RouteEntry("DELETE", path, route));
-                                }
-                            }
-                            Path pathAnnotation = controllerField.getAnnotation(Path.class);
-                            if (pathAnnotation != null) {
-                                for (String path : pathAnnotation.value()) {
-                                    routesCollection.addRoute(new RouteEntry(null, path, route));
-                                }
+                        Get getAnnotation = controllerField.getAnnotation(Get.class);
+                        if (getAnnotation != null) {
+                            for (String path : getAnnotation.value()) {
+                                registerRoute("GET", path, route);
                             }
                         }
+                        Post postAnnotation = controllerField.getAnnotation(Post.class);
+                        if (postAnnotation != null) {
+                            for (String path : postAnnotation.value()) {
+                                registerRoute("POST", path, route);
+                            }
+                        }
+                        Put putAnnotation = controllerField.getAnnotation(Put.class);
+                        if (putAnnotation != null) {
+                            for (String path : putAnnotation.value()) {
+                                registerRoute("PUT", path, route);
+                            }
+                        }
+                        Delete deleteAnnotation = controllerField.getAnnotation(Delete.class);
+                        if (deleteAnnotation != null) {
+                            for (String path : deleteAnnotation.value()) {
+                                registerRoute("DELETE", path, route);
+                            }
+                        }
+                        Path pathAnnotation = controllerField.getAnnotation(Path.class);
+                        if (pathAnnotation != null) {
+                            for (String path : pathAnnotation.value()) {
+                                registerRoute(null, path, route);
+                            }
+                        }
+
                     } catch (Exception ex) {
                     }
                 }
@@ -93,6 +84,26 @@ public class Controllers {
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering controller \"" + controllerClass.getName() + "\" !!", ex);
+        }
+    }
+
+    public void registerRoute (String method, String path, AbstractRoute route) {
+
+        Routes routesCollection = null;
+        if (route instanceof Route) {
+            routesCollection = routes;
+        } else if (route instanceof BeforeRoute) {
+            routesCollection = beforeRoutes;
+        } else if (route instanceof AfterRoute) {
+            routesCollection = afterRoutes;
+        } else if (route instanceof NotFoundRoute) {
+            routesCollection = notFoundRoutes;
+        } else if (route instanceof ErrorRoute) {
+            routesCollection = errorRoutes;
+        }
+
+        if (routesCollection != null) {
+            routesCollection.addRoute(new RouteEntry(method, path, route));
         }
     }
 

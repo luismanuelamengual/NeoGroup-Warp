@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @todo Ver tema de propiedades en otros proyectos de warp
  * @todo Agregar comentarios
  * @todo Hacer la documentación
  * @todo Hacer metodos halt redirect como sparks (puede quedar para la siguiente version)
