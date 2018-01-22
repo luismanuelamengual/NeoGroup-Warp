@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ViewFactoryComponent {
 
-    public String name() default "";
+    public String value() default "";
 }

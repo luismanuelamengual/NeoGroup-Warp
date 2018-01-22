@@ -25,7 +25,7 @@ public class DataSources {
             dataSources.put(dataSourceClass, dataConnection);
             DataSourceComponent dataSourceComponent = dataSourceClass.getAnnotation(DataSourceComponent.class);
             if (dataSourceComponent != null) {
-                dataSourcesByName.put(dataSourceComponent.name(), dataConnection);
+                dataSourcesByName.put(dataSourceComponent.value(), dataConnection);
             }
         }
         catch (Exception ex) {

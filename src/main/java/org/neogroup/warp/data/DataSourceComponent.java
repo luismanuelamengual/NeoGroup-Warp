@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface DataSourceComponent {
 
-    public String name() default "";
+    public String value() default "";
 }

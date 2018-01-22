@@ -27,7 +27,7 @@ public class Views {
 
             ViewFactoryComponent viewFactoryComponent = viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
             if (viewFactoryComponent != null) {
-                viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
+                viewFactoriesByName.put(viewFactoryComponent.value(), viewFactory);
             }
         }
         catch (Exception ex) {
