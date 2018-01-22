@@ -1,4 +1,4 @@
-package org.neogroup.warp.controllers;
+package org.neogroup.warp;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;

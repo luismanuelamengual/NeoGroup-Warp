@@ -1,6 +1,6 @@
 package org.neogroup.warp.views;
 
-import org.neogroup.warp.Warp;
+import org.neogroup.warp.WarpInstance;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -10,10 +10,12 @@ public class Views {
 
     private static final String VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME = "views.default.factory.name";
 
+    private final WarpInstance warpInstance;
     private final Map<Class, ViewFactory> viewFactories;
     private final Map<String, ViewFactory> viewFactoriesByName;
 
-    public Views() {
+    public Views(WarpInstance warpInstance) {
+        this.warpInstance = warpInstance;
         this.viewFactories = new HashMap<>();
         this.viewFactoriesByName = new HashMap<>();
     }
@@ -24,7 +26,7 @@ public class Views {
             ViewFactory viewFactory = viewFactoryClass.getConstructor().newInstance();
             viewFactories.put(viewFactoryClass, viewFactory);
 
-            ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent) viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
+            ViewFactoryComponent viewFactoryComponent = viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
             if (viewFactoryComponent != null) {
                 viewFactoriesByName.put(viewFactoryComponent.name(), viewFactory);
             }
@@ -56,8 +58,8 @@ public class Views {
         if (viewFactories.size() == 1) {
             viewFactoryName = viewFactoriesByName.keySet().iterator().next();
         }
-        else if (Warp.hasProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME)) {
-            viewFactoryName = (String)Warp.getProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME);
+        else if (warpInstance.hasProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME)) {
+            viewFactoryName = (String)warpInstance.getProperty(VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME);
         }
         else {
             throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please setField the property \"" + VIEWS_DEFAULT_FACTORY_NAME_PROPERTY_NAME + "\" !!");

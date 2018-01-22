@@ -1,11 +1,14 @@
 package example.persons;
 
+import org.neogroup.warp.Warp;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Route;
 import org.neogroup.warp.data.DataObject;
 
 import static org.neogroup.warp.Warp.getConnection;
+import static org.neogroup.warp.Warp.getRequest;
+import static org.neogroup.warp.Warp.getResponse;
 
 @ControllerComponent
 public class PersonsController {
@@ -45,7 +48,6 @@ public class PersonsController {
             data.append("|");
             data.append((Integer)doPerson.getField("age"));
         }
-
         return data.toString();
     };
 }

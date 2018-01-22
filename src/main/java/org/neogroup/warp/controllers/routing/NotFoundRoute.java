@@ -1,7 +1,7 @@
 package org.neogroup.warp.controllers.routing;
 
-import org.neogroup.warp.controllers.Request;
-import org.neogroup.warp.controllers.Response;
+import org.neogroup.warp.Request;
+import org.neogroup.warp.Response;
 
 public interface NotFoundRoute extends AbstractRoute {
 

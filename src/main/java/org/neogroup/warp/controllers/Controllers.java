@@ -1,8 +1,9 @@
 package org.neogroup.warp.controllers;
 
+import org.neogroup.warp.Request;
+import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -99,10 +100,7 @@ public class Controllers {
         return (C)controllers.get(controllerClass);
     }
 
-    public void handle(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-
-        Request request = new Request(servletRequest);
-        Response response = new Response(servletResponse);
+    public void handle(Request request, Response response) {
 
         try {
             RouteEntry routeEntry = routes.findRoute(request);

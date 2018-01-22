@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,14 +38,16 @@ public class WarpInstance {
     private final Models models;
     private final Views views;
     private final DataSources dataSources;
+    private final Map<Long, WarpContext> contexts;
 
     protected WarpInstance () {
 
         this.properties = new Properties();
         this.controllers = new Controllers();
         this.models = new Models();
-        this.views = new Views();
-        this.dataSources = new DataSources();
+        this.views = new Views(this);
+        this.dataSources = new DataSources(this);
+        this.contexts = new HashMap<>();
     }
 
     public void registerComponents(String basePackage) {
@@ -185,8 +188,31 @@ public class WarpInstance {
     }
 
     public void handleRequest (HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
-        controllers.handle(servletRequest, servletResponse);
-        dataSources.releaseConnections();
+
+        long threadId = Thread.currentThread().getId();
+        try {
+            Request request = new Request(servletRequest);
+            Response response = new Response(servletResponse);
+            WarpContext context = new WarpContext(request, response);
+            contexts.put(threadId, context);
+            controllers.handle(request, response);
+        }
+        finally {
+            WarpContext context = contexts.remove(threadId);
+            try { context.release(); } catch (Exception ex) {}
+        }
+    }
+
+    public WarpContext getContext() {
+        return contexts.get(Thread.currentThread().getId());
+    }
+
+    public Request getRequest() {
+        return getContext().getRequest();
+    }
+
+    public Response getResponse() {
+        return getContext().getResponse();
     }
 
     public <C> C getController(Class<? extends C> controllerClass) {
@@ -249,7 +275,7 @@ public class WarpInstance {
         return dataSources.getConnection();
     }
 
-    public DataConnection getConnection(String dataConnectionName) {
-        return dataSources.getConnection(dataConnectionName);
+    public DataConnection getConnection(String dataSourceName) {
+        return dataSources.getConnection(dataSourceName);
     }
 }

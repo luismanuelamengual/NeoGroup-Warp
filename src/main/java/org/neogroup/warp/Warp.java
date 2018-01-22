@@ -102,7 +102,20 @@ public class Warp {
         return getInstance().getLogger(clazz);
     }
 
+    public static WarpContext getContext() {
+        return getInstance().getContext();
+    }
+
+    public static Request getRequest() {
+        return getInstance().getRequest();
+    }
+
+    public static Response getResponse() {
+        return getInstance().getResponse();
+    }
+
     public static void handleRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
+
         getInstance().handleRequest(servletRequest, servletResponse);
     }
 
