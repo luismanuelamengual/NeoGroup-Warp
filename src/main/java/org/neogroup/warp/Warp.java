@@ -23,6 +23,7 @@ import java.util.Properties;
  * @todo Agregar comentarios
  * @todo Hacer la documentación
  * @todo Agregar eventos (Puede quedar para siguiente version)
+ * @todo Crear un ModelManager con una implementación usando DataSources usando Attribute y Entity (siguiente version)
  */
 public class Warp {
 
