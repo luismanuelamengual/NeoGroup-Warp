@@ -80,6 +80,9 @@ public class Request {
         return value;
     }
 
+    public boolean hasParameter(String key) {
+        return getParameter(key) != null;
+    }
 
     public String getProtocol() {
         return request.getProtocol();
