@@ -20,13 +20,6 @@ import java.util.Properties;
 /**
  * Main warp framework
  * @author Luis Manuel Amengual
- *
- * @todo Agregar comentarios
- * @todo Agregar folder o resource contexts
- * @todo Hacer la documentación
- * @todo Hacer metodos halt redirect como sparks (puede quedar para la siguiente version)
- * @todo Agregar eventos (Puede quedar para siguiente version)
- * @todo Crear un ModelManager con una implementación usando DataSources usando Attribute y Entity (siguiente version)
  */
 public class Warp {
 
