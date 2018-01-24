@@ -39,9 +39,13 @@ public class Views {
             viewFactories.put(viewFactoryClass, viewFactory);
 
             ViewFactoryComponent viewFactoryComponent = viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
+            String viewFactoryName = null;
             if (viewFactoryComponent != null) {
-                viewFactoriesByName.put(viewFactoryComponent.value(), viewFactory);
+                viewFactoryName = viewFactoryComponent.value();
+                viewFactoriesByName.put(viewFactoryName, viewFactory);
             }
+
+            warpInstance.getLogger().info("View factory \"" + viewFactoryClass.getName() + "\" registered !!" + (viewFactoryName != null?" [name=" + viewFactoryName + "]":""));
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering view factory \"" + viewFactoryClass.getName() + "\" !!", ex);

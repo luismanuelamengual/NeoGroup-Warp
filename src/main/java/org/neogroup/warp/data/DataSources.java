@@ -36,9 +36,12 @@ public class DataSources {
             DataSource dataConnection = dataSourceClass.getConstructor().newInstance();
             dataSources.put(dataSourceClass, dataConnection);
             DataSourceComponent dataSourceComponent = dataSourceClass.getAnnotation(DataSourceComponent.class);
+            String dataSourceName = null;
             if (dataSourceComponent != null) {
-                dataSourcesByName.put(dataSourceComponent.value(), dataConnection);
+                dataSourceName = dataSourceComponent.value();
+                dataSourcesByName.put(dataSourceName, dataConnection);
             }
+            warpInstance.getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null?" [name=" + dataSourceName + "]":""));
         }
         catch (Exception ex) {
             throw new DataException ("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);

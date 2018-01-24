@@ -48,8 +48,8 @@ public class WarpInstance {
     protected WarpInstance () {
 
         this.properties = new Properties();
-        this.controllers = new Controllers();
-        this.models = new Models();
+        this.controllers = new Controllers(this);
+        this.models = new Models(this);
         this.views = new Views(this);
         this.dataSources = new DataSources(this);
         this.contexts = new HashMap<>();

@@ -2,6 +2,7 @@ package org.neogroup.warp.controllers;
 
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
+import org.neogroup.warp.WarpInstance;
 import org.neogroup.warp.controllers.routing.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import java.util.Map;
  */
 public class Controllers {
 
+    private final WarpInstance warpInstance;
     private final Map<Class, Object> controllers;
     private final Routes routes;
     private final Routes beforeRoutes;
@@ -26,7 +28,8 @@ public class Controllers {
     /**
      *
      */
-    public Controllers() {
+    public Controllers(WarpInstance warpInstance) {
+        this.warpInstance = warpInstance;
         this.controllers = new HashMap<>();
         this.routes = new Routes();
         this.beforeRoutes = new Routes();
@@ -92,6 +95,8 @@ public class Controllers {
                     }
                 }
             }
+
+            warpInstance.getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering controller \"" + controllerClass.getName() + "\" !!", ex);

@@ -1,5 +1,7 @@
 package org.neogroup.warp.models;
 
+import org.neogroup.warp.WarpInstance;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -11,13 +13,15 @@ import java.util.Map;
  */
 public class Models {
 
+    private final WarpInstance warpInstance;
     private final Map<Class, ModelManager> managers;
     private final Map<Class, ModelManager> managersByModelClass;
 
     /**
      *
      */
-    public Models() {
+    public Models(WarpInstance warpInstance) {
+        this.warpInstance = warpInstance;
         this.managers = new HashMap<>();
         this.managersByModelClass = new HashMap<>();
     }
@@ -38,6 +42,7 @@ public class Models {
                 managersByModelClass.put(modelClass, modelManager);
             }
             managers.put(modelManagerClass, modelManager);
+            warpInstance.getLogger().info("Model manager \"" + modelManagerClass.getName() + "\" registered !!");
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering model manager \"" + modelManagerClass.getName() + "\" !!", ex);
