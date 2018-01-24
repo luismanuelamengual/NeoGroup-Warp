@@ -19,7 +19,8 @@ import java.nio.file.Paths;
 public class WarpApplication {
 
     private int port;
-    private String scanBasePackage;
+    private String webRootFolder;
+    private String webRootContextPath;
 
     /**
      * Default constructor for the web application
@@ -52,19 +53,35 @@ public class WarpApplication {
     }
 
     /**
-     * Get the base scan package to find components
-     * @return base scan package
+     * Get the web root folder
+     * @return folder containing static files
      */
-    public String getScanBasePackage() {
-        return scanBasePackage;
+    public String getWebRootFolder() {
+        return webRootFolder;
     }
 
     /**
-     * Set the base scan package to find components
-     * @param scanBasePackage base scan package
+     * Set the web root foler
+     * @param webRootFolder folder containing static files
      */
-    public void setScanBasePackage(String scanBasePackage) {
-        this.scanBasePackage = scanBasePackage;
+    public void setWebRootFolder(String webRootFolder) {
+        this.webRootFolder = webRootFolder;
+    }
+
+    /**
+     * Get the web root context path. Defaults to "/"
+     * @return the context path of the web root
+     */
+    public String getWebRootContextPath() {
+        return webRootContextPath;
+    }
+
+    /**
+     * Set the web root context path
+     * @param webRootContextPath web root context path
+     */
+    public void setWebRootContextPath(String webRootContextPath) {
+        this.webRootContextPath = webRootContextPath;
     }
 
     /**
@@ -74,16 +91,23 @@ public class WarpApplication {
 
         try {
             ServletHolder holder = new ServletHolder(WarpServlet.class);
-            if (scanBasePackage != null) {
-                holder.setInitParameter(WarpServlet.SCAN_BASE_PACKAGE_PARAMETER_NAME, scanBasePackage);
-            }
             ServletHandler handler = new ServletHandler();
             handler.addServletWithMapping(holder, "/*");
 
+            String webRootFolder = getWebRootFolder();
+            if (webRootFolder == null) {
+                webRootFolder = guessWebRootFolder();
+            }
+
+            String webRootContextPath = getWebRootContextPath();
+            if (webRootContextPath == null) {
+                webRootContextPath = "/";
+            }
+
             ResourceHandler resourceHandler = new ResourceHandler();
-            resourceHandler.setResourceBase(getWebappFolder());
+            resourceHandler.setResourceBase(webRootFolder);
             resourceHandler.setDirectoriesListed(true);
-            ContextHandler contextHandler= new ContextHandler("/resources");
+            ContextHandler contextHandler= new ContextHandler(webRootContextPath);
             contextHandler.setHandler(resourceHandler);
 
             Server server = new Server(port);
@@ -125,7 +149,7 @@ public class WarpApplication {
      * Guess the webapp folder for the web application
      * @return guessed webapp folder for serving static files
      */
-    private String getWebappFolder() {
+    private String guessWebRootFolder() {
 
         URL location = getMainClass().getProtectionDomain().getCodeSource().getLocation();
         Path webappPath = Paths.get (location.getFile());

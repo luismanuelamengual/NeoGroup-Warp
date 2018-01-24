@@ -59,11 +59,10 @@ public class Warp {
     }
 
     /**
-     * Register all components in the given package
-     * @param basePackage base package to scan for components
+     * Initialize the warp instance
      */
-    public static void registerComponents(String basePackage) {
-        getInstance().registerComponents(basePackage);
+    public static void init() {
+        getInstance().init();
     }
 
     /**

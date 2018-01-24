@@ -9,43 +9,32 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
+ * Servlet that is used for web application servers like tomcat
  */
 public class WarpServlet extends HttpServlet {
 
-    public static final String SCAN_BASE_PACKAGE_PARAMETER_NAME = "scan_base_package";
-    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
-
     /**
-     *
+     * Default constructor for the warp servlet
      */
     public WarpServlet() {
     }
 
     /**
-     *
-     * @param config
-     * @throws ServletException
+     * Initialization for the servlet
+     * @param config default servlet configuration
+     * @throws ServletException servlet exception
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
-        String propertiesResourceName = DEFAULT_PROPERTIES_RESOURCE_NAME;
-        try {
-            Warp.loadPropertiesFromResource(propertiesResourceName);
-        }
-        catch (Exception ex) {
-            Warp.getLogger().warn("Unable to load properties from resource \"" + propertiesResourceName + "\" !!", ex);
-        }
-        String scanBasePackage = config.getInitParameter(SCAN_BASE_PACKAGE_PARAMETER_NAME);
-        Warp.registerComponents(scanBasePackage);
+        Warp.init();
     }
 
     /**
-     *
-     * @param servletRequest
-     * @param servletResponse
-     * @throws ServletException
-     * @throws IOException
+     * Method that is called for each request
+     * @param servletRequest request
+     * @param servletResponse response
+     * @throws ServletException servlet exception
+     * @throws IOException io exception
      */
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {

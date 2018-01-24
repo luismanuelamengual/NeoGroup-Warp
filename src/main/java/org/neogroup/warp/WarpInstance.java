@@ -34,6 +34,8 @@ import java.util.*;
 public class WarpInstance {
 
     private static final String DEFAULT_LOGGER_NAME = "Warp";
+    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
+    private static final String BASE_PACKAGE_PROPERTY = "org.neogroup.warp.basePackage";
 
     private final Properties properties;
     private final Controllers controllers;
@@ -56,10 +58,19 @@ public class WarpInstance {
     }
 
     /**
-     * Register all components in the given package
-     * @param basePackage base package to scan for components
+     * Initialize the warp instance
      */
-    public void registerComponents(String basePackage) {
+    public void init() {
+
+        getLogger().info("Initializing Warp ...");
+        try {
+            Warp.loadPropertiesFromResource(DEFAULT_PROPERTIES_RESOURCE_NAME);
+        }
+        catch (Exception ex) {
+            Warp.getLogger().warn("Unable to load properties from resource \"" + DEFAULT_PROPERTIES_RESOURCE_NAME + "\" !!", ex);
+        }
+
+        String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
@@ -102,6 +113,7 @@ public class WarpInstance {
             }
             return false;
         });
+        getLogger().info("Warp initialized !!");
     }
 
     /**

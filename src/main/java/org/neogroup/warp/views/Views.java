@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class Views {
 
-    public static final String DEFAULT_VIEW_FACTORY_NAME = "default.viewfactory.name";
+    public static final String DEFAULT_VIEW_FACTORY_NAME_PROPERTY = "org.neogroup.warp.defaultViewfactoryName";
     private static final String DEFAULT_WARP_PARAMETER_NAME = "warp";
 
     private final WarpInstance warpInstance;
@@ -100,11 +100,11 @@ public class Views {
         if (viewFactories.size() == 1) {
             viewFactoryName = viewFactoriesByName.keySet().iterator().next();
         }
-        else if (warpInstance.hasProperty(DEFAULT_VIEW_FACTORY_NAME)) {
-            viewFactoryName = warpInstance.getProperty(DEFAULT_VIEW_FACTORY_NAME);
+        else if (warpInstance.hasProperty(DEFAULT_VIEW_FACTORY_NAME_PROPERTY)) {
+            viewFactoryName = warpInstance.getProperty(DEFAULT_VIEW_FACTORY_NAME_PROPERTY);
         }
         else {
-            throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please set the property \"" + DEFAULT_VIEW_FACTORY_NAME + "\" !!");
+            throw new ViewFactoryNotFoundException("More than 1 view Factory is registered. Please set the property \"" + DEFAULT_VIEW_FACTORY_NAME_PROPERTY + "\" !!");
         }
         return createView(viewFactoryName, name, viewParameters);
     }

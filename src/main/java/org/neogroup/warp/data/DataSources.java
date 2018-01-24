@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class DataSources {
 
-    public static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "default.datasource.name";
+    public static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "org.neogroup.warp.defaultDatasourceName";
 
     private final WarpInstance warpInstance;
     private final Map<Class, DataSource> dataSources;
