@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Class that wraps a servlet request
  */
 public class Request {
 
@@ -18,8 +18,8 @@ public class Request {
     private final Map<String,String> parameters;
 
     /**
-     *
-     * @param request
+     * Servlet Request
+     * @param request servlet request
      */
     public Request (HttpServletRequest request) {
         this.request = request;
@@ -27,118 +27,118 @@ public class Request {
     }
 
     /**
-     *
-     * @return
+     * Returns the path info
+     * @return path info for the request
      */
     public String getPathInfo() {
         return request.getPathInfo();
     }
 
     /**
-     *
-     * @return
+     * Returns cookies in the request
+     * @return cookies
      */
     public Cookie[] getCookies() {
         return request.getCookies();
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Get the header from a header name
+     * @param name Name of the header
+     * @return value of the header
      */
-    public String getHeader(String s) {
-        return request.getHeader(s);
+    public String getHeader(String name) {
+        return request.getHeader(name);
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Returns the headers with a given name
+     * @param name Name of the header
+     * @return headers
      */
-    public Enumeration<String> getHeaders(String s) {
-        return request.getHeaders(s);
+    public Enumeration<String> getHeaders(String name) {
+        return request.getHeaders(name);
     }
 
     /**
-     *
-     * @return
+     * Returns the header names
+     * @return header names
      */
     public Enumeration<String> getHeaderNames() {
         return request.getHeaderNames();
     }
 
     /**
-     *
-     * @return
+     * Returns the method
+     * @return method
      */
     public String getMethod() {
         return request.getMethod();
     }
 
     /**
-     *
-     * @return
+     * Returns the URI of the request
+     * @return URI of request
      */
     public String getRequestURI() {
         return request.getRequestURI();
     }
 
     /**
-     *
-     * @return
+     * Returns the URL of the request
+     * @return URL of request
      */
     public StringBuffer getRequestURL() {
         return request.getRequestURL();
     }
 
     /**
-     *
-     * @param b
-     * @return
+     * Return the session of the request
+     * @param create True if a new session is required
+     * @return session of request
      */
-    public HttpSession getSession(boolean b) {
-        return request.getSession(b);
+    public HttpSession getSession(boolean create) {
+        return request.getSession(create);
     }
 
     /**
-     *
-     * @return
+     * Return the session of the request
+     * @return session of request
      */
     public HttpSession getSession() {
         return request.getSession();
     }
 
     /**
-     *
-     * @return
+     * Return the content type
+     * @return content type
      */
     public String getContentType() {
         return request.getContentType();
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Return the input stream
+     * @return input stream
+     * @throws IOException io exception
      */
     public ServletInputStream getInputStream() throws IOException {
         return request.getInputStream();
     }
 
     /**
-     *
-     * @param key
-     * @param value
+     * Set a parameter for the request
+     * @param key key of parameter
+     * @param value value of parameter
      */
     public void setParameter(String key, String value) {
         parameters.put(key, value);
     }
 
     /**
-     *
-     * @param key
-     * @return
+     * Returns the value of a parameter
+     * @param key key of parameter
+     * @return value of parameter
      */
     public String getParameter(String key) {
 
@@ -150,25 +150,25 @@ public class Request {
     }
 
     /**
-     *
-     * @param key
-     * @return
+     * Returns true if the parameter key exists
+     * @param key parameter key
+     * @return boolean
      */
     public boolean hasParameter(String key) {
         return getParameter(key) != null;
     }
 
     /**
-     *
-     * @return
+     * Returns the request protocol
+     * @return protocol
      */
     public String getProtocol() {
         return request.getProtocol();
     }
 
     /**
-     *
-     * @return
+     * Returns the scheme of the request
+     * @return scheme
      */
     public String getScheme() {
         return request.getScheme();
