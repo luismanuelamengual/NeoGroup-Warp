@@ -8,184 +8,185 @@ import java.io.PrintWriter;
 import java.util.Collection;
 
 /**
- *
+ * Class that represents an http response
+ * @author Luis Manuel Amengual
  */
 public class Response {
 
     private final HttpServletResponse response;
 
     /**
-     *
-     * @param response
+     * Constructor for the response
+     * @param response servlet response
      */
     public Response (HttpServletResponse response) {
         this.response = response;
     }
 
     /**
-     *
-     * @param cookie
+     * Adds a new cookie to the response
+     * @param cookie cookie
      */
     public void addCookie(Cookie cookie) {
         response.addCookie(cookie);
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Returns true if a header exists
+     * @param name name of header
+     * @return boolean
      */
-    public boolean containsHeader(String s) {
-        return response.containsHeader(s);
+    public boolean containsHeader(String name) {
+        return response.containsHeader(name);
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Encodes a url
+     * @param url url to encode
+     * @return encoded url
      */
-    public String encodeURL(String s) {
-        return response.encodeURL(s);
+    public String encodeURL(String url) {
+        return response.encodeURL(url);
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Encode a url
+     * @param url url to encode
+     * @return encoded url
      */
-    public String encodeRedirectURL(String s) {
-        return response.encodeRedirectURL(s);
+    public String encodeRedirectURL(String url) {
+        return response.encodeRedirectURL(url);
     }
 
     /**
-     *
-     * @param s
-     * @throws IOException
+     * Sends a redirection
+     * @param url url to redirect
+     * @throws IOException io exception
      */
-    public void sendRedirect(String s) throws IOException {
-        response.sendRedirect(s);
+    public void sendRedirect(String url) throws IOException {
+        response.sendRedirect(url);
     }
 
     /**
-     *
-     * @param s
-     * @param s1
+     * Set a header value
+     * @param name name of header
+     * @param value value of header
      */
-    public void setHeader(String s, String s1) {
-        response.setHeader(s, s1);
+    public void setHeader(String name, String value) {
+        response.setHeader(name, value);
     }
 
     /**
-     *
-     * @param s
-     * @param s1
+     * Adds a new header
+     * @param name name of header
+     * @param value value of header
      */
-    public void addHeader(String s, String s1) {
-        response.addHeader(s, s1);
+    public void addHeader(String name, String value) {
+        response.addHeader(name, value);
     }
 
     /**
-     *
-     * @param i
+     * Set status code
+     * @param status status code
      */
-    public void setStatus(int i) {
-        response.setStatus(i);
+    public void setStatus(int status) {
+        response.setStatus(status);
     }
 
     /**
-     *
-     * @return
+     * Returns the status code
+     * @return status code
      */
     public int getStatus() {
         return response.getStatus();
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Returns a header value
+     * @param name name of header
+     * @return value of the header
      */
-    public String getHeader(String s) {
-        return response.getHeader(s);
+    public String getHeader(String name) {
+        return response.getHeader(name);
     }
 
     /**
-     *
-     * @param s
-     * @return
+     * Return header values for a given header name
+     * @param name name of header
+     * @return collection of header values
      */
-    public Collection<String> getHeaders(String s) {
-        return response.getHeaders(s);
+    public Collection<String> getHeaders(String name) {
+        return response.getHeaders(name);
     }
 
     /**
-     *
-     * @return
+     * Return the header names
+     * @return collection of names
      */
     public Collection<String> getHeaderNames() {
         return response.getHeaderNames();
     }
 
     /**
-     *
-     * @return
+     * Return the response content type
+     * @return content type
      */
     public String getContentType() {
         return response.getContentType();
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Returns the output stream of the response
+     * @return outputstream
+     * @throws IOException io exception
      */
     public ServletOutputStream getOutputStream() throws IOException {
         return response.getOutputStream();
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Returns the print writer for the response
+     * @return print writer
+     * @throws IOException io exception
      */
     public PrintWriter getWriter() throws IOException {
         return response.getWriter();
     }
 
     /**
-     *
-     * @param i
+     * Sets the content length of the response
+     * @param length length
      */
-    public void setContentLength(int i) {
-        response.setContentLength(i);
+    public void setContentLength(int length) {
+        response.setContentLength(length);
     }
 
     /**
-     *
-     * @param s
+     * Set the content type of the response
+     * @param contentType content type
      */
-    public void setContentType(String s) {
-        response.setContentType(s);
+    public void setContentType(String contentType) {
+        response.setContentType(contentType);
     }
 
     /**
-     *
-     * @throws IOException
+     * Flushes the buffer
+     * @throws IOException io exception
      */
     public void flushBuffer() throws IOException {
         response.flushBuffer();
     }
 
     /**
-     *
-     * @return
+     * Return true if the response is commited
+     * @return boolean
      */
     public boolean isCommitted() {
         return response.isCommitted();
     }
 
     /**
-     *
+     * Resets the response
      */
     public void reset() {
         response.reset();
