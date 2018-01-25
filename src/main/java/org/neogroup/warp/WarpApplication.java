@@ -46,7 +46,7 @@ public class WarpApplication {
 
     /**
      * Set the port for the web application
-     * @param port
+     * @param port port of the web server
      */
     public void setPort(int port) {
         this.port = port;

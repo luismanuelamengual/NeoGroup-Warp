@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Context of an http request
+ * @author Luis Manuel Amengual
  */
 public class WarpContext {
 
@@ -15,9 +16,9 @@ public class WarpContext {
     private Map<String, DataConnection> connections;
 
     /**
-     *
-     * @param request
-     * @param response
+     * Constructor of the context with a request and a response
+     * @param request request
+     * @param response response
      */
     public WarpContext(Request request, Response response) {
         this.request = request;
@@ -25,24 +26,24 @@ public class WarpContext {
     }
 
     /**
-     *
-     * @return
+     * Returns the request
+     * @return request
      */
     public Request getRequest() {
         return request;
     }
 
     /**
-     *
-     * @return
+     * Returns the response
+     * @return response
      */
     public Response getResponse() {
         return response;
     }
 
     /**
-     *
-     * @return
+     * Returns the connections used in the http exchange
+     * @return connections
      */
     public Map<String, DataConnection> getConnections() {
         if (connections == null) {
@@ -52,7 +53,7 @@ public class WarpContext {
     }
 
     /**
-     *
+     * Release the context
      */
     public void release () {
         if (connections != null) {

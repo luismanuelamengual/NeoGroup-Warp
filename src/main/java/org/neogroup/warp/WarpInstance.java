@@ -188,7 +188,6 @@ public class WarpInstance {
     /**
      * Load properties from a classpath resource
      * @param resourceName name of the resource
-     * @throws IOException
      */
     public void loadPropertiesFromResource (String resourceName) {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourceName)) {
@@ -202,7 +201,6 @@ public class WarpInstance {
     /**
      * Load properties from a file
      * @param filename name of the file
-     * @throws IOException
      */
     public void loadPropertiesFromFile (String filename) {
         try (FileInputStream in = new FileInputStream(filename)) {

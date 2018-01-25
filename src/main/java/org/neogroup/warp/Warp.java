@@ -137,7 +137,6 @@ public class Warp {
     /**
      * Load properties from a classpath resource
      * @param resourceName name of the resource
-     * @throws IOException
      */
     public static void loadPropertiesFromResource(String resourceName) {
         getInstance().loadPropertiesFromResource(resourceName);
@@ -146,7 +145,6 @@ public class Warp {
     /**
      * Load properties from a file
      * @param filename name of the file
-     * @throws IOException
      */
     public static void loadPropertiesFromFile(String filename) {
         getInstance().loadPropertiesFromFile(filename);
