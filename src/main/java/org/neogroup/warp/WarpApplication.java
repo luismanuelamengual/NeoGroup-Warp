@@ -96,7 +96,10 @@ public class WarpApplication {
 
             String webRootFolder = getWebRootFolder();
             if (webRootFolder == null) {
-                webRootFolder = guessWebRootFolder();
+                webRootFolder = System.getProperty("org.neogroup.warp.webRoot");
+                if (webRootFolder == null) {
+                    webRootFolder = guessWebRootFolder();
+                }
             }
 
             String webRootContextPath = getWebRootContextPath();
