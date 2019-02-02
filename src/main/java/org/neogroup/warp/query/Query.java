@@ -22,6 +22,9 @@ public class Query {
     private ConditionGroup whereConditionGroup;
     private ConditionGroup havingConditionGroup;
     private List<Join> joins;
+    private boolean distinct;
+    private Integer limit;
+    private Integer offset;
 
     public Query(String tableName) {
         this(tableName, null);
@@ -37,6 +40,9 @@ public class Query {
         this.whereConditionGroup = new ConditionGroup();
         this.havingConditionGroup = new ConditionGroup();
         this.joins = new ArrayList<>();
+        this.limit = null;
+        this.offset = null;
+        this.distinct = false;
     }
 
     public Query select(String... fields) {
@@ -52,6 +58,33 @@ public class Query {
 
     public String getTableAlias() {
         return tableAlias;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    public Query setDistinct(boolean distinct) {
+        this.distinct = distinct;
+        return this;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public Query setLimit(Integer limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public Query setOffset(Integer offset) {
+        this.offset = offset;
+        return this;
     }
 
     public Query select(SelectField... fields) {
