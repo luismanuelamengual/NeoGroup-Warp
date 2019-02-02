@@ -2,6 +2,10 @@
 package org.neogroup.warp.query;
 
 import org.neogroup.warp.query.conditions.*;
+import org.neogroup.warp.query.fields.Field;
+import org.neogroup.warp.query.fields.SelectField;
+import org.neogroup.warp.query.fields.SortDirection;
+import org.neogroup.warp.query.fields.SortField;
 import org.neogroup.warp.query.joins.Join;
 import org.neogroup.warp.query.joins.JoinType;
 
@@ -13,6 +17,7 @@ public class Query {
     private String tableAlias;
     private List<SelectField> selectFields;
     private List<Field> groupByFields;
+    private List<SortField> orderByFields;
     private Map<String,Object> fields;
     private ConditionGroup whereConditionGroup;
     private ConditionGroup havingConditionGroup;
@@ -27,6 +32,7 @@ public class Query {
         this.tableAlias = tableAlias;
         this.selectFields = new ArrayList<>();
         this.groupByFields = new ArrayList<>();
+        this.orderByFields = new ArrayList<>();
         this.fields = new HashMap<>();
         this.whereConditionGroup = new ConditionGroup();
         this.havingConditionGroup = new ConditionGroup();
@@ -97,6 +103,31 @@ public class Query {
 
     public Query clearGroupByFields() {
         groupByFields.clear();
+        return this;
+    }
+
+    public Query orderBy(String... orderByFields) {
+        for (String orderByField : orderByFields) {
+            orderBy(new SortField(orderByField));
+        }
+        return this;
+    }
+
+    public Query orderBy(SortField... orderByFields) {
+        Collections.addAll(this.orderByFields, orderByFields);
+        return this;
+    }
+
+    public Query orderBy(String field, SortDirection direction) {
+        return orderBy(new SortField(field, direction));
+    }
+
+    public List<SortField> getOrderByFields() {
+        return orderByFields;
+    }
+
+    public Query clearOrderByFields() {
+        orderByFields.clear();
         return this;
     }
 

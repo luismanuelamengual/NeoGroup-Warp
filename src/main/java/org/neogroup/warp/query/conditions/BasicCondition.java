@@ -1,6 +1,6 @@
 package org.neogroup.warp.query.conditions;
 
-import org.neogroup.warp.query.Field;
+import org.neogroup.warp.query.fields.Field;
 
 public class BasicCondition extends Condition {
 

@@ -1,5 +1,5 @@
 
-package org.neogroup.warp.query;
+package org.neogroup.warp.query.fields;
 
 public class SelectField extends Field {
 
