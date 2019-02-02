@@ -1,13 +1,11 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.data.DataItem;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Resources {
 
-    private static Map<String, Resource<DataItem>> resources;
+    private static Map<String, Resource<ResourceItem>> resources;
     private static Map<Class, Resource> resourcesByModelClass;
 
     static {
@@ -19,7 +17,7 @@ public abstract class Resources {
         resourcesByModelClass.put(modelClass, resource);
     }
 
-    public static void registerResource (String resourceName, Resource<DataItem> resource) {
+    public static void registerResource (String resourceName, Resource<ResourceItem> resource) {
         resources.put(resourceName, resource);
     }
 
@@ -28,14 +26,14 @@ public abstract class Resources {
         if (resource == null) {
             throw new RuntimeException("Resource not found for model \"" + modelClass  + "\" !!");
         }
-        return new ResourceProxy<M>(modelClass.toString(), resource);
+        return new ResourceProxy<>(modelClass.toString(), resource);
     }
 
-    public static ResourceProxy<DataItem> get(String resourceName) {
-        Resource<DataItem> resource = resources.get(resourceName);
+    public static ResourceProxy<ResourceItem> get(String resourceName) {
+        Resource<ResourceItem> resource = resources.get(resourceName);
         if (resource == null) {
             throw new RuntimeException("Resource not found with name \"" + resourceName + "\" !!");
         }
-        return new ResourceProxy<DataItem>(resourceName, resource);
+        return new ResourceProxy<>(resourceName, resource);
     }
 }
