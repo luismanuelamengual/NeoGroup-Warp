@@ -110,279 +110,344 @@ public class Query {
         return whereConditionGroup.getConditions();
     }
 
-    public ConditionGroup clearWhereConditions() {
-        return whereConditionGroup.clearConditions();
+    public Query clearWhereConditions() {
+        whereConditionGroup.clearConditions();
+        return this;
     }
 
     public boolean hasWhereConditions() {
         return whereConditionGroup.isEmpty();
     }
 
-    public ConditionGroup addWhereCondition(Condition condition) {
-        return whereConditionGroup.addCondition(condition);
+    public Query addWhereCondition(Condition condition) {
+        whereConditionGroup.addCondition(condition);
+        return this;
     }
 
-    public ConditionGroup where(String field, Object value) {
-        return whereConditionGroup.on(field, value);
+    public Query where(String field, Object value) {
+        whereConditionGroup.on(field, value);
+        return this;
     }
 
-    public ConditionGroup where(Field field, Object value) {
-        return whereConditionGroup.on(field, value);
+    public Query where(Field field, Object value) {
+        whereConditionGroup.on(field, value);
+        return this;
     }
 
-    public ConditionGroup where(String field, ConditionOperator operator, Object value) {
-        return whereConditionGroup.on(field, operator, value);
+    public Query where(String field, ConditionOperator operator, Object value) {
+        whereConditionGroup.on(field, operator, value);
+        return this;
     }
 
-    public ConditionGroup where(Field field, ConditionOperator operator, Object value) {
-        return whereConditionGroup.on(field, operator, value);
+    public Query where(Field field, ConditionOperator operator, Object value) {
+        whereConditionGroup.on(field, operator, value);
+        return this;
     }
 
-    public ConditionGroup whereGroup(ConditionGroup condition) {
-        return whereConditionGroup.onGroup(condition);
+    public Query whereGroup(ConditionGroup condition) {
+        whereConditionGroup.onGroup(condition);
+        return this;
     }
 
-    public ConditionGroup whereRaw(RawCondition condition) {
-        return whereConditionGroup.onRaw(condition);
+    public Query whereRaw(RawCondition condition) {
+        whereConditionGroup.onRaw(condition);
+        return this;
     }
 
-    public ConditionGroup whereField(String field1, String field2) {
-        return whereConditionGroup.onField(field1, field2);
+    public Query whereField(String field1, String field2) {
+        whereConditionGroup.onField(field1, field2);
+        return this;
     }
 
-    public ConditionGroup whereField(Field field1, Field field2) {
-        return whereConditionGroup.onField(field1, field2);
+    public Query whereField(Field field1, Field field2) {
+        whereConditionGroup.onField(field1, field2);
+        return this;
     }
 
-    public ConditionGroup whereField(String field1, ConditionOperator operator, String field2) {
-        return whereConditionGroup.onField(field1, operator, field2);
+    public Query whereField(String field1, ConditionOperator operator, String field2) {
+        whereConditionGroup.onField(field1, operator, field2);
+        return this;
     }
 
-    public ConditionGroup whereField(Field field1, ConditionOperator operator, Field field2) {
-        return whereConditionGroup.onField(field1, operator, field2);
+    public Query whereField(Field field1, ConditionOperator operator, Field field2) {
+        whereConditionGroup.onField(field1, operator, field2);
+        return this;
     }
 
-    public ConditionGroup whereNull(String field) {
-        return whereConditionGroup.onNull(field);
+    public Query whereNull(String field) {
+        whereConditionGroup.onNull(field);
+        return this;
     }
 
-    public ConditionGroup whereNull(Field field) {
-        return whereConditionGroup.onNull(field);
+    public Query whereNull(Field field) {
+        whereConditionGroup.onNull(field);
+        return this;
     }
 
-    public ConditionGroup whereNotNull(String field) {
-        return whereConditionGroup.onNotNull(field);
+    public Query whereNotNull(String field) {
+        whereConditionGroup.onNotNull(field);
+        return this;
     }
 
-    public ConditionGroup whereNotNull(Field field) {
-        return whereConditionGroup.onNotNull(field);
+    public Query whereNotNull(Field field) {
+        whereConditionGroup.onNotNull(field);
+        return this;
     }
 
-    public ConditionGroup whereIn(String field, Collection<Object> values) {
-        return whereConditionGroup.onIn(field, values);
+    public Query whereIn(String field, Collection<Object> values) {
+        whereConditionGroup.onIn(field, values);
+        return this;
     }
 
-    public ConditionGroup whereIn(Field field, Collection<Object> values) {
-        return whereConditionGroup.onIn(field, values);
+    public Query whereIn(Field field, Collection<Object> values) {
+        whereConditionGroup.onIn(field, values);
+        return this;
     }
 
-    public ConditionGroup whereNotIn(String field, Collection<Object> values) {
-        return whereConditionGroup.onNotIn(field, values);
+    public Query whereNotIn(String field, Collection<Object> values) {
+        whereConditionGroup.onNotIn(field, values);
+        return this;
     }
 
-    public ConditionGroup whereNotIn(Field field, Collection<Object> values) {
-        return whereConditionGroup.onNotIn(field, values);
+    public Query whereNotIn(Field field, Collection<Object> values) {
+        whereConditionGroup.onNotIn(field, values);
+        return this;
     }
 
-    public ConditionGroup whereContains(String field, Object value) {
-        return whereConditionGroup.onContains(field, value);
+    public Query whereContains(String field, Object value) {
+        whereConditionGroup.onContains(field, value);
+        return this;
     }
 
-    public ConditionGroup whereContains(Field field, Object value) {
-        return whereConditionGroup.onContains(field, value);
+    public Query whereContains(Field field, Object value) {
+        whereConditionGroup.onContains(field, value);
+        return this;
     }
 
-    public ConditionGroup whereNotContains(String field, Object value) {
-        return whereConditionGroup.onNotContains(field, value);
+    public Query whereNotContains(String field, Object value) {
+        whereConditionGroup.onNotContains(field, value);
+        return this;
     }
 
-    public ConditionGroup whereNotContains(Field field, Object value) {
-        return whereConditionGroup.onNotContains(field, value);
+    public Query whereNotContains(Field field, Object value) {
+        whereConditionGroup.onNotContains(field, value);
+        return this;
     }
 
-    public ConditionGroup whereGreaterThan(String field, Object value) {
-        return whereConditionGroup.onGreaterThan(field, value);
+    public Query whereGreaterThan(String field, Object value) {
+        whereConditionGroup.onGreaterThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereGreaterThan(Field field, Object value) {
-        return whereConditionGroup.onGreaterThan(field, value);
+    public Query whereGreaterThan(Field field, Object value) {
+        whereConditionGroup.onGreaterThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereGreaterOrEqualsThan(String field, Object value) {
-        return whereConditionGroup.onGreaterOrEqualsThan(field, value);
+    public Query whereGreaterOrEqualsThan(String field, Object value) {
+        whereConditionGroup.onGreaterOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereGreaterOrEqualsThan(Field field, Object value) {
-        return whereConditionGroup.onGreaterOrEqualsThan(field, value);
+    public Query whereGreaterOrEqualsThan(Field field, Object value) {
+        whereConditionGroup.onGreaterOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereLowerThan(String field, Object value) {
-        return whereConditionGroup.onLowerThan(field, value);
+    public Query whereLowerThan(String field, Object value) {
+        whereConditionGroup.onLowerThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereLowerThan(Field field, Object value) {
-        return whereConditionGroup.onLowerThan(field, value);
+    public Query whereLowerThan(Field field, Object value) {
+        whereConditionGroup.onLowerThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereLowerOrEqualsThan(String field, Object value) {
-        return whereConditionGroup.onLowerOrEqualsThan(field, value);
+    public Query whereLowerOrEqualsThan(String field, Object value) {
+        whereConditionGroup.onLowerOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup whereLowerOrEqualsThan(Field field, Object value) {
-        return whereConditionGroup.onLowerOrEqualsThan(field, value);
+    public Query whereLowerOrEqualsThan(Field field, Object value) {
+        whereConditionGroup.onLowerOrEqualsThan(field, value);
+        return this;
     }
 
     public ConditionGroupConnector getHavingConnector() {
         return havingConditionGroup.getConnector();
     }
 
-    public void setHavingConnector(ConditionGroupConnector connector) {
+    public Query setHavingConnector(ConditionGroupConnector connector) {
         havingConditionGroup.setConnector(connector);
+        return this;
     }
 
     public List<Condition> getHavingConditions() {
         return havingConditionGroup.getConditions();
     }
 
-    public ConditionGroup clearHavingConditions() {
-        return havingConditionGroup.clearConditions();
+    public Query clearHavingConditions() {
+        havingConditionGroup.clearConditions();
+        return this;
     }
 
     public boolean hasHavingConditions() {
         return havingConditionGroup.isEmpty();
     }
 
-    public ConditionGroup addHavingCondition(Condition condition) {
-        return havingConditionGroup.addCondition(condition);
+    public Query addHavingCondition(Condition condition) {
+        havingConditionGroup.addCondition(condition);
+        return this;
     }
 
-    public ConditionGroup having(String field, Object value) {
-        return havingConditionGroup.on(field, value);
+    public Query having(String field, Object value) {
+        havingConditionGroup.on(field, value);
+        return this;
     }
 
-    public ConditionGroup having(Field field, Object value) {
-        return havingConditionGroup.on(field, value);
+    public Query having(Field field, Object value) {
+        havingConditionGroup.on(field, value);
+        return this;
     }
 
-    public ConditionGroup having(String field, ConditionOperator operator, Object value) {
-        return havingConditionGroup.on(field, operator, value);
+    public Query having(String field, ConditionOperator operator, Object value) {
+        havingConditionGroup.on(field, operator, value);
+        return this;
     }
 
-    public ConditionGroup having(Field field, ConditionOperator operator, Object value) {
-        return havingConditionGroup.on(field, operator, value);
+    public Query having(Field field, ConditionOperator operator, Object value) {
+        havingConditionGroup.on(field, operator, value);
+        return this;
     }
 
-    public ConditionGroup havingGroup(ConditionGroup condition) {
-        return havingConditionGroup.onGroup(condition);
+    public Query havingGroup(ConditionGroup condition) {
+        havingConditionGroup.onGroup(condition);
+        return this;
     }
 
-    public ConditionGroup havingRaw(RawCondition condition) {
-        return havingConditionGroup.onRaw(condition);
+    public Query havingRaw(RawCondition condition) {
+        havingConditionGroup.onRaw(condition);
+        return this;
     }
 
-    public ConditionGroup havingField(String field1, String field2) {
-        return havingConditionGroup.onField(field1, field2);
+    public Query havingField(String field1, String field2) {
+        havingConditionGroup.onField(field1, field2);
+        return this;
     }
 
-    public ConditionGroup havingField(Field field1, Field field2) {
-        return havingConditionGroup.onField(field1, field2);
+    public Query havingField(Field field1, Field field2) {
+        havingConditionGroup.onField(field1, field2);
+        return this;
     }
 
-    public ConditionGroup havingField(String field1, ConditionOperator operator, String field2) {
-        return havingConditionGroup.onField(field1, operator, field2);
+    public Query havingField(String field1, ConditionOperator operator, String field2) {
+        havingConditionGroup.onField(field1, operator, field2);
+        return this;
     }
 
-    public ConditionGroup havingField(Field field1, ConditionOperator operator, Field field2) {
-        return havingConditionGroup.onField(field1, operator, field2);
+    public Query havingField(Field field1, ConditionOperator operator, Field field2) {
+        havingConditionGroup.onField(field1, operator, field2);
+        return this;
     }
 
-    public ConditionGroup havingNull(String field) {
-        return havingConditionGroup.onNull(field);
+    public Query havingNull(String field) {
+        havingConditionGroup.onNull(field);
+        return this;
     }
 
-    public ConditionGroup havingNull(Field field) {
-        return havingConditionGroup.onNull(field);
+    public Query havingNull(Field field) {
+        havingConditionGroup.onNull(field);
+        return this;
     }
 
-    public ConditionGroup havingNotNull(String field) {
-        return havingConditionGroup.onNotNull(field);
+    public Query havingNotNull(String field) {
+        havingConditionGroup.onNotNull(field);
+        return this;
     }
 
-    public ConditionGroup havingNotNull(Field field) {
-        return havingConditionGroup.onNotNull(field);
+    public Query havingNotNull(Field field) {
+        havingConditionGroup.onNotNull(field);
+        return this;
     }
 
-    public ConditionGroup havingIn(String field, Collection<Object> values) {
-        return havingConditionGroup.onIn(field, values);
+    public Query havingIn(String field, Collection<Object> values) {
+        havingConditionGroup.onIn(field, values);
+        return this;
     }
 
-    public ConditionGroup havingIn(Field field, Collection<Object> values) {
-        return havingConditionGroup.onIn(field, values);
+    public Query havingIn(Field field, Collection<Object> values) {
+        havingConditionGroup.onIn(field, values);
+        return this;
     }
 
-    public ConditionGroup havingNotIn(String field, Collection<Object> values) {
-        return havingConditionGroup.onNotIn(field, values);
+    public Query havingNotIn(String field, Collection<Object> values) {
+        havingConditionGroup.onNotIn(field, values);
+        return this;
     }
 
-    public ConditionGroup havingNotIn(Field field, Collection<Object> values) {
-        return havingConditionGroup.onNotIn(field, values);
+    public Query havingNotIn(Field field, Collection<Object> values) {
+        havingConditionGroup.onNotIn(field, values);
+        return this;
     }
 
-    public ConditionGroup havingContains(String field, Object value) {
-        return havingConditionGroup.onContains(field, value);
+    public Query havingContains(String field, Object value) {
+        havingConditionGroup.onContains(field, value);
+        return this;
     }
 
-    public ConditionGroup havingContains(Field field, Object value) {
-        return havingConditionGroup.onContains(field, value);
+    public Query havingContains(Field field, Object value) {
+        havingConditionGroup.onContains(field, value);
+        return this;
     }
 
-    public ConditionGroup havingNotContains(String field, Object value) {
-        return havingConditionGroup.onNotContains(field, value);
+    public Query havingNotContains(String field, Object value) {
+        havingConditionGroup.onNotContains(field, value);
+        return this;
     }
 
-    public ConditionGroup havingNotContains(Field field, Object value) {
-        return havingConditionGroup.onNotContains(field, value);
+    public Query havingNotContains(Field field, Object value) {
+        havingConditionGroup.onNotContains(field, value);
+        return this;
     }
 
-    public ConditionGroup havingGreaterThan(String field, Object value) {
-        return havingConditionGroup.onGreaterThan(field, value);
+    public Query havingGreaterThan(String field, Object value) {
+        havingConditionGroup.onGreaterThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingGreaterThan(Field field, Object value) {
-        return havingConditionGroup.onGreaterThan(field, value);
+    public Query havingGreaterThan(Field field, Object value) {
+        havingConditionGroup.onGreaterThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingGreaterOrEqualsThan(String field, Object value) {
-        return havingConditionGroup.onGreaterOrEqualsThan(field, value);
+    public Query havingGreaterOrEqualsThan(String field, Object value) {
+        havingConditionGroup.onGreaterOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingGreaterOrEqualsThan(Field field, Object value) {
-        return havingConditionGroup.onGreaterOrEqualsThan(field, value);
+    public Query havingGreaterOrEqualsThan(Field field, Object value) {
+        havingConditionGroup.onGreaterOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingLowerThan(String field, Object value) {
-        return havingConditionGroup.onLowerThan(field, value);
+    public Query havingLowerThan(String field, Object value) {
+        havingConditionGroup.onLowerThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingLowerThan(Field field, Object value) {
-        return havingConditionGroup.onLowerThan(field, value);
+    public Query havingLowerThan(Field field, Object value) {
+        havingConditionGroup.onLowerThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingLowerOrEqualsThan(String field, Object value) {
-        return havingConditionGroup.onLowerOrEqualsThan(field, value);
+    public Query havingLowerOrEqualsThan(String field, Object value) {
+        havingConditionGroup.onLowerOrEqualsThan(field, value);
+        return this;
     }
 
-    public ConditionGroup havingLowerOrEqualsThan(Field field, Object value) {
-        return havingConditionGroup.onLowerOrEqualsThan(field, value);
+    public Query havingLowerOrEqualsThan(Field field, Object value) {
+        havingConditionGroup.onLowerOrEqualsThan(field, value);
+        return this;
     }
 }
