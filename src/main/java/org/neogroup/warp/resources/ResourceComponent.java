@@ -1,4 +1,4 @@
-package org.neogroup.warp.models;
+package org.neogroup.warp.resources;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ModelManagerComponent {
+public @interface ResourceComponent {
+
+    public String value() default "";
 }

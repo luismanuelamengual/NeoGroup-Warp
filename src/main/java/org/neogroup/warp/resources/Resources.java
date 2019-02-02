@@ -1,7 +1,13 @@
 package org.neogroup.warp.resources;
 
+import org.neogroup.warp.data.DataException;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
 
@@ -13,12 +19,30 @@ public abstract class Resources {
         resourcesByModelClass = new HashMap<>();
     }
 
-    public static <M> void  registerResource (Class<M> modelClass, Resource<M> resource) {
-        resourcesByModelClass.put(modelClass, resource);
-    }
+    public static void register(Class<? extends Resource> resourceClass) {
+        try {
+            Type type = resourceClass.getGenericSuperclass();
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
+                Class modelClass = (Class) fieldArgTypes[0];
+                Resource resource = resourceClass.getConstructor().newInstance();
+                if (modelClass.isAssignableFrom(ResourceItem.class)) {
+                    ResourceComponent resourceComponent = resourceClass.getAnnotation(ResourceComponent.class);
+                    String resourceName = (resourceComponent != null && !resourceComponent.value().isEmpty())? resourceComponent.value() : resourceClass.toString();
+                    resources.put(resourceName, resource);
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name=" + resourceName + "]");
+                }
+                else {
+                    resourcesByModelClass.put(modelClass, resource);
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass=" + modelClass.getName() + "]");
+                }
+            }
 
-    public static void registerResource (String resourceName, Resource<ResourceItem> resource) {
-        resources.put(resourceName, resource);
+        }
+        catch (Exception ex) {
+            throw new DataException("Error registering resource \"" + resourceClass.getName() + "\" !!", ex);
+        }
     }
 
     public static <M> ResourceProxy<M> get(Class<M> modelClass) {
