@@ -7,88 +7,123 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.neogroup.util.Scanner;
+import org.neogroup.warp.controllers.ControllerComponent;
+import org.neogroup.warp.data.DataSourceComponent;
+import org.neogroup.warp.resources.Resource;
+import org.neogroup.warp.resources.ResourceComponent;
+import org.neogroup.warp.views.ViewFactory;
+import org.neogroup.warp.views.ViewFactoryComponent;
 
+import javax.sql.DataSource;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Warp application for a standalone web application execution
- * @author Luis Manuel Amengual
- */
+import static org.neogroup.warp.Warp.*;
+
 public class WarpApplication {
+
+    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
+    private static final String BASE_PACKAGE_PROPERTY = "org.neogroup.warp.basePackage";
 
     private int port;
     private String webRootFolder;
     private String webRootContextPath;
 
-    /**
-     * Default constructor for the web application
-     */
     public WarpApplication () {
     }
 
-    /**
-     * Constructor for a web application with a port
-     * @param port port to listen
-     */
     public WarpApplication(int port) {
         this.port = port;
     }
 
-    /**
-     * Get the port for the web application
-     * @return port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * Set the port for the web application
-     * @param port port of the web server
-     */
     public void setPort(int port) {
         this.port = port;
     }
 
-    /**
-     * Get the web root folder
-     * @return folder containing static files
-     */
     public String getWebRootFolder() {
         return webRootFolder;
     }
 
-    /**
-     * Set the web root foler
-     * @param webRootFolder folder containing static files
-     */
     public void setWebRootFolder(String webRootFolder) {
         this.webRootFolder = webRootFolder;
     }
 
-    /**
-     * Get the web root context path. Defaults to "/"
-     * @return the context path of the web root
-     */
     public String getWebRootContextPath() {
         return webRootContextPath;
     }
 
-    /**
-     * Set the web root context path
-     * @param webRootContextPath web root context path
-     */
     public void setWebRootContextPath(String webRootContextPath) {
         this.webRootContextPath = webRootContextPath;
     }
 
-    /**
-     * Initialize the web application
-     */
     public void start () {
+        initializeComponents();
+        initializeServer();
+    }
 
+    protected void initializeComponents() {
+        getLogger().info("Initializing Warp Components ...");
+        try {
+            Warp.loadPropertiesFromResource(DEFAULT_PROPERTIES_RESOURCE_NAME);
+        }
+        catch (Exception ex) {
+            getLogger().warn("Unable to load properties from resource \"" + DEFAULT_PROPERTIES_RESOURCE_NAME + "\" !!", ex);
+        }
+
+        String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
+        Scanner scanner = new Scanner();
+        scanner.findClasses(cls -> {
+            if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
+                try {
+
+                    ControllerComponent controllerAnnotation = (ControllerComponent)cls.getAnnotation(ControllerComponent.class);
+                    if (controllerAnnotation != null) {
+                        registerController(cls);
+                        return true;
+                    }
+
+                    ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
+                    if (viewFactoryComponent != null) {
+                        if (ViewFactory.class.isAssignableFrom(cls)) {
+                            registerViewFactory(cls);
+                            return true;
+                        }
+                    }
+
+                    ResourceComponent resourceComponent = (ResourceComponent)cls.getAnnotation(ResourceComponent.class);
+                    if (resourceComponent != null) {
+                        if (Resource.class.isAssignableFrom(cls)) {
+                            registerResource(cls);
+                            return true;
+                        }
+                    }
+
+                    DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
+                    if (dataSourceComponent != null) {
+                        if (DataSource.class.isAssignableFrom(cls)) {
+                            registerDataSource(cls);
+                            return true;
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return false;
+        });
+        getLogger().info("Warp Components initialized !!");
+    }
+
+    protected void initializeServer() {
+        getLogger().info("Initializing Warp Server [port:" + port + "] ...");
+        Server server;
         try {
             ServletHolder holder = new ServletHolder(WarpServlet.class);
             ServletHandler handler = new ServletHandler();
@@ -113,23 +148,24 @@ public class WarpApplication {
             ContextHandler contextHandler= new ContextHandler(webRootContextPath);
             contextHandler.setHandler(resourceHandler);
 
-            Server server = new Server(port);
+            server = new Server(port);
             HandlerCollection handlerCollection = new HandlerCollection();
             handlerCollection.setHandlers(new Handler[] {contextHandler, handler});
             server.setHandler(handlerCollection);
             server.start();
-            server.join();
         }
         catch (Exception ex) {
-            throw new RuntimeException("Error initializing warp application", ex);
+            throw new RuntimeException("Error initializing warp server", ex);
+        }
+        getLogger().info("Warp Server [port:" + port + "] initialized !!");
+
+        try { server.join(); } catch (Exception ex) {
+            getLogger().error("Warp server error", ex);
         }
     }
 
-    /**
-     * Get the main class for the web application
-     * @return main class
-     */
     private Class getMainClass() {
+        getLogger().info("Initializing Warp Server [port:" + port + "] ...");
 
         Class clazz = null;
         StackTraceElement trace[] = Thread.currentThread().getStackTrace();
@@ -148,10 +184,6 @@ public class WarpApplication {
         return clazz;
     }
 
-    /**
-     * Guess the webapp folder for the web application
-     * @return guessed webapp folder for serving static files
-     */
     private String guessWebRootFolder() {
 
         URL location = getMainClass().getProtectionDomain().getCodeSource().getLocation();

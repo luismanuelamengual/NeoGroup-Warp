@@ -1,36 +1,26 @@
 package org.neogroup.warp.data;
 
-import org.neogroup.warp.WarpInstance;
-
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- */
-public class DataSources {
+import static org.neogroup.warp.Warp.*;
 
-    public static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "org.neogroup.warp.defaultDatasourceName";
+public abstract class DataSources {
 
-    private final WarpInstance warpInstance;
-    private final Map<Class, DataSource> dataSources;
-    private final Map<String, DataSource> dataSourcesByName;
+    private static final String DEFAULT_DATA_SOURCE_NAME_PROPERTY = "org.neogroup.warp.defaultDatasourceName";
+    private static final String DEFAULT_DATA_SOURCE_NAME = "main";
 
-    /**
-     *
-     * @param warpInstance
-     */
-    public DataSources(WarpInstance warpInstance) {
-        this.warpInstance = warpInstance;
+    private static final Map<Class, DataSource> dataSources;
+    private static final Map<String, DataSource> dataSourcesByName;
+
+    static {
         dataSources = new HashMap<>();
         dataSourcesByName = new HashMap<>();
     }
 
-    /**
-     *
-     * @param dataSourceClass
-     */
-    public void registerDataSource(Class<? extends DataSource> dataSourceClass) {
+    public static void registerDataSource(Class<? extends DataSource> dataSourceClass) {
 
         try {
             DataSource dataConnection = dataSourceClass.getConstructor().newInstance();
@@ -41,54 +31,48 @@ public class DataSources {
                 dataSourceName = dataSourceComponent.value();
                 dataSourcesByName.put(dataSourceName, dataConnection);
             }
-            warpInstance.getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null?" [name=" + dataSourceName + "]":""));
+            getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null?" [name=" + dataSourceName + "]":""));
         }
         catch (Exception ex) {
-            throw new DataException ("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);
+            throw new RuntimeException ("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);
         }
     }
 
-    /**
-     *
-     * @return
-     */
-    public DataConnection getConnection() {
-
+    private static String getDefaultSourceName () {
         String dataSourceName = null;
-        if (dataSources.isEmpty()) {
-            throw new DataException ("No data connections found !!");
-        }
-
         if (dataSourcesByName.size() == 1) {
             dataSourceName = dataSourcesByName.keySet().iterator().next();
         }
-        else if (warpInstance.hasProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY)) {
-            dataSourceName = warpInstance.getProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY);
+        else if (hasProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY)) {
+            String possibleDataSourceName = getProperty(DEFAULT_DATA_SOURCE_NAME_PROPERTY);
+            if (dataSourcesByName.containsKey(possibleDataSourceName)) {
+                dataSourceName = possibleDataSourceName;
+            }
+            else if (dataSourcesByName.containsKey(DEFAULT_DATA_SOURCE_NAME)) {
+                dataSourceName = DEFAULT_DATA_SOURCE_NAME;
+            }
         }
-        else {
-            throw new DataException("More than 1 data source is registered. Please set the property \"" + DEFAULT_DATA_SOURCE_NAME_PROPERTY + "\" !!");
-        }
+        return dataSourceName;
+    }
 
+    public static Connection getConnection() {
+        String dataSourceName = getDefaultSourceName();
+        if (dataSourceName == null) {
+            throw new RuntimeException("No data source found !!");
+        }
         return getConnection(dataSourceName);
     }
 
-    /**
-     *
-     * @param dataSourceName
-     * @return
-     */
-    public DataConnection getConnection(String dataSourceName) {
-
-        Map<String, DataConnection> connections = warpInstance.getContext().getConnections();
-        DataConnection connection = connections.get(dataSourceName);
-        if (connection == null || connection.isClosed()) {
-            DataSource source = dataSourcesByName.get(dataSourceName);
-            if (source == null) {
-                throw new DataException("No data source with name \"" + dataSourceName + "\"");
-            }
-            connection = new DataConnection(source.requestConnection());
-            connections.put(dataSourceName, connection);
+    public static Connection getConnection(String dataSourceName) {
+        DataSource source = dataSourcesByName.get(dataSourceName);
+        if (source == null) {
+            throw new RuntimeException("No data source with name \"" + dataSourceName + "\"");
         }
+        Connection connection = null;
+        try {
+            connection = source.getConnection();
+        }
+        catch (Exception ex) {}
         return connection;
     }
 }

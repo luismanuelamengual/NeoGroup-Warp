@@ -1,7 +1,5 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.data.DataException;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -41,7 +39,7 @@ public abstract class Resources {
 
         }
         catch (Exception ex) {
-            throw new DataException("Error registering resource \"" + resourceClass.getName() + "\" !!", ex);
+            throw new RuntimeException("Error registering resource \"" + resourceClass.getName() + "\" !!", ex);
         }
     }
 

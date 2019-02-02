@@ -2,48 +2,36 @@ package org.neogroup.warp.controllers;
 
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
-import org.neogroup.warp.WarpInstance;
 import org.neogroup.warp.controllers.routing.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Class that controls the logic controllers
- * @author Luis Manuel Amengual
- */
-public class Controllers {
+import static org.neogroup.warp.Warp.getLogger;
 
-    private final WarpInstance warpInstance;
-    private final Map<Class, Object> controllers;
-    private final Routes routes;
-    private final Routes beforeRoutes;
-    private final Routes afterRoutes;
-    private final Routes notFoundRoutes;
-    private final Routes errorRoutes;
+public abstract class Controllers {
 
-    /**
-     *
-     */
-    public Controllers(WarpInstance warpInstance) {
-        this.warpInstance = warpInstance;
-        this.controllers = new HashMap<>();
-        this.routes = new Routes();
-        this.beforeRoutes = new Routes();
-        this.afterRoutes = new Routes();
-        this.notFoundRoutes = new Routes();
-        this.errorRoutes = new Routes();
+    private static final Map<Class, Object> controllers;
+    private static final Routes routes;
+    private static final Routes beforeRoutes;
+    private static final Routes afterRoutes;
+    private static final Routes notFoundRoutes;
+    private static final Routes errorRoutes;
+
+    static {
+        controllers = new HashMap<>();
+        routes = new Routes();
+        beforeRoutes = new Routes();
+        afterRoutes = new Routes();
+        notFoundRoutes = new Routes();
+        errorRoutes = new Routes();
     }
 
-    /**
-     *
-     * @param controllerClass
-     */
-    public void registerController (Class controllerClass) {
-
+    public static void registerController (Class controllerClass) {
         try {
             Object controller = null;
 
@@ -95,21 +83,14 @@ public class Controllers {
                     }
                 }
             }
-
-            warpInstance.getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
+            getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering controller \"" + controllerClass.getName() + "\" !!", ex);
         }
     }
 
-    /**
-     *
-     * @param method
-     * @param path
-     * @param route
-     */
-    public void registerRoute (String method, String path, AbstractRoute route) {
+    public static void registerRoute (String method, String path, AbstractRoute route) {
 
         Routes routesCollection = null;
         if (route instanceof Route) {
@@ -129,22 +110,11 @@ public class Controllers {
         }
     }
 
-    /**
-     *
-     * @param controllerClass
-     * @param <C>
-     * @return
-     */
-    public <C extends Object> C getController (Class<? extends C> controllerClass) {
+    public static <C extends Object> C get (Class<? extends C> controllerClass) {
         return (C)controllers.get(controllerClass);
     }
 
-    /**
-     *
-     * @param request
-     * @param response
-     */
-    public void handle(Request request, Response response) {
+    public static void handle(Request request, Response response) {
 
         try {
             RouteEntry routeEntry = routes.findRoute(request);
