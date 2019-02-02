@@ -8,6 +8,10 @@ public class Join extends ConditionGroup {
     private String tableAlias;
     private JoinType type;
 
+    public Join(String tableName) {
+        this(tableName, JoinType.INNER_JOIN);
+    }
+
     public Join(String tableName, JoinType type) {
         this(tableName, null, type);
     }

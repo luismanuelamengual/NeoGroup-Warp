@@ -2,23 +2,35 @@
 package org.neogroup.warp.query;
 
 import org.neogroup.warp.query.conditions.*;
+import org.neogroup.warp.query.joins.Join;
+import org.neogroup.warp.query.joins.JoinType;
 
 import java.util.*;
 
 public class Query {
 
+    private String tableName;
+    private String tableAlias;
     private List<SelectField> selectFields;
     private List<Field> groupByFields;
     private Map<String,Object> fields;
     private ConditionGroup whereConditionGroup;
     private ConditionGroup havingConditionGroup;
+    private List<Join> joins;
 
-    public Query() {
+    public Query(String tableName) {
+        this(tableName, null);
+    }
+
+    public Query(String tableName, String tableAlias) {
+        this.tableName = tableName;
+        this.tableAlias = tableAlias;
         this.selectFields = new ArrayList<>();
         this.groupByFields = new ArrayList<>();
         this.fields = new HashMap<>();
         this.whereConditionGroup = new ConditionGroup();
         this.havingConditionGroup = new ConditionGroup();
+        this.joins = new ArrayList<>();
     }
 
     public Query select(String... fields) {
@@ -26,6 +38,14 @@ public class Query {
             selectFields.add(new SelectField(field));
         }
         return this;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getTableAlias() {
+        return tableAlias;
     }
 
     public Query select(SelectField... fields) {
@@ -122,6 +142,10 @@ public class Query {
     public Query addWhereCondition(Condition condition) {
         whereConditionGroup.addCondition(condition);
         return this;
+    }
+
+    public ConditionGroup getWhereConditionGroup() {
+        return whereConditionGroup;
     }
 
     public Query where(String field, Object value) {
@@ -301,6 +325,10 @@ public class Query {
         return this;
     }
 
+    public ConditionGroup getHavingConditionGroup() {
+        return havingConditionGroup;
+    }
+
     public Query having(String field, Object value) {
         havingConditionGroup.on(field, value);
         return this;
@@ -449,5 +477,62 @@ public class Query {
     public Query havingLowerOrEqualsThan(Field field, Object value) {
         havingConditionGroup.onLowerOrEqualsThan(field, value);
         return this;
+    }
+
+    public Query join (Join join) {
+        joins.add(join);
+        return this;
+    }
+
+    public Query join (String tableName, String field1, String field2) {
+        Join join = new Join(tableName, JoinType.JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query join (String tableName, Field field1, Field field2) {
+        Join join = new Join(tableName, JoinType.JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query innerJoin (String tableName, String field1, String field2) {
+        Join join = new Join(tableName, JoinType.INNER_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query innerJoin (String tableName, Field field1, Field field2) {
+        Join join = new Join(tableName, JoinType.INNER_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query leftJoin (String tableName, String field1, String field2) {
+        Join join = new Join(tableName, JoinType.LEFT_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query leftJoin (String tableName, Field field1, Field field2) {
+        Join join = new Join(tableName, JoinType.LEFT_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query rightJoin (String tableName, String field1, String field2) {
+        Join join = new Join(tableName, JoinType.RIGHT_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public Query rightJoin (String tableName, Field field1, Field field2) {
+        Join join = new Join(tableName, JoinType.RIGHT_JOIN);
+        join.onField(field1, field2);
+        return join(join);
+    }
+
+    public List<Join> getJoins () {
+        return joins;
     }
 }
