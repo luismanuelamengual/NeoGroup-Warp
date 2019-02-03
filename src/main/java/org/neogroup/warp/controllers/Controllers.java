@@ -90,56 +90,67 @@ public abstract class Controllers {
         return (C)controllers.get(controllerClass);
     }
 
-    public static void handle(Request request, Response response) {
+    private static void handleNotFound (Request request, Response response) throws InvocationTargetException, IllegalAccessException, IOException {
+        List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request);
+        if (!notFoundRoutes.isEmpty()) {
+            for (RouteEntry route : notFoundRoutes) {
+                executeRoute(route, request, response);
+            }
+            writeResponse(response);
+        }
+        else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
+        }
+    }
+
+    private static void handleException (Request request, Response response, Throwable throwable) {
         try {
-            List<RouteEntry> routes = Controllers.routes.findRoutes(request);
-            if (!routes.isEmpty()) {
-                List<RouteEntry> beforeRoutes = Controllers.beforeRoutes.findRoutes(request);
-                for (RouteEntry beforeRoute : beforeRoutes) {
-                    executeRoute(beforeRoute, request, response);
-                }
-                if (response.getResponseObject() == null) {
-                    for (RouteEntry route : routes) {
-                        executeRoute(route, request, response);
-                    }
-                    List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request);
-                    for (RouteEntry route : afterRoutes) {
-                        executeRoute(route, request, response);
-                    }
+            List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request);
+            if (!errorRoutes.isEmpty()) {
+                for (RouteEntry route : errorRoutes) {
+                    executeRoute(route, request, response);
                 }
                 writeResponse(response);
             } else {
-                List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request);
-                if (!notFoundRoutes.isEmpty()) {
-                    for (RouteEntry route : notFoundRoutes) {
-                        executeRoute(route, request, response);
-                    }
-                    writeResponse(response);
-                }
-                else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
-                }
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                throwable.printStackTrace(response.getWriter());
             }
         }
-        catch (Throwable throwable) {
+        catch (Throwable errorThrowable) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try { errorThrowable.printStackTrace(response.getWriter()); } catch (Exception err) {}
+        }
+    }
 
+    public static void handle(Request request, Response response) {
+        try {
             try {
-                List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request);
-                if (!errorRoutes.isEmpty()) {
-                    for (RouteEntry route : errorRoutes) {
-                        executeRoute(route, request, response);
+                List<RouteEntry> routes = Controllers.routes.findRoutes(request);
+                if (!routes.isEmpty()) {
+                    List<RouteEntry> beforeRoutes = Controllers.beforeRoutes.findRoutes(request);
+                    for (RouteEntry beforeRoute : beforeRoutes) {
+                        executeRoute(beforeRoute, request, response);
+                    }
+                    if (response.getResponseObject() == null) {
+                        for (RouteEntry route : routes) {
+                            executeRoute(route, request, response);
+                        }
+                        List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request);
+                        for (RouteEntry route : afterRoutes) {
+                            executeRoute(route, request, response);
+                        }
                     }
                     writeResponse(response);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    throwable.printStackTrace(response.getWriter());
+                    throw new RouteNotFoundException();
                 }
+            } catch (RouteNotFoundException notFoundException) {
+                handleNotFound(request, response);
             }
-            catch (Throwable errorThrowable) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                try { errorThrowable.printStackTrace(response.getWriter()); } catch (Exception err) {}
-            }
+        }
+        catch (Throwable throwable) {
+            handleException(request, response, throwable);
         }
     }
 
@@ -159,7 +170,11 @@ public abstract class Controllers {
             }
             Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
             if (paramAnnotation != null) {
-                parameters[i] = request.getParameter(paramAnnotation.value());
+                Object parameterValue = request.getParameter(paramAnnotation.value());
+                if (paramAnnotation.required() && parameterValue == null) {
+                    throw new RouteNotFoundException();
+                }
+                parameters[i] = parameterValue;
             }
         }
         Object responseObject = controllerMethod.invoke(controller, parameters);
