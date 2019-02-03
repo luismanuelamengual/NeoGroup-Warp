@@ -39,6 +39,7 @@ public abstract class Controllers {
             Object controller = controllerClass.getConstructor().newInstance();
             controllers.put(controllerClass, controller);
 
+            getLogger().info("Registering controller \"" + controllerClass.getName() + "\" ...");
             for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
                 try {
                     Get getAnnotation = controllerMethod.getAnnotation(Get.class);
@@ -61,12 +62,8 @@ public abstract class Controllers {
                     if (pathAnnotation != null) {
                         registerRoutes(RouteType.NORMAL, null, pathAnnotation.value(), controller, controllerMethod);
                     }
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                } catch (Exception ex) {}
             }
-            getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering controller \"" + controllerClass.getName() + "\" !!", ex);
