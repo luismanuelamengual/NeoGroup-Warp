@@ -5,9 +5,14 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.neogroup.warp.Warp.getLogger;
@@ -32,54 +37,44 @@ public abstract class Controllers {
 
     public static void registerController (Class controllerClass) {
         try {
-            Object controller = null;
+            Object controller = controllerClass.getConstructor().newInstance();
+            controllers.put(controllerClass, controller);
 
-            if (!Modifier.isAbstract(controllerClass.getModifiers())) {
-                controller = controllerClass.getConstructor().newInstance();
-                controllers.put(controllerClass, controller);
-            }
+            for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
+                try {
 
-            for (Field controllerField : controllerClass.getDeclaredFields()) {
-
-                if (AbstractRoute.class.isAssignableFrom(controllerField.getType())) {
-
-                    try {
-                        controllerField.setAccessible(true);
-                        AbstractRoute route = (AbstractRoute) controllerField.get(controller);
-
-                        Get getAnnotation = controllerField.getAnnotation(Get.class);
-                        if (getAnnotation != null) {
-                            for (String path : getAnnotation.value()) {
-                                registerRoute("GET", path, route);
-                            }
+                    Get getAnnotation = controllerMethod.getAnnotation(Get.class);
+                    if (getAnnotation != null) {
+                        for (String path : getAnnotation.value()) {
+                            routes.addRoute(new RouteEntry("GET", path, controller, controllerMethod));
                         }
-                        Post postAnnotation = controllerField.getAnnotation(Post.class);
-                        if (postAnnotation != null) {
-                            for (String path : postAnnotation.value()) {
-                                registerRoute("POST", path, route);
-                            }
-                        }
-                        Put putAnnotation = controllerField.getAnnotation(Put.class);
-                        if (putAnnotation != null) {
-                            for (String path : putAnnotation.value()) {
-                                registerRoute("PUT", path, route);
-                            }
-                        }
-                        Delete deleteAnnotation = controllerField.getAnnotation(Delete.class);
-                        if (deleteAnnotation != null) {
-                            for (String path : deleteAnnotation.value()) {
-                                registerRoute("DELETE", path, route);
-                            }
-                        }
-                        Path pathAnnotation = controllerField.getAnnotation(Path.class);
-                        if (pathAnnotation != null) {
-                            for (String path : pathAnnotation.value()) {
-                                registerRoute(null, path, route);
-                            }
-                        }
-
-                    } catch (Exception ex) {
                     }
+                    Post postAnnotation = controllerMethod.getAnnotation(Post.class);
+                    if (postAnnotation != null) {
+                        for (String path : postAnnotation.value()) {
+                            routes.addRoute(new RouteEntry("POST", path, controller, controllerMethod));
+                        }
+                    }
+                    Put putAnnotation = controllerMethod.getAnnotation(Put.class);
+                    if (putAnnotation != null) {
+                        for (String path : putAnnotation.value()) {
+                            routes.addRoute(new RouteEntry("PUT", path, controller, controllerMethod));
+                        }
+                    }
+                    Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
+                    if (deleteAnnotation != null) {
+                        for (String path : deleteAnnotation.value()) {
+                            routes.addRoute(new RouteEntry("DELETE", path, controller, controllerMethod));
+                        }
+                    }
+                    Path pathAnnotation = controllerMethod.getAnnotation(Path.class);
+                    if (pathAnnotation != null) {
+                        for (String path : pathAnnotation.value()) {
+                            routes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
+                        }
+                    }
+
+                } catch (Exception ex) {
                 }
             }
             getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
@@ -89,65 +84,35 @@ public abstract class Controllers {
         }
     }
 
-    public static void registerRoute (String method, String path, AbstractRoute route) {
-
-        Routes routesCollection = null;
-        if (route instanceof Route) {
-            routesCollection = routes;
-        } else if (route instanceof BeforeRoute) {
-            routesCollection = beforeRoutes;
-        } else if (route instanceof AfterRoute) {
-            routesCollection = afterRoutes;
-        } else if (route instanceof NotFoundRoute) {
-            routesCollection = notFoundRoutes;
-        } else if (route instanceof ErrorRoute) {
-            routesCollection = errorRoutes;
-        }
-
-        if (routesCollection != null) {
-            routesCollection.addRoute(new RouteEntry(method, path, route));
-        }
-    }
-
     public static <C extends Object> C get (Class<? extends C> controllerClass) {
         return (C)controllers.get(controllerClass);
     }
 
     public static void handle(Request request, Response response) {
-
         try {
-            RouteEntry routeEntry = routes.findBestRoute(request);
-            if (routeEntry != null) {
-
-                RouteEntry beforeRouteEntry = beforeRoutes.findBestRoute(request);
-                boolean executeRoute = true;
-                if (beforeRouteEntry != null) {
-                    executeRoute = ((BeforeRoute)beforeRouteEntry.getRoute()).handle(request, response);
+            List<RouteEntry> routes = Controllers.routes.findRoutes(request);
+            if (!routes.isEmpty()) {
+                List<RouteEntry> beforeRoutes = Controllers.beforeRoutes.findRoutes(request);
+                for (RouteEntry beforeRoute : beforeRoutes) {
+                    executeRoute(beforeRoute, request, response);
                 }
-
-                if (executeRoute) {
-                    Object routeResponse = ((Route)routeEntry.getRoute()).handle(request, response);
-
-                    RouteEntry afterRouteEntry = afterRoutes.findBestRoute(request);
-                    if (afterRouteEntry != null) {
-                        routeResponse = ((AfterRoute)afterRouteEntry.getRoute()).handle(request, response, routeResponse);
+                if (response.getResponseObject() == null) {
+                    for (RouteEntry route : routes) {
+                        executeRoute(route, request, response);
                     }
-
-                    if (routeResponse != null) {
-                        response.getWriter().print(routeResponse);
-                        response.flushBuffer();
+                    List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request);
+                    for (RouteEntry route : afterRoutes) {
+                        executeRoute(route, request, response);
                     }
                 }
+                writeResponse(response);
             } else {
-
-                RouteEntry notFoundRouteEntry = notFoundRoutes.findBestRoute(request);
-                if (notFoundRouteEntry != null) {
-                    Object routeResponse = ((NotFoundRoute)notFoundRouteEntry.getRoute()).handle(request, response);
-
-                    if (routeResponse != null) {
-                        response.getWriter().print(routeResponse);
-                        response.flushBuffer();
+                List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request);
+                if (!notFoundRoutes.isEmpty()) {
+                    for (RouteEntry route : notFoundRoutes) {
+                        executeRoute(route, request, response);
                     }
+                    writeResponse(response);
                 }
                 else {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -158,16 +123,12 @@ public abstract class Controllers {
         catch (Throwable throwable) {
 
             try {
-                RouteEntry errorRouteEntry = errorRoutes.findBestRoute(request);
-                if (errorRouteEntry != null) {
-
-                    Object routeResponse = ((ErrorRoute)errorRouteEntry.getRoute()).handle(request, response, throwable);
-
-                    if (routeResponse != null) {
-                        response.getWriter().print(routeResponse);
-                        response.flushBuffer();
+                List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request);
+                if (!errorRoutes.isEmpty()) {
+                    for (RouteEntry route : errorRoutes) {
+                        executeRoute(route, request, response);
                     }
-
+                    writeResponse(response);
                 } else {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     throwable.printStackTrace(response.getWriter());
@@ -177,6 +138,24 @@ public abstract class Controllers {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 try { errorThrowable.printStackTrace(response.getWriter()); } catch (Exception err) {}
             }
+        }
+    }
+
+    private static void executeRoute (RouteEntry route, Request request, Response response) throws InvocationTargetException, IllegalAccessException {
+        Object controller = route.getController();
+        Method controllerMethod = route.getControllerMethod();
+        Object[] parameters = new Object[controllerMethod.getParameterCount()];
+        Object responseObject = controllerMethod.invoke(controller, parameters);
+        if (responseObject != null) {
+            response.setResponseObject(responseObject);
+        }
+    }
+
+    private static void writeResponse (Response response) throws IOException {
+        Object responseObject = response.getResponseObject();
+        if (responseObject != null) {
+            response.getWriter().print(responseObject);
+            response.flushBuffer();
         }
     }
 }

@@ -14,6 +14,7 @@ import java.util.Collection;
 public class Response {
 
     private final HttpServletResponse response;
+    private Object responseObject;
 
     /**
      * Constructor for the response
@@ -167,6 +168,14 @@ public class Response {
      */
     public void setContentType(String contentType) {
         response.setContentType(contentType);
+    }
+
+    public Object getResponseObject() {
+        return responseObject;
+    }
+
+    public void setResponseObject(Object responseObject) {
+        this.responseObject = responseObject;
     }
 
     /**
