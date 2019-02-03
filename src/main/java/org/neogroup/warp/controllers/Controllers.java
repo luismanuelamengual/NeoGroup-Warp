@@ -3,14 +3,11 @@ package org.neogroup.warp.controllers;
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
+import org.neogroup.warp.controllers.routing.Parameter;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +147,21 @@ public abstract class Controllers {
         Object controller = route.getController();
         Method controllerMethod = route.getControllerMethod();
         Object[] parameters = new Object[controllerMethod.getParameterCount()];
+        java.lang.reflect.Parameter[] methodParameters = controllerMethod.getParameters();
+        for (int i = 0; i < methodParameters.length; i++) {
+            java.lang.reflect.Parameter methodParameter = methodParameters[i];
+            Class methodParameterClass = methodParameter.getType();
+            if (Request.class.isAssignableFrom(methodParameterClass)) {
+                parameters[i] = request;
+            }
+            else if (Response.class.isAssignableFrom(methodParameterClass)) {
+                parameters[i] = response;
+            }
+            Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
+            if (paramAnnotation != null) {
+                parameters[i] = request.getParameter(paramAnnotation.value());
+            }
+        }
         Object responseObject = controllerMethod.invoke(controller, parameters);
         if (responseObject != null) {
             response.setResponseObject(responseObject);
