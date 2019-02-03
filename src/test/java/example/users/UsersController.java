@@ -2,6 +2,7 @@ package example.users;
 
 import org.neogroup.warp.controllers.Controller;
 import org.neogroup.warp.controllers.routing.Get;
+import org.neogroup.warp.controllers.routing.Put;
 import org.neogroup.warp.resources.ResourceItem;
 
 import java.util.Collection;
@@ -15,5 +16,10 @@ public class UsersController {
     @Get("users")
     public String getUsers () {
         return "lksjfl";
+    }
+
+    @Put("users/")
+    public String insertUser () {
+        return "";
     }
 }

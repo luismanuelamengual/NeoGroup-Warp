@@ -47,22 +47,23 @@ public abstract class Controllers {
                     }
                     Post postAnnotation = controllerMethod.getAnnotation(Post.class);
                     if (postAnnotation != null) {
-                        registerRoutes(RouteType.NORMAL, "POST", getAnnotation.value(), controller, controllerMethod);
+                        registerRoutes(RouteType.NORMAL, "POST", postAnnotation.value(), controller, controllerMethod);
                     }
                     Put putAnnotation = controllerMethod.getAnnotation(Put.class);
                     if (putAnnotation != null) {
-                        registerRoutes(RouteType.NORMAL, "PUT", getAnnotation.value(), controller, controllerMethod);
+                        registerRoutes(RouteType.NORMAL, "PUT", putAnnotation.value(), controller, controllerMethod);
                     }
                     Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
                     if (deleteAnnotation != null) {
-                        registerRoutes(RouteType.NORMAL, "DELETE", getAnnotation.value(), controller, controllerMethod);
+                        registerRoutes(RouteType.NORMAL, "DELETE", deleteAnnotation.value(), controller, controllerMethod);
                     }
                     Path pathAnnotation = controllerMethod.getAnnotation(Path.class);
                     if (pathAnnotation != null) {
-                        registerRoutes(RouteType.NORMAL, null, getAnnotation.value(), controller, controllerMethod);
+                        registerRoutes(RouteType.NORMAL, null, pathAnnotation.value(), controller, controllerMethod);
                     }
 
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
             getLogger().info("Controller \"" + controllerClass.getName() + "\" registered !!");
@@ -88,6 +89,7 @@ public abstract class Controllers {
             case ERROR: routes = Controllers.errorRoutes; break;
         }
         routes.addRoute(new RouteEntry(method, path, controller, controllerMethod));
+        getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" route registered !!");
     }
 
     public static <C extends Object> C get (Class<? extends C> controllerClass) {
