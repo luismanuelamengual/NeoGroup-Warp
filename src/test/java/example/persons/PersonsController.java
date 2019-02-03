@@ -1,8 +1,8 @@
 package example.persons;
 
-import org.neogroup.warp.controllers.Controller;
+import org.neogroup.warp.controllers.ControllerComponent;
 
-@Controller
+@ControllerComponent
 public class PersonsController {
 
 }

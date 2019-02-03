@@ -1,7 +1,7 @@
 package example.users;
 
 import org.neogroup.warp.Request;
-import org.neogroup.warp.controllers.Controller;
+import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
 import org.neogroup.warp.controllers.routing.Put;
@@ -10,7 +10,7 @@ import java.text.MessageFormat;
 
 import static org.neogroup.warp.Warp.getResource;
 
-@Controller
+@ControllerComponent
 public class UsersController {
 
     @Get("users")
