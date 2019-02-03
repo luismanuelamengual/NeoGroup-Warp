@@ -59,6 +59,7 @@ public class Routes {
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         RouteEntry route = findBestRoute(request, routeIndex, pathParts, 0);
         if (route != null) {
+            loadExtraParameters(request, route, pathParts);
         }
         return route;
     }
@@ -68,11 +69,13 @@ public class Routes {
         String path = getNormalizedPath(request.getPathInfo());
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         findRoutes(routes, request, routeIndex, pathParts, 0);
+        for (RouteEntry route : routes) {
+            loadExtraParameters(request, route, pathParts);
+        }
         return routes;
     }
 
-    private Map<String,String> getRouteExtraParameters (RouteEntry route, String[] pathParts) {
-        Map<String,String> parameters = new HashMap<>();
+    private void loadExtraParameters (Request request, RouteEntry route, String[] pathParts) {
         if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
             String routePath = getNormalizedPath(route.getPath());
             String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
@@ -81,11 +84,10 @@ public class Routes {
                 if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
                     String parameterName = pathPart.substring(1);
                     String parameterValue = pathParts[i];
-                    parameters.put(parameterName, parameterValue);
+                    request.setParameter(parameterName, parameterValue);
                 }
             }
         }
-        return parameters;
     }
 
     private RouteEntry findBestRoute(Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
