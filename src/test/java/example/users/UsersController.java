@@ -1,6 +1,7 @@
 package example.users;
 
 import org.neogroup.warp.Request;
+import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
@@ -30,8 +31,13 @@ public class UsersController {
     }
 
     @Get("/users/show")
-    public String show (@Parameter(value = "", required=false) String name) {
+    public String show (@Parameter(value = "name", required=false) String name) {
         return MessageFormat.format("My name is \"{0}\"", name);
     }
 
+
+    @Get("rama")
+    public void showRama (Response response) {
+        response.print("superv ").print(125);
+    }
 }

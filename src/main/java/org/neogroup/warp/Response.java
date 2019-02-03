@@ -15,6 +15,7 @@ public class Response {
 
     private final HttpServletResponse response;
     private Object responseObject;
+    private Throwable responseException;
 
     /**
      * Constructor for the response
@@ -28,8 +29,9 @@ public class Response {
      * Adds a new cookie to the response
      * @param cookie cookie
      */
-    public void addCookie(Cookie cookie) {
+    public Response addCookie(Cookie cookie) {
         response.addCookie(cookie);
+        return this;
     }
 
     /**
@@ -64,8 +66,9 @@ public class Response {
      * @param url url to redirect
      * @throws IOException io exception
      */
-    public void sendRedirect(String url) throws IOException {
+    public Response sendRedirect(String url) throws IOException {
         response.sendRedirect(url);
+        return this;
     }
 
     /**
@@ -73,8 +76,9 @@ public class Response {
      * @param name name of header
      * @param value value of header
      */
-    public void setHeader(String name, String value) {
+    public Response setHeader(String name, String value) {
         response.setHeader(name, value);
+        return this;
     }
 
     /**
@@ -82,16 +86,18 @@ public class Response {
      * @param name name of header
      * @param value value of header
      */
-    public void addHeader(String name, String value) {
+    public Response addHeader(String name, String value) {
         response.addHeader(name, value);
+        return this;
     }
 
     /**
      * Set status code
      * @param status status code
      */
-    public void setStatus(int status) {
+    public Response setStatus(int status) {
         response.setStatus(status);
+        return this;
     }
 
     /**
@@ -155,35 +161,12 @@ public class Response {
     }
 
     /**
-     * Sets the content length of the response
-     * @param length length
-     */
-    public void setContentLength(int length) {
-        response.setContentLength(length);
-    }
-
-    /**
-     * Set the content type of the response
-     * @param contentType content type
-     */
-    public void setContentType(String contentType) {
-        response.setContentType(contentType);
-    }
-
-    public Object getResponseObject() {
-        return responseObject;
-    }
-
-    public void setResponseObject(Object responseObject) {
-        this.responseObject = responseObject;
-    }
-
-    /**
      * Flushes the buffer
      * @throws IOException io exception
      */
-    public void flushBuffer() throws IOException {
+    public Response flushBuffer() throws IOException {
         response.flushBuffer();
+        return this;
     }
 
     /**
@@ -197,7 +180,141 @@ public class Response {
     /**
      * Resets the response
      */
-    public void reset() {
+    public Response reset() {
         response.reset();
+        return this;
+    }
+
+    public Response flush() {
+        try {
+            getWriter().flush();
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response close() {
+        try {
+            getWriter().close();
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(boolean b) {
+        try {
+            getWriter().print(b);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(char c) {
+        try {
+            getWriter().print(c);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(int i) {
+        try {
+            getWriter().print(i);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(long l) {
+        try {
+            getWriter().print(l);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(float v) {
+        try {
+            getWriter().print(v);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(double v) {
+        try {
+            getWriter().print(v);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(String s) {
+        try {
+            getWriter().print(s);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Response print(Object o) {
+        try {
+            getWriter().print(o);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public PrintWriter printf(String s, Object... objects) {
+        try {
+            return getWriter().printf(s, objects);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Sets the content length of the response
+     * @param length length
+     */
+    public Response setContentLength(int length) {
+        response.setContentLength(length);
+        return this;
+    }
+
+    /**
+     * Set the content type of the response
+     * @param contentType content type
+     */
+    public Response setContentType(String contentType) {
+        response.setContentType(contentType);
+        return this;
+    }
+
+    public Object getResponseObject() {
+        return responseObject;
+    }
+
+    public void setResponseObject(Object responseObject) {
+        this.responseObject = responseObject;
+    }
+
+    public Throwable getResponseException() {
+        return responseException;
+    }
+
+    public Response setResponseException(Throwable responseException) {
+        this.responseException = responseException;
+        return this;
     }
 }
