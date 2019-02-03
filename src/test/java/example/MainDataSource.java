@@ -3,7 +3,7 @@ package example;
 import org.neogroup.warp.data.DataSourceComponent;
 import org.postgresql.ds.PGSimpleDataSource;
 
-@DataSourceComponent
+@DataSourceComponent("main")
 public class MainDataSource extends PGSimpleDataSource {
 
     public MainDataSource() {
