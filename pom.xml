@@ -28,11 +28,6 @@
 
         <!-- MAIN DEPENDENCIES -->
         <dependency>
-            <groupId>com.github.luismanuelamengual</groupId>
-            <artifactId>NeoGroup-Utils</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
