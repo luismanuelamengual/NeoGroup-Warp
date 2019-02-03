@@ -1,11 +1,14 @@
 
 package org.neogroup.warp.controllers.routing;
 
+import java.util.Map;
+
 public class RouteEntry {
 
     private final String method;
     private final String path;
     private final AbstractRoute route;
+    private Map<String,String> parameters;
 
     public RouteEntry(String method, String path, AbstractRoute route) {
         this.method = method;
@@ -24,4 +27,6 @@ public class RouteEntry {
     public AbstractRoute getRoute() {
         return route;
     }
+
+
 }

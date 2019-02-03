@@ -3,7 +3,10 @@ package org.neogroup.warp.controllers.routing;
 
 import org.neogroup.warp.Request;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Routes {
 
@@ -55,23 +58,34 @@ public class Routes {
         String path = getNormalizedPath(request.getPathInfo());
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         RouteEntry route = findBestRoute(request, routeIndex, pathParts, 0);
-
         if (route != null) {
-            if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
-                String routePath = getNormalizedPath(route.getPath());
-                String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
-                for (int i = 0; i < routePathParts.length; i++) {
-                    String pathPart = routePathParts[i];
-                    if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
-                        String parameterName = pathPart.substring(1);
-                        String parameterValue = pathParts[i];
-                        request.setParameter(parameterName, parameterValue);
-                    }
+        }
+        return route;
+    }
+
+    public List<RouteEntry> findRoutes(Request request) {
+        List<RouteEntry> routes = new ArrayList<>();
+        String path = getNormalizedPath(request.getPathInfo());
+        String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+        findRoutes(routes, request, routeIndex, pathParts, 0);
+        return routes;
+    }
+
+    private Map<String,String> getRouteExtraParameters (RouteEntry route, String[] pathParts) {
+        Map<String,String> parameters = new HashMap<>();
+        if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
+            String routePath = getNormalizedPath(route.getPath());
+            String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
+            for (int i = 0; i < routePathParts.length; i++) {
+                String pathPart = routePathParts[i];
+                if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
+                    String parameterName = pathPart.substring(1);
+                    String parameterValue = pathParts[i];
+                    parameters.put(parameterName, parameterValue);
                 }
             }
         }
-
-        return route;
+        return parameters;
     }
 
     private RouteEntry findBestRoute(Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
