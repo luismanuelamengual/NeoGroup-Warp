@@ -28,4 +28,10 @@ public class UsersController {
     public String insertUser () {
         return "";
     }
+
+    @Get("/users/show")
+    public String show (@Parameter(value = "", required=false) String name) {
+        return MessageFormat.format("My name is \"{0}\"", name);
+    }
+
 }
