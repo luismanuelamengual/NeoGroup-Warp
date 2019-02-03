@@ -109,7 +109,7 @@ public abstract class Controllers {
             List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request);
             if (!errorRoutes.isEmpty()) {
                 for (RouteEntry route : errorRoutes) {
-                    executeRoute(route, request, response);
+                    executeRoute(route, request, response, throwable);
                 }
                 writeResponse(response);
             } else {
@@ -154,6 +154,10 @@ public abstract class Controllers {
     }
 
     private static void executeRoute (RouteEntry route, Request request, Response response) throws InvocationTargetException, IllegalAccessException {
+        executeRoute(route, request, response, null);
+    }
+
+    private static void executeRoute (RouteEntry route, Request request, Response response, Throwable throwable) throws InvocationTargetException, IllegalAccessException {
         Object controller = route.getController();
         Method controllerMethod = route.getControllerMethod();
         Object[] parameters = new Object[controllerMethod.getParameterCount()];
@@ -166,6 +170,9 @@ public abstract class Controllers {
             }
             else if (Response.class.isAssignableFrom(methodParameterClass)) {
                 parameters[i] = response;
+            }
+            else if (throwable != null && Throwable.class.isAssignableFrom(methodParameterClass)) {
+                parameters[i] = throwable;
             }
             Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
             if (paramAnnotation != null) {

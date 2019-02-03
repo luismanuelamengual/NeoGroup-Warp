@@ -15,7 +15,6 @@ public class Response {
 
     private final HttpServletResponse response;
     private Object responseObject;
-    private Throwable responseException;
 
     /**
      * Constructor for the response
@@ -307,14 +306,5 @@ public class Response {
 
     public void setResponseObject(Object responseObject) {
         this.responseObject = responseObject;
-    }
-
-    public Throwable getResponseException() {
-        return responseException;
-    }
-
-    public Response setResponseException(Throwable responseException) {
-        this.responseException = responseException;
-        return this;
     }
 }
