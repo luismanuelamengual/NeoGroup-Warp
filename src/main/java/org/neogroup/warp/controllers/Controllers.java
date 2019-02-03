@@ -18,7 +18,6 @@ import java.util.Map;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Controllers {
-
     private static final Map<Class, Object> controllers;
     private static final Routes routes;
     private static final Routes beforeRoutes;
@@ -42,36 +41,25 @@ public abstract class Controllers {
 
             for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
                 try {
-
                     Get getAnnotation = controllerMethod.getAnnotation(Get.class);
                     if (getAnnotation != null) {
-                        for (String path : getAnnotation.value()) {
-                            routes.addRoute(new RouteEntry("GET", path, controller, controllerMethod));
-                        }
+                        registerRoutes(RouteType.NORMAL, "GET", getAnnotation.value(), controller, controllerMethod);
                     }
                     Post postAnnotation = controllerMethod.getAnnotation(Post.class);
                     if (postAnnotation != null) {
-                        for (String path : postAnnotation.value()) {
-                            routes.addRoute(new RouteEntry("POST", path, controller, controllerMethod));
-                        }
+                        registerRoutes(RouteType.NORMAL, "POST", getAnnotation.value(), controller, controllerMethod);
                     }
                     Put putAnnotation = controllerMethod.getAnnotation(Put.class);
                     if (putAnnotation != null) {
-                        for (String path : putAnnotation.value()) {
-                            routes.addRoute(new RouteEntry("PUT", path, controller, controllerMethod));
-                        }
+                        registerRoutes(RouteType.NORMAL, "PUT", getAnnotation.value(), controller, controllerMethod);
                     }
                     Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
                     if (deleteAnnotation != null) {
-                        for (String path : deleteAnnotation.value()) {
-                            routes.addRoute(new RouteEntry("DELETE", path, controller, controllerMethod));
-                        }
+                        registerRoutes(RouteType.NORMAL, "DELETE", getAnnotation.value(), controller, controllerMethod);
                     }
                     Path pathAnnotation = controllerMethod.getAnnotation(Path.class);
                     if (pathAnnotation != null) {
-                        for (String path : pathAnnotation.value()) {
-                            routes.addRoute(new RouteEntry(null, path, controller, controllerMethod));
-                        }
+                        registerRoutes(RouteType.NORMAL, null, getAnnotation.value(), controller, controllerMethod);
                     }
 
                 } catch (Exception ex) {
@@ -82,6 +70,24 @@ public abstract class Controllers {
         catch (Exception ex) {
             throw new RuntimeException ("Error registering controller \"" + controllerClass.getName() + "\" !!", ex);
         }
+    }
+
+    public static void registerRoutes (RouteType type, String method, String[] paths, Object controller, Method controllerMethod) {
+        for (String path : paths) {
+            registerRoute(type, method, path, controller, controllerMethod);
+        }
+    }
+
+    public static void registerRoute (RouteType type, String method, String path, Object controller, Method controllerMethod) {
+        Routes routes = null;
+        switch(type) {
+            case NORMAL: routes = Controllers.routes; break;
+            case BEFORE: routes = Controllers.beforeRoutes; break;
+            case AFTER: routes = Controllers.afterRoutes; break;
+            case NOT_FOUND: routes = Controllers.notFoundRoutes; break;
+            case ERROR: routes = Controllers.errorRoutes; break;
+        }
+        routes.addRoute(new RouteEntry(method, path, controller, controllerMethod));
     }
 
     public static <C extends Object> C get (Class<? extends C> controllerClass) {
