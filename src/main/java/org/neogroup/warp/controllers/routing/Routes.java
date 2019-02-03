@@ -56,7 +56,8 @@ public class Routes {
 
         if (webRoute != null) {
             if (webRoute.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
-                String[] routePathParts = webRoute.getPath().split(ROUTE_PATH_SEPARATOR);
+                String routePath = getNormalizedPath(webRoute.getPath());
+                String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
                 for (int i = 0; i < routePathParts.length; i++) {
                     String pathPart = routePathParts[i];
                     if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
