@@ -3,6 +3,8 @@ package org.neogroup.warp.controllers.routing;
 
 import org.neogroup.warp.Request;
 
+import java.util.List;
+
 public class Routes {
 
     private static final String ROUTE_GENERIC_PATH = "*";
@@ -72,7 +74,7 @@ public class Routes {
         return webRoute;
     }
 
-    protected RouteEntry findBestRoute(Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
+    private RouteEntry findBestRoute(Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
         RouteEntry route = null;
         if (pathIndex < pathParts.length) {
             String pathPart = pathParts[pathIndex];
@@ -104,5 +106,33 @@ public class Routes {
             }
         }
         return route;
+    }
+
+    private void findRoutes(List<RouteEntry> routes, Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
+        if (pathIndex < pathParts.length) {
+            String pathPart = pathParts[pathIndex];
+            RouteIndex nextRootIndex = currentRootIndex.getRouteIndex(pathPart);
+            if (nextRootIndex != null) {
+                findRoutes(routes, request, nextRootIndex, pathParts, pathIndex + 1);
+            }
+            nextRootIndex = currentRootIndex.getRouteIndex(ROUTE_PARAMETER_WILDCARD);
+            if (nextRootIndex != null) {
+                findRoutes(routes, request, nextRootIndex, pathParts, pathIndex + 1);
+            }
+        }
+        else {
+            for (RouteEntry routeEntry : currentRootIndex.getRoutes()) {
+                if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
+                    routes.add(routeEntry);
+                    break;
+                }
+            }
+        }
+        for (RouteEntry routeEntry : currentRootIndex.getGenericRoutes()) {
+            if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
+                routes.add(routeEntry);
+                break;
+            }
+        }
     }
 }

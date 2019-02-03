@@ -15,4 +15,16 @@ public class UsersController {
 
     @Get("/users/:userId")
     protected Route getUserId = (req, res) -> req.getParameter("userId");
+
+    @Get("/pepe/:name/:lastName/tito")
+    protected Route pepeAction = (req, res) -> "Hola " + req.getParameter("name") + " "+ req.getParameter("lastName");
+
+    @Get("tata")
+    protected Route rama = (req, res) -> {
+        return "";
+    };
+
+
+
+
 }
