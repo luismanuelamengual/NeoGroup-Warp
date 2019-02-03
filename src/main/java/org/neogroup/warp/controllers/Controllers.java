@@ -5,7 +5,6 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -117,10 +116,10 @@ public abstract class Controllers {
     public static void handle(Request request, Response response) {
 
         try {
-            RouteEntry routeEntry = routes.findRoute(request);
+            RouteEntry routeEntry = routes.findBestRoute(request);
             if (routeEntry != null) {
 
-                RouteEntry beforeRouteEntry = beforeRoutes.findRoute(request);
+                RouteEntry beforeRouteEntry = beforeRoutes.findBestRoute(request);
                 boolean executeRoute = true;
                 if (beforeRouteEntry != null) {
                     executeRoute = ((BeforeRoute)beforeRouteEntry.getRoute()).handle(request, response);
@@ -129,7 +128,7 @@ public abstract class Controllers {
                 if (executeRoute) {
                     Object routeResponse = ((Route)routeEntry.getRoute()).handle(request, response);
 
-                    RouteEntry afterRouteEntry = afterRoutes.findRoute(request);
+                    RouteEntry afterRouteEntry = afterRoutes.findBestRoute(request);
                     if (afterRouteEntry != null) {
                         routeResponse = ((AfterRoute)afterRouteEntry.getRoute()).handle(request, response, routeResponse);
                     }
@@ -141,7 +140,7 @@ public abstract class Controllers {
                 }
             } else {
 
-                RouteEntry notFoundRouteEntry = notFoundRoutes.findRoute(request);
+                RouteEntry notFoundRouteEntry = notFoundRoutes.findBestRoute(request);
                 if (notFoundRouteEntry != null) {
                     Object routeResponse = ((NotFoundRoute)notFoundRouteEntry.getRoute()).handle(request, response);
 
@@ -159,7 +158,7 @@ public abstract class Controllers {
         catch (Throwable throwable) {
 
             try {
-                RouteEntry errorRouteEntry = errorRoutes.findRoute(request);
+                RouteEntry errorRouteEntry = errorRoutes.findBestRoute(request);
                 if (errorRouteEntry != null) {
 
                     Object routeResponse = ((ErrorRoute)errorRouteEntry.getRoute()).handle(request, response, throwable);

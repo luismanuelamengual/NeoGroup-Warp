@@ -51,14 +51,14 @@ public class Routes {
         routeIndex.clear();
     }
 
-    public RouteEntry findRoute(Request request) {
+    public RouteEntry findBestRoute(Request request) {
         String path = getNormalizedPath(request.getPathInfo());
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
-        RouteEntry webRoute = findBestRoute(request, routeIndex, pathParts, 0);
+        RouteEntry route = findBestRoute(request, routeIndex, pathParts, 0);
 
-        if (webRoute != null) {
-            if (webRoute.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
-                String routePath = getNormalizedPath(webRoute.getPath());
+        if (route != null) {
+            if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
+                String routePath = getNormalizedPath(route.getPath());
                 String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
                 for (int i = 0; i < routePathParts.length; i++) {
                     String pathPart = routePathParts[i];
@@ -71,7 +71,7 @@ public class Routes {
             }
         }
 
-        return webRoute;
+        return route;
     }
 
     private RouteEntry findBestRoute(Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
