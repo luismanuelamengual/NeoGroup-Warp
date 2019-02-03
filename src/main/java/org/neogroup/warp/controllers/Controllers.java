@@ -113,8 +113,7 @@ public abstract class Controllers {
                 }
                 writeResponse(response);
             } else {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                throwable.printStackTrace(response.getWriter());
+                throw new RuntimeException("Unhandled exception");
             }
         }
         catch (Throwable errorThrowable) {
