@@ -6,6 +6,7 @@ import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
 import org.neogroup.warp.controllers.routing.Put;
+import org.neogroup.warp.controllers.routing.RoutingPriority;
 
 import java.text.MessageFormat;
 
@@ -14,7 +15,7 @@ import static org.neogroup.warp.Warp.getResource;
 @ControllerComponent
 public class UsersController {
 
-    @Get("users")
+    @Get(value="users", priority = RoutingPriority.HIGH)
     public String getUsers (Request req) {
         //return getResource("user").first();
         return "Hola " + req.getParameter("name");

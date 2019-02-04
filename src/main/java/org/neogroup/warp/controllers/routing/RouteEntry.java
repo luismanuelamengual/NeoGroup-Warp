@@ -9,12 +9,14 @@ public class RouteEntry {
     private final String path;
     private final Object controller;
     private final Method controllerMethod;
+    private final int priority;
 
-    public RouteEntry(String method, String path, Object controller, Method controllerMethod) {
+    public RouteEntry(String method, String path, Object controller, Method controllerMethod, int priority) {
         this.method = method;
         this.path = path;
         this.controller = controller;
         this.controllerMethod = controllerMethod;
+        this.priority = priority;
     }
 
     public String getMethod() {
@@ -31,5 +33,9 @@ public class RouteEntry {
 
     public Method getControllerMethod() {
         return controllerMethod;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 }
