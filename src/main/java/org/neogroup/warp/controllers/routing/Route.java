@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Path {
+public @interface Route {
     String[] value();
     int priority() default RoutingPriority.NORMAL;
+    boolean auxiliary() default false;
 }

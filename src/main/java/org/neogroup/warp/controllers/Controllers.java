@@ -37,31 +37,31 @@ public abstract class Controllers {
             for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
                 Get getAnnotation = controllerMethod.getAnnotation(Get.class);
                 if (getAnnotation != null) {
-                    registerRoutes(routes, "GET", getAnnotation.value(), controller, controllerMethod, getAnnotation.priority());
+                    registerRoutes(routes, "GET", getAnnotation.value(), controller, controllerMethod, getAnnotation.priority(), getAnnotation.auxiliary());
                 }
                 Post postAnnotation = controllerMethod.getAnnotation(Post.class);
                 if (postAnnotation != null) {
-                    registerRoutes(routes, "POST", postAnnotation.value(), controller, controllerMethod, postAnnotation.priority());
+                    registerRoutes(routes, "POST", postAnnotation.value(), controller, controllerMethod, postAnnotation.priority(), postAnnotation.auxiliary());
                 }
                 Put putAnnotation = controllerMethod.getAnnotation(Put.class);
                 if (putAnnotation != null) {
-                    registerRoutes(routes, "PUT", putAnnotation.value(), controller, controllerMethod, putAnnotation.priority());
+                    registerRoutes(routes, "PUT", putAnnotation.value(), controller, controllerMethod, putAnnotation.priority(), putAnnotation.auxiliary());
                 }
                 Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
                 if (deleteAnnotation != null) {
-                    registerRoutes(routes, "DELETE", deleteAnnotation.value(), controller, controllerMethod, deleteAnnotation.priority());
+                    registerRoutes(routes, "DELETE", deleteAnnotation.value(), controller, controllerMethod, deleteAnnotation.priority(), deleteAnnotation.auxiliary());
                 }
-                Path pathAnnotation = controllerMethod.getAnnotation(Path.class);
-                if (pathAnnotation != null) {
-                    registerRoutes(routes, null, pathAnnotation.value(), controller, controllerMethod, pathAnnotation.priority());
+                Route routeAnnotation = controllerMethod.getAnnotation(Route.class);
+                if (routeAnnotation != null) {
+                    registerRoutes(routes, null, routeAnnotation.value(), controller, controllerMethod, routeAnnotation.priority(), routeAnnotation.auxiliary());
                 }
                 NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
                 if (notFoundAnnotation != null) {
-                    registerRoutes(notFoundRoutes, null, notFoundAnnotation.value(), controller, controllerMethod, notFoundAnnotation.priority());
+                    registerRoutes(notFoundRoutes, null, notFoundAnnotation.value(), controller, controllerMethod, notFoundAnnotation.priority(), notFoundAnnotation.auxiliary());
                 }
                 Error errorAnnotation = controllerMethod.getAnnotation(Error.class);
                 if (errorAnnotation != null) {
-                    registerRoutes(errorRoutes, null, errorAnnotation.value(), controller, controllerMethod, errorAnnotation.priority());
+                    registerRoutes(errorRoutes, null, errorAnnotation.value(), controller, controllerMethod, errorAnnotation.priority(), errorAnnotation.auxiliary());
                 }
             }
         }
@@ -70,14 +70,14 @@ public abstract class Controllers {
         }
     }
 
-    public static void registerRoutes (Routes routes, String method, String[] paths, Object controller, Method controllerMethod, int priority) {
+    public static void registerRoutes (Routes routes, String method, String[] paths, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
         for (String path : paths) {
-            registerRoute(routes, method, path, controller, controllerMethod, priority);
+            registerRoute(routes, method, path, controller, controllerMethod, priority, auxiliary);
         }
     }
 
-    public static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority) {
-        routes.addRoute(new RouteEntry(method, path, controller, controllerMethod, priority));
+    public static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+        routes.addRoute(new RouteEntry(method, path, controller, controllerMethod, priority, auxiliary));
         getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" route registered !!");
     }
 
@@ -121,10 +121,22 @@ public abstract class Controllers {
         try {
             try {
                 List<RouteEntry> routes = Controllers.routes.findRoutes(request);
+                boolean routeFound = false;
                 for (RouteEntry route : routes) {
-                    executeRoute(route, request, response);
+                    if (!route.isAuxiliary()) {
+                        routeFound = true;
+                        break;
+                    }
                 }
-                writeResponse(response);
+                if (routeFound) {
+                    for (RouteEntry route : routes) {
+                        executeRoute(route, request, response);
+                    }
+                    writeResponse(response);
+                }
+                else {
+                    throw new RouteNotFoundException();
+                }
             } catch (RouteNotFoundException notFoundException) {
                 handleNotFound(request, response);
             }

@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Error {
     String[] value();
     int priority() default RoutingPriority.NORMAL;
+    boolean auxiliary() default false;
 }

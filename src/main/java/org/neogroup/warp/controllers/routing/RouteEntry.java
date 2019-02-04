@@ -10,13 +10,15 @@ public class RouteEntry {
     private final Object controller;
     private final Method controllerMethod;
     private final int priority;
+    private final boolean auxiliary;
 
-    public RouteEntry(String method, String path, Object controller, Method controllerMethod, int priority) {
+    public RouteEntry(String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
         this.method = method;
         this.path = path;
         this.controller = controller;
         this.controllerMethod = controllerMethod;
         this.priority = priority;
+        this.auxiliary = auxiliary;
     }
 
     public String getMethod() {
@@ -37,5 +39,9 @@ public class RouteEntry {
 
     public int getPriority() {
         return priority;
+    }
+
+    public boolean isAuxiliary() {
+        return auxiliary;
     }
 }
