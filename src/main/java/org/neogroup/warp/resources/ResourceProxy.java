@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ResourceProxy<T extends Object> {
+public class ResourceProxy<T> {
 
     private Query query;
     private Resource<T> resource;
@@ -39,10 +39,10 @@ public class ResourceProxy<T extends Object> {
     }
 
     public T first () {
-        return (T)limit(1).find().iterator().next();
+        return limit(1).find().iterator().next();
     }
 
-    public ResourceProxy select(String... fields) {
+    public ResourceProxy<T> select(String... fields) {
         query.select(fields);
         return this;
     }
@@ -59,7 +59,7 @@ public class ResourceProxy<T extends Object> {
         return query.isDistinct();
     }
 
-    public ResourceProxy setDistinct(boolean distinct) {
+    public ResourceProxy<T> setDistinct(boolean distinct) {
         query.setDistinct(distinct);
         return this;
     }
@@ -68,7 +68,7 @@ public class ResourceProxy<T extends Object> {
         return query.getLimit();
     }
 
-    public ResourceProxy limit(Integer limit) {
+    public ResourceProxy<T> limit(Integer limit) {
         query.limit(limit);
         return this;
     }
@@ -77,32 +77,32 @@ public class ResourceProxy<T extends Object> {
         return query.getOffset();
     }
 
-    public ResourceProxy offset(Integer offset) {
+    public ResourceProxy<T> offset(Integer offset) {
         query.offset(offset);
         return this;
     }
 
-    public ResourceProxy select(SelectField... fields) {
+    public ResourceProxy<T> select(SelectField... fields) {
         query.select(fields);
         return this;
     }
 
-    public ResourceProxy selectField(SelectField field) {
+    public ResourceProxy<T> selectField(SelectField field) {
         query.selectField(field);
         return this;
     }
 
-    public ResourceProxy selectField(String name) {
+    public ResourceProxy<T> selectField(String name) {
         query.selectField(name);
         return this;
     }
 
-    public ResourceProxy selectField(String name, String alias) {
+    public ResourceProxy<T> selectField(String name, String alias) {
         query.selectField(name, alias);
         return this;
     }
 
-    public ResourceProxy selectField(String tableName, String name, String alias) {
+    public ResourceProxy<T> selectField(String tableName, String name, String alias) {
         query.selectField(tableName, name, alias);
         return this;
     }
@@ -111,17 +111,17 @@ public class ResourceProxy<T extends Object> {
         return query.getSelectFields();
     }
 
-    public ResourceProxy clearSelectFields() {
+    public ResourceProxy<T> clearSelectFields() {
         query.clearSelectFields();
         return this;
     }
 
-    public ResourceProxy groupBy(String... groupByFields) {
+    public ResourceProxy<T> groupBy(String... groupByFields) {
         query.groupBy(groupByFields);
         return this;
     }
 
-    public ResourceProxy groupBy(Field... groupByFields) {
+    public ResourceProxy<T> groupBy(Field... groupByFields) {
         query.groupBy(groupByFields);
         return this;
     }
@@ -130,22 +130,22 @@ public class ResourceProxy<T extends Object> {
         return query.getGroupByFields();
     }
 
-    public ResourceProxy clearGroupByFields() {
+    public ResourceProxy<T> clearGroupByFields() {
         query.clearGroupByFields();
         return this;
     }
 
-    public ResourceProxy orderBy(String... orderByFields) {
+    public ResourceProxy<T> orderBy(String... orderByFields) {
         query.orderBy(orderByFields);
         return this;
     }
 
-    public ResourceProxy orderBy(SortField... orderByFields) {
+    public ResourceProxy<T> orderBy(SortField... orderByFields) {
         query.orderBy(orderByFields);
         return this;
     }
 
-    public ResourceProxy orderBy(String field, SortDirection direction) {
+    public ResourceProxy<T> orderBy(String field, SortDirection direction) {
         query.orderBy(field, direction);
         return this;
     }
@@ -154,12 +154,12 @@ public class ResourceProxy<T extends Object> {
         return query.getOrderByFields();
     }
 
-    public ResourceProxy clearOrderByFields() {
+    public ResourceProxy<T> clearOrderByFields() {
         query.clearOrderByFields();
         return this;
     }
 
-    public ResourceProxy set(String field, Object value) {
+    public ResourceProxy<T> set(String field, Object value) {
         query.set(field, value);
         return this;
     }
@@ -172,7 +172,7 @@ public class ResourceProxy<T extends Object> {
         return query.getFields();
     }
 
-    public ResourceProxy clearFields() {
+    public ResourceProxy<T> clearFields() {
         query.clearFields();
         return this;
     }
@@ -181,7 +181,7 @@ public class ResourceProxy<T extends Object> {
         return query.getWhereConnector();
     }
 
-    public ResourceProxy setWhereConnector(ConditionGroupConnector connector) {
+    public ResourceProxy<T> setWhereConnector(ConditionGroupConnector connector) {
         query.setWhereConnector(connector);
         return this;
     }
@@ -190,7 +190,7 @@ public class ResourceProxy<T extends Object> {
         return query.getWhereConditions();
     }
 
-    public ResourceProxy clearWhereConditions() {
+    public ResourceProxy<T> clearWhereConditions() {
         query.clearWhereConditions();
         return this;
     }
@@ -199,7 +199,7 @@ public class ResourceProxy<T extends Object> {
         return query.hasWhereConditions();
     }
 
-    public ResourceProxy where(Condition condition) {
+    public ResourceProxy<T> where(Condition condition) {
         query.where(condition);
         return this;
     }
@@ -208,152 +208,152 @@ public class ResourceProxy<T extends Object> {
         return query.getWhereConditionGroup();
     }
 
-    public ResourceProxy where(String field, Object value) {
+    public ResourceProxy<T> where(String field, Object value) {
         query.where(field, value);
         return this;
     }
 
-    public ResourceProxy where(Field field, Object value) {
+    public ResourceProxy<T> where(Field field, Object value) {
         query.where(field, value);
         return this;
     }
 
-    public ResourceProxy where(String field, ConditionOperator operator, Object value) {
+    public ResourceProxy<T> where(String field, ConditionOperator operator, Object value) {
         query.where(field, operator, value);
         return this;
     }
 
-    public ResourceProxy where(Field field, ConditionOperator operator, Object value) {
+    public ResourceProxy<T> where(Field field, ConditionOperator operator, Object value) {
         query.where(field, operator, value);
         return this;
     }
 
-    public ResourceProxy whereGroup(ConditionGroup condition) {
+    public ResourceProxy<T> whereGroup(ConditionGroup condition) {
         query.whereGroup(condition);
         return this;
     }
 
-    public ResourceProxy whereRaw(RawCondition condition) {
+    public ResourceProxy<T> whereRaw(RawCondition condition) {
         query.whereRaw(condition);
         return this;
     }
 
-    public ResourceProxy whereField(String field1, String field2) {
+    public ResourceProxy<T> whereField(String field1, String field2) {
         query.whereField(field1, field2);
         return this;
     }
 
-    public ResourceProxy whereField(Field field1, Field field2) {
+    public ResourceProxy<T> whereField(Field field1, Field field2) {
         query.whereField(field1, field2);
         return this;
     }
 
-    public ResourceProxy whereField(String field1, ConditionOperator operator, String field2) {
+    public ResourceProxy<T> whereField(String field1, ConditionOperator operator, String field2) {
         query.whereField(field1, operator, field2);
         return this;
     }
 
-    public ResourceProxy whereField(Field field1, ConditionOperator operator, Field field2) {
+    public ResourceProxy<T> whereField(Field field1, ConditionOperator operator, Field field2) {
         query.whereField(field1, operator, field2);
         return this;
     }
 
-    public ResourceProxy whereNull(String field) {
+    public ResourceProxy<T> whereNull(String field) {
         query.whereNull(field);
         return this;
     }
 
-    public ResourceProxy whereNull(Field field) {
+    public ResourceProxy<T> whereNull(Field field) {
         query.whereNull(field);
         return this;
     }
 
-    public ResourceProxy whereNotNull(String field) {
+    public ResourceProxy<T> whereNotNull(String field) {
         query.whereNotNull(field);
         return this;
     }
 
-    public ResourceProxy whereNotNull(Field field) {
+    public ResourceProxy<T> whereNotNull(Field field) {
         query.whereNotNull(field);
         return this;
     }
 
-    public ResourceProxy whereIn(String field, Collection<Object> values) {
+    public ResourceProxy<T> whereIn(String field, Collection<Object> values) {
         query.whereIn(field, values);
         return this;
     }
 
-    public ResourceProxy whereIn(Field field, Collection<Object> values) {
+    public ResourceProxy<T> whereIn(Field field, Collection<Object> values) {
         query.whereIn(field, values);
         return this;
     }
 
-    public ResourceProxy whereNotIn(String field, Collection<Object> values) {
+    public ResourceProxy<T> whereNotIn(String field, Collection<Object> values) {
         query.whereNotIn(field, values);
         return this;
     }
 
-    public ResourceProxy whereNotIn(Field field, Collection<Object> values) {
+    public ResourceProxy<T> whereNotIn(Field field, Collection<Object> values) {
         query.whereNotIn(field, values);
         return this;
     }
 
-    public ResourceProxy whereContains(String field, Object value) {
+    public ResourceProxy<T> whereContains(String field, Object value) {
         query.whereContains(field, value);
         return this;
     }
 
-    public ResourceProxy whereContains(Field field, Object value) {
+    public ResourceProxy<T> whereContains(Field field, Object value) {
         query.whereContains(field, value);
         return this;
     }
 
-    public ResourceProxy whereNotContains(String field, Object value) {
+    public ResourceProxy<T> whereNotContains(String field, Object value) {
         query.whereNotContains(field, value);
         return this;
     }
 
-    public ResourceProxy whereNotContains(Field field, Object value) {
+    public ResourceProxy<T> whereNotContains(Field field, Object value) {
         query.whereNotContains(field, value);
         return this;
     }
 
-    public ResourceProxy whereGreaterThan(String field, Object value) {
+    public ResourceProxy<T> whereGreaterThan(String field, Object value) {
         query.whereGreaterThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereGreaterThan(Field field, Object value) {
+    public ResourceProxy<T> whereGreaterThan(Field field, Object value) {
         query.whereGreaterThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereGreaterOrEqualsThan(String field, Object value) {
+    public ResourceProxy<T> whereGreaterOrEqualsThan(String field, Object value) {
         query.whereGreaterOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereGreaterOrEqualsThan(Field field, Object value) {
+    public ResourceProxy<T> whereGreaterOrEqualsThan(Field field, Object value) {
         query.whereGreaterOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereLowerThan(String field, Object value) {
+    public ResourceProxy<T> whereLowerThan(String field, Object value) {
         query.whereLowerThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereLowerThan(Field field, Object value) {
+    public ResourceProxy<T> whereLowerThan(Field field, Object value) {
         query.whereLowerThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereLowerOrEqualsThan(String field, Object value) {
+    public ResourceProxy<T> whereLowerOrEqualsThan(String field, Object value) {
         query.whereLowerOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy whereLowerOrEqualsThan(Field field, Object value) {
+    public ResourceProxy<T> whereLowerOrEqualsThan(Field field, Object value) {
         query.whereLowerOrEqualsThan(field, value);
         return this;
     }
@@ -362,7 +362,7 @@ public class ResourceProxy<T extends Object> {
         return query.getHavingConnector();
     }
 
-    public ResourceProxy setHavingConnector(ConditionGroupConnector connector) {
+    public ResourceProxy<T> setHavingConnector(ConditionGroupConnector connector) {
         query.setHavingConnector(connector);
         return this;
     }
@@ -371,7 +371,7 @@ public class ResourceProxy<T extends Object> {
         return query.getHavingConditions();
     }
 
-    public ResourceProxy clearHavingConditions() {
+    public ResourceProxy<T> clearHavingConditions() {
         query.clearHavingConditions();
         return this;
     }
@@ -380,7 +380,7 @@ public class ResourceProxy<T extends Object> {
         return query.hasHavingConditions();
     }
 
-    public ResourceProxy having(Condition condition) {
+    public ResourceProxy<T> having(Condition condition) {
         query.having(condition);
         return this;
     }
@@ -389,197 +389,197 @@ public class ResourceProxy<T extends Object> {
         return query.getHavingConditionGroup();
     }
 
-    public ResourceProxy having(String field, Object value) {
+    public ResourceProxy<T> having(String field, Object value) {
         query.having(field, value);
         return this;
     }
 
-    public ResourceProxy having(Field field, Object value) {
+    public ResourceProxy<T> having(Field field, Object value) {
         query.having(field, value);
         return this;
     }
 
-    public ResourceProxy having(String field, ConditionOperator operator, Object value) {
+    public ResourceProxy<T> having(String field, ConditionOperator operator, Object value) {
         query.having(field, operator, value);
         return this;
     }
 
-    public ResourceProxy having(Field field, ConditionOperator operator, Object value) {
+    public ResourceProxy<T> having(Field field, ConditionOperator operator, Object value) {
         query.having(field, operator, value);
         return this;
     }
 
-    public ResourceProxy havingGroup(ConditionGroup condition) {
+    public ResourceProxy<T> havingGroup(ConditionGroup condition) {
         query.havingGroup(condition);
         return this;
     }
 
-    public ResourceProxy havingRaw(RawCondition condition) {
+    public ResourceProxy<T> havingRaw(RawCondition condition) {
         query.havingRaw(condition);
         return this;
     }
 
-    public ResourceProxy havingField(String field1, String field2) {
+    public ResourceProxy<T> havingField(String field1, String field2) {
         query.havingField(field1, field2);
         return this;
     }
 
-    public ResourceProxy havingField(Field field1, Field field2) {
+    public ResourceProxy<T> havingField(Field field1, Field field2) {
         query.havingField(field1, field2);
         return this;
     }
 
-    public ResourceProxy havingField(String field1, ConditionOperator operator, String field2) {
+    public ResourceProxy<T> havingField(String field1, ConditionOperator operator, String field2) {
         query.havingField(field1, operator, field2);
         return this;
     }
 
-    public ResourceProxy havingField(Field field1, ConditionOperator operator, Field field2) {
+    public ResourceProxy<T> havingField(Field field1, ConditionOperator operator, Field field2) {
         query.havingField(field1, operator, field2);
         return this;
     }
 
-    public ResourceProxy havingNull(String field) {
+    public ResourceProxy<T> havingNull(String field) {
         query.havingNull(field);
         return this;
     }
 
-    public ResourceProxy havingNull(Field field) {
+    public ResourceProxy<T> havingNull(Field field) {
         query.havingNull(field);
         return this;
     }
 
-    public ResourceProxy havingNotNull(String field) {
+    public ResourceProxy<T> havingNotNull(String field) {
         query.havingNotNull(field);
         return this;
     }
 
-    public ResourceProxy havingNotNull(Field field) {
+    public ResourceProxy<T> havingNotNull(Field field) {
         query.havingNotNull(field);
         return this;
     }
 
-    public ResourceProxy havingIn(String field, Collection<Object> values) {
+    public ResourceProxy<T> havingIn(String field, Collection<Object> values) {
         query.havingIn(field, values);
         return this;
     }
 
-    public ResourceProxy havingIn(Field field, Collection<Object> values) {
+    public ResourceProxy<T> havingIn(Field field, Collection<Object> values) {
         query.havingIn(field, values);
         return this;
     }
 
-    public ResourceProxy havingNotIn(String field, Collection<Object> values) {
+    public ResourceProxy<T> havingNotIn(String field, Collection<Object> values) {
         query.havingNotIn(field, values);
         return this;
     }
 
-    public ResourceProxy havingNotIn(Field field, Collection<Object> values) {
+    public ResourceProxy<T> havingNotIn(Field field, Collection<Object> values) {
         query.havingNotIn(field, values);
         return this;
     }
 
-    public ResourceProxy havingContains(String field, Object value) {
+    public ResourceProxy<T> havingContains(String field, Object value) {
         query.havingContains(field, value);
         return this;
     }
 
-    public ResourceProxy havingContains(Field field, Object value) {
+    public ResourceProxy<T> havingContains(Field field, Object value) {
         query.havingContains(field, value);
         return this;
     }
 
-    public ResourceProxy havingNotContains(String field, Object value) {
+    public ResourceProxy<T> havingNotContains(String field, Object value) {
         query.havingNotContains(field, value);
         return this;
     }
 
-    public ResourceProxy havingNotContains(Field field, Object value) {
+    public ResourceProxy<T> havingNotContains(Field field, Object value) {
         query.havingNotContains(field, value);
         return this;
     }
 
-    public ResourceProxy havingGreaterThan(String field, Object value) {
+    public ResourceProxy<T> havingGreaterThan(String field, Object value) {
         query.havingGreaterThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingGreaterThan(Field field, Object value) {
+    public ResourceProxy<T> havingGreaterThan(Field field, Object value) {
         query.havingGreaterThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingGreaterOrEqualsThan(String field, Object value) {
+    public ResourceProxy<T> havingGreaterOrEqualsThan(String field, Object value) {
         query.havingGreaterOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingGreaterOrEqualsThan(Field field, Object value) {
+    public ResourceProxy<T> havingGreaterOrEqualsThan(Field field, Object value) {
         query.havingGreaterOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingLowerThan(String field, Object value) {
+    public ResourceProxy<T> havingLowerThan(String field, Object value) {
         query.havingLowerThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingLowerThan(Field field, Object value) {
+    public ResourceProxy<T> havingLowerThan(Field field, Object value) {
         query.havingLowerThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingLowerOrEqualsThan(String field, Object value) {
+    public ResourceProxy<T> havingLowerOrEqualsThan(String field, Object value) {
         query.havingLowerOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy havingLowerOrEqualsThan(Field field, Object value) {
+    public ResourceProxy<T> havingLowerOrEqualsThan(Field field, Object value) {
         query.havingLowerOrEqualsThan(field, value);
         return this;
     }
 
-    public ResourceProxy join(Join join) {
+    public ResourceProxy<T> join(Join join) {
         query.join(join);
         return this;
     }
 
-    public ResourceProxy join(String tableName, String field1, String field2) {
+    public ResourceProxy<T> join(String tableName, String field1, String field2) {
         query.join(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy join(String tableName, Field field1, Field field2) {
+    public ResourceProxy<T> join(String tableName, Field field1, Field field2) {
         query.join(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy innerJoin(String tableName, String field1, String field2) {
+    public ResourceProxy<T> innerJoin(String tableName, String field1, String field2) {
         query.innerJoin(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy innerJoin(String tableName, Field field1, Field field2) {
+    public ResourceProxy<T> innerJoin(String tableName, Field field1, Field field2) {
         query.innerJoin(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy leftJoin(String tableName, String field1, String field2) {
+    public ResourceProxy<T> leftJoin(String tableName, String field1, String field2) {
         query.leftJoin(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy leftJoin(String tableName, Field field1, Field field2) {
+    public ResourceProxy<T> leftJoin(String tableName, Field field1, Field field2) {
         query.leftJoin(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy rightJoin(String tableName, String field1, String field2) {
+    public ResourceProxy<T> rightJoin(String tableName, String field1, String field2) {
         query.rightJoin(tableName, field1, field2);
         return this;
     }
 
-    public ResourceProxy rightJoin(String tableName, Field field1, Field field2) {
+    public ResourceProxy<T> rightJoin(String tableName, Field field1, Field field2) {
         query.rightJoin(tableName, field1, field2);
         return this;
     }
