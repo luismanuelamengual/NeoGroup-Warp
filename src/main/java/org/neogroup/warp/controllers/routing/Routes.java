@@ -1,16 +1,17 @@
 
 package org.neogroup.warp.controllers.routing;
 
-import org.neogroup.warp.Request;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Routes {
 
-    private static final String ROUTE_GENERIC_PATH = "*";
-    private static final String ROUTE_PARAMETER_PREFIX = ":";
+    public static final String ROUTE_GENERIC_PATH = "*";
+    public static final String ROUTE_PARAMETER_PREFIX = ":";
+
     private static final String ROUTE_PARAMETER_WILDCARD = "%";
-    private static final String ROUTE_PATH_SEPARATOR = "/";
     private static final Comparator<RouteEntry> routeEntryComparator = (r1, r2) -> r2.getPriority() - r1.getPriority();
 
     private final RouteIndex routeIndex;
@@ -19,18 +20,9 @@ public class Routes {
         routeIndex = new RouteIndex();
     }
 
-    private String getNormalizedPath (String path) {
-        if (!path.isEmpty() && path.startsWith(ROUTE_PATH_SEPARATOR)) {
-            path = path.substring(1);
-        }
-        return path;
-    }
-
     public void addRoute(RouteEntry route) {
-        String path = getNormalizedPath(route.getPath());
-        String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         RouteIndex currentRootIndex = routeIndex;
-        for (String pathPart : pathParts) {
+        for (String pathPart : route.getPathParts()) {
             if (pathPart.equals(ROUTE_GENERIC_PATH)) {
                 currentRootIndex.addGenericRoute(route);
                 return;
@@ -52,57 +44,35 @@ public class Routes {
         routeIndex.clear();
     }
 
-
-
-    public List<RouteEntry> findRoutes(Request request) {
+    public List<RouteEntry> findRoutes(String method, String[] pathParts) {
         List<RouteEntry> routes = new ArrayList<>();
-        String path = getNormalizedPath(request.getPathInfo());
-        String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
-        findRoutes(routes, request, routeIndex, pathParts, 0);
-        for (RouteEntry route : routes) {
-            loadExtraParameters(request, route, pathParts);
-        }
+        findRoutes(routes, routeIndex, method, pathParts, 0);
         Collections.sort(routes, routeEntryComparator);
         return routes;
     }
 
-    private void findRoutes(List<RouteEntry> routes, Request request, RouteIndex currentRootIndex, String[] pathParts, int pathIndex) {
+    private void findRoutes(List<RouteEntry> routes, RouteIndex currentRootIndex, String method, String[] pathParts, int pathIndex) {
         if (pathIndex < pathParts.length) {
             String pathPart = pathParts[pathIndex];
             RouteIndex nextRootIndex = currentRootIndex.getRouteIndex(pathPart);
             if (nextRootIndex != null) {
-                findRoutes(routes, request, nextRootIndex, pathParts, pathIndex + 1);
+                findRoutes(routes, nextRootIndex, method, pathParts, pathIndex + 1);
             }
             nextRootIndex = currentRootIndex.getRouteIndex(ROUTE_PARAMETER_WILDCARD);
             if (nextRootIndex != null) {
-                findRoutes(routes, request, nextRootIndex, pathParts, pathIndex + 1);
+                findRoutes(routes, nextRootIndex, method, pathParts, pathIndex + 1);
             }
         }
         else {
             for (RouteEntry routeEntry : currentRootIndex.getRoutes()) {
-                if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
+                if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(method)) {
                     routes.add(routeEntry);
                 }
             }
         }
         for (RouteEntry routeEntry : currentRootIndex.getGenericRoutes()) {
-            if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
+            if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(method)) {
                 routes.add(routeEntry);
-            }
-        }
-    }
-
-    private void loadExtraParameters (Request request, RouteEntry route, String[] pathParts) {
-        if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
-            String routePath = getNormalizedPath(route.getPath());
-            String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
-            for (int i = 0; i < routePathParts.length; i++) {
-                String pathPart = routePathParts[i];
-                if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
-                    String parameterName = pathPart.substring(1);
-                    String parameterValue = pathParts[i];
-                    request.setParameter(parameterName, parameterValue);
-                }
             }
         }
     }

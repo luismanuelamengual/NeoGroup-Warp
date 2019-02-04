@@ -6,15 +6,15 @@ import java.lang.reflect.Method;
 public class RouteEntry {
 
     private final String method;
-    private final String path;
+    private final String[] pathParts;
     private final Object controller;
     private final Method controllerMethod;
     private final int priority;
     private final boolean auxiliary;
 
-    public RouteEntry(String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+    public RouteEntry(String method, String[] pathParts, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
         this.method = method;
-        this.path = path;
+        this.pathParts = pathParts;
         this.controller = controller;
         this.controllerMethod = controllerMethod;
         this.priority = priority;
@@ -25,8 +25,8 @@ public class RouteEntry {
         return method;
     }
 
-    public String getPath() {
-        return path;
+    public String[] getPathParts() {
+        return pathParts;
     }
 
     public Object getController() {

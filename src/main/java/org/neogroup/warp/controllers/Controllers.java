@@ -16,6 +16,9 @@ import java.util.Map;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Controllers {
+
+    private static final String ROUTE_PATH_SEPARATOR = "/";
+
     private static final Map<Class, Object> controllers;
     private static final Routes routes;
     private static final Routes notFoundRoutes;
@@ -26,6 +29,13 @@ public abstract class Controllers {
         routes = new Routes();
         notFoundRoutes = new Routes();
         errorRoutes = new Routes();
+    }
+
+    private static String getNormalizedPath (String path) {
+        if (!path.isEmpty() && path.startsWith(ROUTE_PATH_SEPARATOR)) {
+            path = path.substring(1);
+        }
+        return path;
     }
 
     public static void registerController (Class controllerClass) {
@@ -77,7 +87,9 @@ public abstract class Controllers {
     }
 
     public static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
-        routes.addRoute(new RouteEntry(method, path, controller, controllerMethod, priority, auxiliary));
+        path = getNormalizedPath(path);
+        String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+        routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority, auxiliary));
         getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" route registered !!");
     }
 
@@ -86,10 +98,12 @@ public abstract class Controllers {
     }
 
     private static void handleNotFound (Request request, Response response) throws InvocationTargetException, IllegalAccessException, IOException {
-        List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request);
+        String path = getNormalizedPath(request.getPathInfo());
+        String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+        List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request.getMethod(), pathParts);
         if (!notFoundRoutes.isEmpty()) {
             for (RouteEntry route : notFoundRoutes) {
-                executeRoute(route, request, response);
+                executeRoute(route, pathParts, request, response);
             }
             writeResponse(response);
         }
@@ -101,14 +115,16 @@ public abstract class Controllers {
 
     private static void handleException (Request request, Response response, Throwable throwable) {
         try {
-            List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request);
+            String path = getNormalizedPath(request.getPathInfo());
+            String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+            List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request.getMethod(), pathParts);
             if (!errorRoutes.isEmpty()) {
                 for (RouteEntry route : errorRoutes) {
-                    executeRoute(route, request, response, throwable);
+                    executeRoute(route, pathParts, request, response, throwable);
                 }
                 writeResponse(response);
             } else {
-                throw new RuntimeException("Unhandled exception");
+                throw throwable;
             }
         }
         catch (Throwable errorThrowable) {
@@ -120,7 +136,9 @@ public abstract class Controllers {
     public static void handle(Request request, Response response) {
         try {
             try {
-                List<RouteEntry> routes = Controllers.routes.findRoutes(request);
+                String path = getNormalizedPath(request.getPathInfo());
+                String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+                List<RouteEntry> routes = Controllers.routes.findRoutes(request.getMethod(), pathParts);
                 boolean routeFound = false;
                 for (RouteEntry route : routes) {
                     if (!route.isAuxiliary()) {
@@ -130,7 +148,7 @@ public abstract class Controllers {
                 }
                 if (routeFound) {
                     for (RouteEntry route : routes) {
-                        executeRoute(route, request, response);
+                        executeRoute(route, pathParts, request, response);
                     }
                     writeResponse(response);
                 }
@@ -146,11 +164,41 @@ public abstract class Controllers {
         }
     }
 
-    private static void executeRoute (RouteEntry route, Request request, Response response) throws InvocationTargetException, IllegalAccessException {
-        executeRoute(route, request, response, null);
+    private static void executeRoute (RouteEntry route, String[] pathParts, Request request, Response response) throws InvocationTargetException, IllegalAccessException {
+        executeRoute(route, pathParts, request, response, null);
     }
 
-    private static void executeRoute (RouteEntry route, Request request, Response response, Throwable throwable) throws InvocationTargetException, IllegalAccessException {
+    /*private void loadExtraParameters (Request request, RouteEntry route, String[] pathParts) {
+        if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
+            String routePath = getNormalizedPath(route.getPath());
+            String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
+            for (int i = 0; i < routePathParts.length; i++) {
+                String pathPart = routePathParts[i];
+                if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
+                    String parameterName = pathPart.substring(1);
+                    String parameterValue = pathParts[i];
+                    request.setParameter(parameterName, parameterValue);
+                }
+            }
+        }
+    }*/
+
+    private static void executeRoute (RouteEntry route, String[] pathParts, Request request, Response response, Throwable throwable) throws InvocationTargetException, IllegalAccessException {
+
+        Map<String,String> extraRouteParameters = null;
+        String[] routePathParts = route.getPathParts();
+        for (int i = 0; i < routePathParts.length; i++) {
+            String pathPart = routePathParts[i];
+            if (pathPart.startsWith(Routes.ROUTE_PARAMETER_PREFIX)) {
+                if (extraRouteParameters == null) {
+                    extraRouteParameters = new HashMap<>();
+                }
+                String parameterName = pathPart.substring(1);
+                String parameterValue = pathParts[i];
+                extraRouteParameters.put(parameterName, parameterValue);
+            }
+        }
+
         Object controller = route.getController();
         Method controllerMethod = route.getControllerMethod();
         Object[] parameters = new Object[controllerMethod.getParameterCount()];
@@ -169,9 +217,16 @@ public abstract class Controllers {
             }
             Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
             if (paramAnnotation != null) {
-                Object parameterValue = request.getParameter(paramAnnotation.value());
+                String parameterName = paramAnnotation.value();
+                Object parameterValue = null;
+                if (extraRouteParameters != null && extraRouteParameters.containsKey(parameterName)) {
+                    parameterValue = extraRouteParameters.get(parameterName);
+                }
+                else if (request.hasParameter(parameterName)) {
+                    parameterValue = request.getParameter(parameterName);
+                }
                 if (paramAnnotation.required() && parameterValue == null) {
-                    throw new RouteNotFoundException();
+                    throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
                 }
                 parameters[i] = parameterValue;
             }

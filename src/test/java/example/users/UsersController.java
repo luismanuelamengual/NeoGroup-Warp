@@ -61,4 +61,27 @@ public class UsersController {
         getResponse().print("Validando sesion !!   ");
     }
 
+    @Get("cama")
+    public Pepe getPepe () {
+        return new Pepe("Luis", "Amengual");
+    }
+
+
+    class Pepe {
+        private String name;
+        private String lastName;
+
+        public Pepe(String name, String lastName) {
+            this.name = name;
+            this.lastName = lastName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+    }
 }
