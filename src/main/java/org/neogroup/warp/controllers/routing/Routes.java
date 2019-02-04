@@ -11,6 +11,7 @@ public class Routes {
     private static final String ROUTE_PARAMETER_PREFIX = ":";
     private static final String ROUTE_PARAMETER_WILDCARD = "%";
     private static final String ROUTE_PATH_SEPARATOR = "/";
+    private static final Comparator<RouteEntry> routeEntryComparator = (r1, r2) -> r2.getPriority() - r1.getPriority();
 
     private final RouteIndex routeIndex;
 
@@ -51,6 +52,8 @@ public class Routes {
         routeIndex.clear();
     }
 
+
+
     public List<RouteEntry> findRoutes(Request request) {
         List<RouteEntry> routes = new ArrayList<>();
         String path = getNormalizedPath(request.getPathInfo());
@@ -59,7 +62,7 @@ public class Routes {
         for (RouteEntry route : routes) {
             loadExtraParameters(request, route, pathParts);
         }
-        Collections.sort(routes, Comparator.comparingInt(o -> o.getPriority()));
+        Collections.sort(routes, routeEntryComparator);
         return routes;
     }
 
@@ -79,14 +82,12 @@ public class Routes {
             for (RouteEntry routeEntry : currentRootIndex.getRoutes()) {
                 if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
                     routes.add(routeEntry);
-                    break;
                 }
             }
         }
         for (RouteEntry routeEntry : currentRootIndex.getGenericRoutes()) {
             if (routeEntry.getMethod() == null || routeEntry.getMethod().equals(request.getMethod())) {
                 routes.add(routeEntry);
-                break;
             }
         }
     }

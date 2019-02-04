@@ -3,14 +3,12 @@ package example.users;
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.ControllerComponent;
-import org.neogroup.warp.controllers.routing.Get;
-import org.neogroup.warp.controllers.routing.Parameter;
-import org.neogroup.warp.controllers.routing.Put;
-import org.neogroup.warp.controllers.routing.RoutingPriority;
+import org.neogroup.warp.controllers.routing.*;
 
 import java.text.MessageFormat;
 
 import static org.neogroup.warp.Warp.getResource;
+import static org.neogroup.warp.Warp.getResponse;
 
 @ControllerComponent
 public class UsersController {
@@ -41,4 +39,26 @@ public class UsersController {
     public void showRama (Response response) {
         response.print("superv ").print(125);
     }
+
+
+    @Get(value="pepe", priority = RoutingPriority.LOW)
+    public void pepe3 (Response response) {
+        response.print("PEPE 3 ");
+    }
+
+    @Get(value="pepe", priority = RoutingPriority.HIGH)
+    public void pepe1 (Response response) {
+        response.print("PEPE 1 ");
+    }
+
+    @Get("pepe")
+    public void pepe2 (Response response) {
+        response.print("PEPE 2 ");
+    }
+
+    @Route(value = "*", auxiliary = true, priority = RoutingPriority.VERY_HIGH)
+    public void aux () {
+        getResponse().print("Validando sesion !!   ");
+    }
+
 }
