@@ -4,13 +4,13 @@ import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
-import org.neogroup.warp.controllers.routing.Parameter;
-import org.neogroup.warp.utils.ReflectionUtils;
+import org.neogroup.warp.utils.json.JsonElement;
 import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,8 @@ import java.util.Map;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Controllers {
+
+    private static final String JSON_CONTENT_TYPE = "application/json";
 
     private static final String ROUTE_PATH_SEPARATOR = "/";
 
@@ -253,6 +255,12 @@ public abstract class Controllers {
         if (responseObject != null) {
             if (responseObject instanceof View) {
                 response.print(((View) responseObject).render());
+            }
+            else if (responseObject instanceof JsonElement) {
+                if (response.getContentType() == null) {
+                    response.setContentType(JSON_CONTENT_TYPE);
+                }
+                response.print(responseObject);
             }
             else {
                 response.print(responseObject);
