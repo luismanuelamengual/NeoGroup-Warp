@@ -73,7 +73,7 @@ public class Query {
         return limit;
     }
 
-    public Query setLimit(Integer limit) {
+    public Query limit(Integer limit) {
         this.limit = limit;
         return this;
     }
@@ -82,7 +82,7 @@ public class Query {
         return offset;
     }
 
-    public Query setOffset(Integer offset) {
+    public Query offset(Integer offset) {
         this.offset = offset;
         return this;
     }
@@ -203,7 +203,7 @@ public class Query {
         return whereConditionGroup.isEmpty();
     }
 
-    public Query addWhereCondition(Condition condition) {
+    public Query where(Condition condition) {
         whereConditionGroup.addCondition(condition);
         return this;
     }
@@ -384,7 +384,7 @@ public class Query {
         return havingConditionGroup.isEmpty();
     }
 
-    public Query addHavingCondition(Condition condition) {
+    public Query having(Condition condition) {
         havingConditionGroup.addCondition(condition);
         return this;
     }

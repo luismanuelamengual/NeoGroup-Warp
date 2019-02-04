@@ -165,8 +165,6 @@ public class WarpApplication {
     }
 
     private Class getMainClass() {
-        getLogger().info("Initializing Warp Server [port:" + port + "] ...");
-
         Class clazz = null;
         StackTraceElement trace[] = Thread.currentThread().getStackTrace();
         if (trace.length > 0) {

@@ -6,8 +6,19 @@ import java.util.Collection;
 
 public abstract class Resource<R>  {
 
-    public abstract Collection<R> find(Query query);
-    public abstract R insert(Query query);
-    public abstract R update(Query query);
-    public abstract R delete(Query query);
+    public Collection<R> find(Query query) {
+        throw new RuntimeException ("Unimplemented \"find\" method !!");
+    }
+
+    public R insert(Query query) {
+        throw new RuntimeException ("Unimplemented \"insert\" method !!");
+    }
+
+    public R update(Query query) {
+        throw new RuntimeException ("Unimplemented \"update\" method !!");
+    }
+
+    public R delete(Query query) {
+        throw new RuntimeException ("Unimplemented \"delete\" method !!");
+    }
 }

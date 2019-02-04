@@ -13,10 +13,6 @@ public class ResourceProxy<T extends Object> extends Query {
         this.resource = resource;
     }
 
-    public Resource<T> getResource() {
-        return resource;
-    }
-
     public Collection<T> find() {
         return resource.find(this);
     }
@@ -31,5 +27,10 @@ public class ResourceProxy<T extends Object> extends Query {
 
     public T delete () {
         return resource.delete(this);
+    }
+
+    public T first () {
+        limit(1);
+        return find().iterator().next();
     }
 }
