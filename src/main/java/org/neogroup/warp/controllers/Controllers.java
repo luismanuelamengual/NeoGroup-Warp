@@ -168,21 +168,6 @@ public abstract class Controllers {
         executeRoute(route, pathParts, request, response, null);
     }
 
-    /*private void loadExtraParameters (Request request, RouteEntry route, String[] pathParts) {
-        if (route.getPath().contains(ROUTE_PARAMETER_PREFIX)) {
-            String routePath = getNormalizedPath(route.getPath());
-            String[] routePathParts = routePath.split(ROUTE_PATH_SEPARATOR);
-            for (int i = 0; i < routePathParts.length; i++) {
-                String pathPart = routePathParts[i];
-                if (pathPart.startsWith(ROUTE_PARAMETER_PREFIX)) {
-                    String parameterName = pathPart.substring(1);
-                    String parameterValue = pathParts[i];
-                    request.setParameter(parameterName, parameterValue);
-                }
-            }
-        }
-    }*/
-
     private static void executeRoute (RouteEntry route, String[] pathParts, Request request, Response response, Throwable throwable) throws InvocationTargetException, IllegalAccessException {
 
         Map<String,String> extraRouteParameters = null;
@@ -239,11 +224,11 @@ public abstract class Controllers {
         }
     }
 
-    private static void writeResponse (Response response) throws IOException {
+    private static void writeResponse (Response response) {
         Object responseObject = response.getResponseObject();
         if (responseObject != null) {
-            response.getWriter().print(responseObject);
-            response.flushBuffer();
+            response.print(responseObject);
+            response.flush();
         }
     }
 }

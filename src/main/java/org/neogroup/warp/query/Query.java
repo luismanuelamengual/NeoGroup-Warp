@@ -186,8 +186,9 @@ public class Query {
         return whereConditionGroup.getConnector();
     }
 
-    public void setWhereConnector(ConditionGroupConnector connector) {
+    public Query setWhereConnector(ConditionGroupConnector connector) {
         whereConditionGroup.setConnector(connector);
+        return this;
     }
 
     public List<Condition> getWhereConditions() {
