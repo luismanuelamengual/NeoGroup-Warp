@@ -7,6 +7,7 @@ import org.neogroup.warp.controllers.routing.*;
 
 import java.text.MessageFormat;
 
+import static org.neogroup.warp.Warp.getLogger;
 import static org.neogroup.warp.Warp.getResource;
 import static org.neogroup.warp.Warp.getResponse;
 
@@ -58,7 +59,7 @@ public class UsersController {
 
     @Route(value = "*", auxiliary = true, priority = RoutingPriority.VERY_HIGH)
     public void aux () {
-        getResponse().print("Validando sesion !!   ");
+        getLogger().info("Validando sesión");
     }
 
     @Get("cama")
