@@ -125,18 +125,6 @@ public abstract class Warp {
         }
     }
 
-    public static WarpContext getContext() {
-        return contexts.get(Thread.currentThread().getId());
-    }
-
-    public static Request getRequest() {
-        return getContext().getRequest();
-    }
-
-    public static Response getResponse() {
-        return getContext().getResponse();
-    }
-
     public static <C> C getController(Class<? extends C> controllerClass) {
         return Controllers.get(controllerClass);
     }
@@ -173,11 +161,23 @@ public abstract class Warp {
         return Views.createView(viewFactoryName, viewName, viewParameters);
     }
 
+    public static WarpContext getContext() {
+        return contexts.get(Thread.currentThread().getId());
+    }
+
+    public static Request getRequest() {
+        return getContext().getRequest();
+    }
+
+    public static Response getResponse() {
+        return getContext().getResponse();
+    }
+
     public static Connection getConnection() {
-        return DataSources.getConnection();
+        return getContext().getConnection();
     }
 
     public static Connection getConnection(String dataSourceName) {
-        return DataSources.getConnection(dataSourceName);
+        return getContext().getConnection(dataSourceName);
     }
 }
