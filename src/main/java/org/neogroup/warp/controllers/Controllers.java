@@ -180,9 +180,7 @@ public abstract class Controllers {
                 }
                 String parameterName = pathPart.substring(1);
                 String parameterValue = pathParts[i];
-                if (!parameterValue.isEmpty()) {
-                    extraRouteParameters.put(parameterName, parameterValue);
-                }
+                extraRouteParameters.put(parameterName, parameterValue);
             }
         }
 
@@ -202,20 +200,44 @@ public abstract class Controllers {
             else if (throwable != null && Throwable.class.isAssignableFrom(methodParameterClass)) {
                 parameters[i] = throwable;
             }
-            Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
-            if (paramAnnotation != null) {
-                String parameterName = paramAnnotation.value();
-                Object parameterValue = null;
-                if (extraRouteParameters != null && extraRouteParameters.containsKey(parameterName)) {
-                    parameterValue = extraRouteParameters.get(parameterName);
+            else {
+                Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
+                if (paramAnnotation != null) {
+                    String parameterName = paramAnnotation.value();
+                    Object parameterValue = null;
+                    if (extraRouteParameters != null && extraRouteParameters.containsKey(parameterName)) {
+                        parameterValue = extraRouteParameters.get(parameterName);
+                    } else if (request.hasParameter(parameterName)) {
+                        parameterValue = request.getParameter(parameterName);
+                    }
+
+                    if (parameterValue != null && !((String)parameterValue).isEmpty()) {
+                        if (!String.class.isAssignableFrom(methodParameterClass)) {
+                            if (int.class.isAssignableFrom(methodParameterClass) || Integer.class.isAssignableFrom(methodParameterClass)) {
+                                parameterValue = Integer.parseInt((String)parameterValue);
+                            }
+                            if (float.class.isAssignableFrom(methodParameterClass) || Float.class.isAssignableFrom(methodParameterClass)) {
+                                parameterValue = Float.parseFloat((String)parameterValue);
+                            }
+                            if (double.class.isAssignableFrom(methodParameterClass) || Double.class.isAssignableFrom(methodParameterClass)) {
+                                parameterValue = Double.parseDouble((String)parameterValue);
+                            }
+                            if (boolean.class.isAssignableFrom(methodParameterClass) || Boolean.class.isAssignableFrom(methodParameterClass)) {
+                                parameterValue = Boolean.parseBoolean((String)parameterValue);
+                            }
+                            else {
+                                throw new RuntimeException("Parameter type \"" + methodParameterClass.getName() + "\" not supported !!");
+                            }
+                        }
+                    }
+                    else {
+                        if (paramAnnotation.required()) {
+                            throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
+                        }
+                    }
+
+                    parameters[i] = parameterValue;
                 }
-                else if (request.hasParameter(parameterName)) {
-                    parameterValue = request.getParameter(parameterName);
-                }
-                if (paramAnnotation.required() && parameterValue == null) {
-                    throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
-                }
-                parameters[i] = parameterValue;
             }
         }
         Object responseObject = controllerMethod.invoke(controller, parameters);

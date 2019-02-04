@@ -16,7 +16,7 @@ public class PersonsController {
     }
 
     @Get("/persons/:id")
-    public Person getPerson(@Parameter("id") String personId) {
-        return getResource(Person.class).where("id", 1).first();
+    public Person getPerson(@Parameter("id") int personId) {
+        return getResource(Person.class).where("id", personId).first();
     }
 }
