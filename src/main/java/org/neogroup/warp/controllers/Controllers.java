@@ -195,7 +195,9 @@ public abstract class Controllers {
                 }
                 String parameterName = pathPart.substring(1);
                 String parameterValue = pathParts[i];
-                extraRouteParameters.put(parameterName, parameterValue);
+                if (!parameterValue.isEmpty()) {
+                    extraRouteParameters.put(parameterName, parameterValue);
+                }
             }
         }
 
