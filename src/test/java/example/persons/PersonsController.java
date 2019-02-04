@@ -4,6 +4,7 @@ import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
 
+import static org.neogroup.warp.Warp.getRequest;
 import static org.neogroup.warp.Warp.getResource;
 import static org.neogroup.warp.Warp.getResponse;
 

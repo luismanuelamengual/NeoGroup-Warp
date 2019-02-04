@@ -5,6 +5,8 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
 import org.neogroup.warp.controllers.routing.Parameter;
+import org.neogroup.warp.utils.ReflectionUtils;
+import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -216,13 +218,13 @@ public abstract class Controllers {
                             if (int.class.isAssignableFrom(methodParameterClass) || Integer.class.isAssignableFrom(methodParameterClass)) {
                                 parameterValue = Integer.parseInt((String)parameterValue);
                             }
-                            if (float.class.isAssignableFrom(methodParameterClass) || Float.class.isAssignableFrom(methodParameterClass)) {
+                            else if (float.class.isAssignableFrom(methodParameterClass) || Float.class.isAssignableFrom(methodParameterClass)) {
                                 parameterValue = Float.parseFloat((String)parameterValue);
                             }
-                            if (double.class.isAssignableFrom(methodParameterClass) || Double.class.isAssignableFrom(methodParameterClass)) {
+                            else if (double.class.isAssignableFrom(methodParameterClass) || Double.class.isAssignableFrom(methodParameterClass)) {
                                 parameterValue = Double.parseDouble((String)parameterValue);
                             }
-                            if (boolean.class.isAssignableFrom(methodParameterClass) || Boolean.class.isAssignableFrom(methodParameterClass)) {
+                            else if (boolean.class.isAssignableFrom(methodParameterClass) || Boolean.class.isAssignableFrom(methodParameterClass)) {
                                 parameterValue = Boolean.parseBoolean((String)parameterValue);
                             }
                             else {
@@ -249,7 +251,12 @@ public abstract class Controllers {
     private static void writeResponse (Response response) {
         Object responseObject = response.getResponseObject();
         if (responseObject != null) {
-            response.print(responseObject);
+            if (responseObject instanceof View) {
+                response.print(((View) responseObject).render());
+            }
+            else {
+                response.print(responseObject);
+            }
             response.flush();
         }
     }
