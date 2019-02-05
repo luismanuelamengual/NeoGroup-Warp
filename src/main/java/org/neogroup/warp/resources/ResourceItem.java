@@ -15,15 +15,17 @@ public class ResourceItem {
         return (V) fields.get(fieldName);
     }
 
-    public void set(String fieldName, Object value) {
+    public ResourceItem set(String fieldName, Object value) {
         fields.put(fieldName, value);
+        return this;
     }
 
     public Map<String, Object> get() {
         return fields;
     }
 
-    public void clear () {
+    public ResourceItem clear () {
         fields.clear();
+        return this;
     }
 }
