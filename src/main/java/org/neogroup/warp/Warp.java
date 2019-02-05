@@ -1,9 +1,9 @@
 package org.neogroup.warp;
 
 import org.neogroup.warp.controllers.Controllers;
+import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataSources;
 import org.neogroup.warp.resources.Resource;
-import org.neogroup.warp.resources.ResourceItem;
 import org.neogroup.warp.resources.ResourceProxy;
 import org.neogroup.warp.resources.Resources;
 import org.neogroup.warp.views.View;
@@ -129,7 +129,7 @@ public abstract class Warp {
         return Controllers.get(controllerClass);
     }
 
-    public static ResourceProxy<ResourceItem> getResource(String resourceName) {
+    public static ResourceProxy<DataElement> getResource(String resourceName) {
         return Resources.get(resourceName);
     }
 

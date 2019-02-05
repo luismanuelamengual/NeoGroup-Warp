@@ -1,10 +1,6 @@
 package example.persons;
 
-import org.neogroup.warp.utils.json.Json;
-import org.neogroup.warp.utils.json.JsonElement;
-import org.neogroup.warp.utils.json.JsonSerializable;
-
-public class Person implements JsonSerializable {
+public class Person {
 
     private String name;
     private String lastName;
@@ -23,12 +19,5 @@ public class Person implements JsonSerializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    @Override
-    public JsonElement toJson() {
-        return Json.object()
-            .set("name", name)
-            .set("lastName", lastName);
     }
 }

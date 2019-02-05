@@ -1,8 +1,12 @@
-package org.neogroup.warp.utils.json;
+package org.neogroup.warp.data.writers;
+
+import org.neogroup.warp.data.DataArray;
+import org.neogroup.warp.data.DataElement;
+import org.neogroup.warp.data.DataObject;
 
 import java.io.StringWriter;
 
-public class JsonWriter {
+public class JsonDataWriter extends DataWriter {
 
     private static final char JSON_ARRAY_START_CHAR = '[';
     private static final char JSON_ARRAY_END_CHAR = ']';
@@ -12,18 +16,19 @@ public class JsonWriter {
     private static final char JSON_ELEMENT_SEPARATOR_CHAR = ',';
     private static final char JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR = ':';
 
-    public String write(JsonElement jsonElement) {
+    @Override
+    public String write(DataElement element) {
         StringWriter writer = new StringWriter();
-        write(jsonElement, writer);
+        write(element, writer);
         return writer.toString();
     }
 
     private void write (Object object, StringWriter writer) {
-        if (object instanceof JsonObject) {
-            writeObject((JsonObject)object, writer);
+        if (object instanceof DataObject) {
+            writeObject((DataObject)object, writer);
         }
-        else if (object instanceof JsonArray) {
-            writeArray((JsonArray)object, writer);
+        else if (object instanceof DataArray) {
+            writeArray((DataArray)object, writer);
         }
         else if ((object instanceof Number) || (object instanceof Boolean)) {
             writer.append(object.toString());
@@ -35,10 +40,10 @@ public class JsonWriter {
         }
     }
 
-    private void writeObject (JsonObject jsonObject, StringWriter writer) {
+    private void writeObject (DataObject dataObject, StringWriter writer) {
         writer.append(JSON_OBJECT_START_CHAR);
         boolean isFirst = true;
-        for (String key : jsonObject.keys()) {
+        for (String key : dataObject.keys()) {
             if (!isFirst) {
                 writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
             }
@@ -46,16 +51,16 @@ public class JsonWriter {
             writer.append(key);
             writer.append(JSON_DOUBLE_COLON_CHAR);
             writer.append(JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
-            write(jsonObject.get(key), writer);
+            write(dataObject.get(key), writer);
             isFirst = false;
         }
         writer.append(JSON_OBJECT_END_CHAR);
     }
 
-    private void writeArray (JsonArray jsonObject, StringWriter writer) {
+    private void writeArray (DataArray dataObject, StringWriter writer) {
         writer.append(JSON_ARRAY_START_CHAR);
         boolean isFirst = true;
-        for (Object object : jsonObject.getElements()) {
+        for (Object object : dataObject) {
             if (!isFirst) {
                 writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
             }

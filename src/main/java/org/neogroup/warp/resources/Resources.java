@@ -1,5 +1,7 @@
 package org.neogroup.warp.resources;
 
+import org.neogroup.warp.data.DataElement;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -9,7 +11,7 @@ import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
 
-    private static Map<String, Resource<ResourceItem>> resources;
+    private static Map<String, Resource<DataElement>> resources;
     private static Map<Class, Resource> resourcesByModelClass;
 
     static {
@@ -25,7 +27,7 @@ public abstract class Resources {
                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                 Class modelClass = (Class) fieldArgTypes[0];
                 Resource resource = resourceClass.getConstructor().newInstance();
-                if (modelClass.isAssignableFrom(ResourceItem.class)) {
+                if (modelClass.isAssignableFrom(DataElement.class)) {
                     ResourceComponent resourceComponent = resourceClass.getAnnotation(ResourceComponent.class);
                     String resourceName = (resourceComponent != null && !resourceComponent.value().isEmpty())? resourceComponent.value() : resourceClass.toString();
                     resources.put(resourceName, resource);
@@ -51,8 +53,8 @@ public abstract class Resources {
         return new ResourceProxy<>(modelClass.toString(), resource);
     }
 
-    public static ResourceProxy<ResourceItem> get(String resourceName) {
-        Resource<ResourceItem> resource = resources.get(resourceName);
+    public static ResourceProxy<DataElement> get(String resourceName) {
+        Resource<DataElement> resource = resources.get(resourceName);
         if (resource == null) {
             throw new RuntimeException("Resource not found with name \"" + resourceName + "\" !!");
         }

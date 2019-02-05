@@ -4,8 +4,7 @@ import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
-import org.neogroup.warp.utils.json.JsonElement;
-import org.neogroup.warp.utils.json.JsonSerializable;
+import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
@@ -248,17 +247,11 @@ public abstract class Controllers {
             if (responseObject instanceof View) {
                 response.print(((View) responseObject).render());
             }
-            else if (responseObject instanceof JsonElement) {
+            else if (responseObject instanceof DataElement) {
                 if (response.getContentType() == null) {
                     response.setContentType(JSON_CONTENT_TYPE);
                 }
                 response.print(responseObject);
-            }
-            else if (responseObject instanceof JsonSerializable) {
-                if (response.getContentType() == null) {
-                    response.setContentType(JSON_CONTENT_TYPE);
-                }
-                response.print(((JsonSerializable) responseObject).toJson());
             }
             else {
                 response.print(responseObject);

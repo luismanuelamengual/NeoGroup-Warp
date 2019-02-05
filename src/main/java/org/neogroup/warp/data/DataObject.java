@@ -1,43 +1,43 @@
-package org.neogroup.warp.utils.json;
+package org.neogroup.warp.data;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class JsonObject extends JsonElement {
+public class DataObject extends DataElement {
 
     private Map<String, Object> properties;
 
-    public JsonObject() {
+    public DataObject() {
         properties = new LinkedHashMap<>();
     }
 
-    public JsonObject set(String name, String value) {
+    public DataObject set(String name, String value) {
         properties.put(name, value);
         return this;
     }
 
-    public JsonObject set(String name, int value) {
+    public DataObject set(String name, int value) {
         properties.put(name, value);
         return this;
     }
 
-    public JsonObject set(String name, float value) {
+    public DataObject set(String name, float value) {
         properties.put(name, value);
         return this;
     }
 
-    public JsonObject set(String name, double value) {
+    public DataObject set(String name, double value) {
         properties.put(name, value);
         return this;
     }
 
-    public JsonObject set(String name, boolean value) {
+    public DataObject set(String name, boolean value) {
         properties.put(name, value);
         return this;
     }
 
-    public JsonObject set(String name, JsonElement value) {
+    public DataObject set(String name, DataElement value) {
         properties.put(name, value);
         return this;
     }

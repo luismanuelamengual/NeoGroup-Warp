@@ -3,8 +3,8 @@ package example.persons;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
-import org.neogroup.warp.utils.json.Json;
-import org.neogroup.warp.utils.json.JsonElement;
+import org.neogroup.warp.data.Data;
+import org.neogroup.warp.data.DataElement;
 
 import static org.neogroup.warp.Warp.getResource;
 import static org.neogroup.warp.Warp.getResponse;
@@ -23,17 +23,17 @@ public class PersonsController {
     }
 
     @Get("elem")
-    public JsonElement getElement() {
-        return Json.object()
+    public DataElement getElement() {
+        return Data.object()
             .set("name", "Luis")
             .set("lastName", "Amengual")
-            .set("projects", Json.array()
+            .set("projects", Data.array()
                 .add("Ramach")
                 .add("Pepech")
                 .add(124.46)
                 .add(true))
             .set("rulex", "pepperonni")
-            .set("direction", Json.object()
+            .set("direction", Data.object()
                 .set("country", "Argentina")
                 .set("province", "Mendoza"))
             .set("age", 36);
