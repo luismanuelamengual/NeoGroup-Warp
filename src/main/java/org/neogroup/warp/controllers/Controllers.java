@@ -5,6 +5,7 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
 import org.neogroup.warp.utils.json.JsonElement;
+import org.neogroup.warp.utils.json.JsonSerializable;
 import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
@@ -252,6 +253,12 @@ public abstract class Controllers {
                     response.setContentType(JSON_CONTENT_TYPE);
                 }
                 response.print(responseObject);
+            }
+            else if (responseObject instanceof JsonSerializable) {
+                if (response.getContentType() == null) {
+                    response.setContentType(JSON_CONTENT_TYPE);
+                }
+                response.print(((JsonSerializable) responseObject).toJson());
             }
             else {
                 response.print(responseObject);
