@@ -1,4 +1,4 @@
-package example.customers;
+package example.users;
 
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataElement;
@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @ResourceComponent("customer")
-public class CustomersResource extends Resource<DataElement> {
+public class UsersResource extends Resource<DataElement> {
 
     @Override
     public Collection<DataElement> find(Query query) {
