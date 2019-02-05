@@ -15,7 +15,7 @@ import java.util.Map;
 public class Request {
 
     private final HttpServletRequest request;
-    private final Map<String,String> parameters;
+    private Map<String,String> parameters;
 
     /**
      * Servlet Request
@@ -23,7 +23,7 @@ public class Request {
      */
     public Request (HttpServletRequest request) {
         this.request = request;
-        parameters = new HashMap<>();
+        this.parameters = new HashMap<>();
     }
 
     /**
@@ -131,7 +131,7 @@ public class Request {
      * @param key key of parameter
      * @param value value of parameter
      */
-    public void setParameter(String key, String value) {
+    public void set(String key, String value) {
         parameters.put(key, value);
     }
 
@@ -140,7 +140,7 @@ public class Request {
      * @param key key of parameter
      * @return value of parameter
      */
-    public String getParameter(String key) {
+    public String get(String key) {
 
         String value = parameters.get(key);
         if (value == null) {
@@ -154,8 +154,8 @@ public class Request {
      * @param key parameter key
      * @return boolean
      */
-    public boolean hasParameter(String key) {
-        return getParameter(key) != null;
+    public boolean has(String key) {
+        return get(key) != null;
     }
 
     /**

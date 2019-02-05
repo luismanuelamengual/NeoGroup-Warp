@@ -174,17 +174,15 @@ public abstract class Controllers {
 
     private static void executeRoute (RouteEntry route, String[] pathParts, Request request, Response response, Throwable throwable) throws InvocationTargetException, IllegalAccessException {
 
-        Map<String,String> extraRouteParameters = null;
         String[] routePathParts = route.getPathParts();
         for (int i = 0; i < routePathParts.length; i++) {
             String pathPart = routePathParts[i];
             if (pathPart.startsWith(Routes.ROUTE_PARAMETER_PREFIX)) {
-                if (extraRouteParameters == null) {
-                    extraRouteParameters = new HashMap<>();
-                }
                 String parameterName = pathPart.substring(1);
                 String parameterValue = pathParts[i];
-                extraRouteParameters.put(parameterName, parameterValue);
+                if (!parameterValue.isEmpty()) {
+                    request.set(parameterName, parameterValue);
+                }
             }
         }
 
@@ -208,14 +206,8 @@ public abstract class Controllers {
                 Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
                 if (paramAnnotation != null) {
                     String parameterName = paramAnnotation.value();
-                    Object parameterValue = null;
-                    if (extraRouteParameters != null && extraRouteParameters.containsKey(parameterName)) {
-                        parameterValue = extraRouteParameters.get(parameterName);
-                    } else if (request.hasParameter(parameterName)) {
-                        parameterValue = request.getParameter(parameterName);
-                    }
-
-                    if (parameterValue != null && !((String)parameterValue).isEmpty()) {
+                    Object parameterValue = request.get(parameterName);
+                    if (parameterValue != null) {
                         if (!String.class.isAssignableFrom(methodParameterClass)) {
                             if (int.class.isAssignableFrom(methodParameterClass) || Integer.class.isAssignableFrom(methodParameterClass)) {
                                 parameterValue = Integer.parseInt((String)parameterValue);
@@ -239,7 +231,6 @@ public abstract class Controllers {
                             throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
                         }
                     }
-
                     parameters[i] = parameterValue;
                 }
             }

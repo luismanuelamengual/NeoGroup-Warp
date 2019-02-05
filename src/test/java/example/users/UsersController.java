@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 
 import static org.neogroup.warp.Warp.getLogger;
 import static org.neogroup.warp.Warp.getResource;
-import static org.neogroup.warp.Warp.getResponse;
 
 @ControllerComponent
 public class UsersController {
@@ -17,7 +16,7 @@ public class UsersController {
     @Get(value="users", priority = RoutingPriority.HIGH)
     public String getUsers (Request req) {
         //return getResource("user").first();
-        return "Hola " + req.getParameter("name");
+        return "Hola " + req.get("name");
     }
 
     @Get("/users/showName")
