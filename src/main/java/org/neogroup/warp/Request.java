@@ -127,6 +127,15 @@ public class Request {
     }
 
     /**
+     * Returns true if the parameter key exists
+     * @param key parameter key
+     * @return boolean
+     */
+    public boolean has(String key) {
+        return get(key) != null;
+    }
+
+    /**
      * Set a parameter for the request
      * @param key key of parameter
      * @param value value of parameter
@@ -141,7 +150,6 @@ public class Request {
      * @return value of parameter
      */
     public String get(String key) {
-
         String value = parameters.get(key);
         if (value == null) {
             value = request.getParameter(key);
@@ -149,13 +157,66 @@ public class Request {
         return value;
     }
 
-    /**
-     * Returns true if the parameter key exists
-     * @param key parameter key
-     * @return boolean
-     */
-    public boolean has(String key) {
-        return get(key) != null;
+    public String get(String key, String defaultValue) {
+        String value = get(key);
+        return value != null? value : defaultValue;
+    }
+
+    public <V> V get(String key, Class<? extends V> valueClass) {
+        Object value = get(key);
+        if (value != null) {
+            if (!String.class.isAssignableFrom(valueClass)) {
+                if (int.class.isAssignableFrom(valueClass) || Integer.class.isAssignableFrom(valueClass)) {
+                    value = Integer.parseInt((String)value);
+                } else if (float.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
+                    value = Float.parseFloat((String)value);
+                } else if (double.class.isAssignableFrom(valueClass) || Double.class.isAssignableFrom(valueClass)) {
+                    value = Double.parseDouble((String)value);
+                } else if (boolean.class.isAssignableFrom(valueClass) || Boolean.class.isAssignableFrom(valueClass)) {
+                    value = Boolean.parseBoolean((String)value);
+                } else {
+                    throw new RuntimeException("Parameter type \"" + valueClass.getName() + "\" not supported !!");
+                }
+            }
+        }
+        return (V)value;
+    }
+
+    public <V> V get(String key, Class<? extends V> valueClass, V defaultValue) {
+        V value = get(key, valueClass);
+        return value != null? value : defaultValue;
+    }
+
+    public Integer getInt(String key) {
+        return get(key, Integer.class);
+    }
+
+    public int getInt(String key, int defaultValue) {
+        return get(key, Integer.class, defaultValue);
+    }
+
+    public Double getDouble(String key) {
+        return get(key, Double.class);
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        return get(key, Double.class, defaultValue);
+    }
+
+    public float getFloat(String key) {
+        return get(key, float.class);
+    }
+
+    public float getFloat(String key, float defaultValue) {
+        return get(key, Float.class, defaultValue);
+    }
+
+    public boolean getBoolean(String key) {
+        return get(key, boolean.class);
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return get(key, Boolean.class, defaultValue);
     }
 
     /**

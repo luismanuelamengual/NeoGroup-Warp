@@ -209,27 +209,8 @@ public abstract class Controllers {
                 Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
                 if (paramAnnotation != null) {
                     String parameterName = paramAnnotation.value();
-                    Object parameterValue = request.get(parameterName);
-                    if (parameterValue != null) {
-                        if (!String.class.isAssignableFrom(methodParameterClass)) {
-                            if (int.class.isAssignableFrom(methodParameterClass) || Integer.class.isAssignableFrom(methodParameterClass)) {
-                                parameterValue = Integer.parseInt((String)parameterValue);
-                            }
-                            else if (float.class.isAssignableFrom(methodParameterClass) || Float.class.isAssignableFrom(methodParameterClass)) {
-                                parameterValue = Float.parseFloat((String)parameterValue);
-                            }
-                            else if (double.class.isAssignableFrom(methodParameterClass) || Double.class.isAssignableFrom(methodParameterClass)) {
-                                parameterValue = Double.parseDouble((String)parameterValue);
-                            }
-                            else if (boolean.class.isAssignableFrom(methodParameterClass) || Boolean.class.isAssignableFrom(methodParameterClass)) {
-                                parameterValue = Boolean.parseBoolean((String)parameterValue);
-                            }
-                            else {
-                                throw new RuntimeException("Parameter type \"" + methodParameterClass.getName() + "\" not supported !!");
-                            }
-                        }
-                    }
-                    else {
+                    Object parameterValue = request.get(parameterName, methodParameterClass);
+                    if (parameterValue == null) {
                         if (paramAnnotation.required()) {
                             throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
                         }
