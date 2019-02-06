@@ -50,8 +50,9 @@ public class DataObject extends DataElement {
         return properties.containsKey(key);
     }
 
-    public void clear() {
+    public DataObject clear() {
         properties.clear();
+        return this;
     }
 
     public Set<String> keys() {

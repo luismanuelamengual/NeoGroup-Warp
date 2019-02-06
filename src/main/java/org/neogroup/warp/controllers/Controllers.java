@@ -2,9 +2,10 @@ package org.neogroup.warp.controllers;
 
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
+import org.neogroup.warp.controllers.formatters.Formatter;
+import org.neogroup.warp.controllers.formatters.JsonFormatter;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
-import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,8 @@ public abstract class Controllers {
     private static final Routes routes;
     private static final Routes notFoundRoutes;
     private static final Routes errorRoutes;
+
+    private static final Formatter defaultFormatter = new JsonFormatter();
 
     static {
         controllers = new HashMap<>();
@@ -247,14 +250,11 @@ public abstract class Controllers {
             if (responseObject instanceof View) {
                 response.print(((View) responseObject).render());
             }
-            else if (responseObject instanceof DataElement) {
+            else {
                 if (response.getContentType() == null) {
                     response.setContentType(JSON_CONTENT_TYPE);
                 }
-                response.print(responseObject);
-            }
-            else {
-                response.print(responseObject);
+                response.print(defaultFormatter.format(responseObject));
             }
             response.flush();
         }

@@ -84,4 +84,10 @@ public class RoutesController {
     public void aux () {
         getLogger().info("Validando sesión");
     }
+
+
+    @Get("tata")
+    public Object[] rama () {
+        return new Object[] {"asklj", 12354, new Double[] {65.0, 256.25}};
+    }
 }

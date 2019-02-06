@@ -52,8 +52,9 @@ public class DataArray extends DataElement implements Iterable {
         return elements.isEmpty();
     }
 
-    public void clear() {
+    public DataArray clear() {
         elements.clear();
+        return this;
     }
 
     @Override

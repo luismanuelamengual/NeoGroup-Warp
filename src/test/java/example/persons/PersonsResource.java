@@ -23,6 +23,7 @@ public class PersonsResource extends Resource<Person> {
         Person person2 = new Person();
         person2.setName("Jessica");
         person2.setLastName("Alba");
+        person2.setAge(35);
         persons.add(person2);
 
         return persons;
