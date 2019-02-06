@@ -3,6 +3,7 @@ package org.neogroup.warp;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataSources;
+import org.neogroup.warp.properties.Properties;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceProxy;
 import org.neogroup.warp.resources.Resources;
@@ -16,22 +17,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public abstract class Warp {
 
     private static final String DEFAULT_LOGGER_NAME = "Warp";
 
-    private static final Properties properties;
     private static final Map<Long, WarpContext> contexts;
 
     static {
-        properties = new Properties();
         contexts = new HashMap<>();
     }
 
@@ -51,38 +51,16 @@ public abstract class Warp {
         Resources.register(resourceClass);
     }
 
-    public static Properties getProperties() {
-        return properties;
-    }
-
     public static <R> R getProperty(String property) {
-        return (R)properties.getProperty(property);
+        return (R) Properties.get(property);
     }
 
     public static boolean hasProperty(String property) {
-        return properties.containsKey(property);
+        return Properties.has(property);
     }
 
     public static void setProperty(String property, Object value) {
-        properties.put(property, value);
-    }
-
-    public static void loadPropertiesFromResource(String resourceName) {
-        try (InputStream in = Warp.class.getClassLoader().getResourceAsStream(resourceName)) {
-            properties.load(in);
-        }
-        catch (IOException exception) {
-            throw new RuntimeException("Error reading properties resource file", exception);
-        }
-    }
-
-    public static void loadPropertiesFromFile(String filename) {
-        try (FileInputStream in = new FileInputStream(filename)) {
-            properties.load(in);
-        }
-        catch (IOException exception) {
-            throw new RuntimeException("Error reading properties file", exception);
-        }
+        Properties.set(property, value);
     }
 
     public static Logger getLogger() {

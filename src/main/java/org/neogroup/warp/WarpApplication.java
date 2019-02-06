@@ -24,7 +24,7 @@ import static org.neogroup.warp.Warp.*;
 
 public class WarpApplication {
 
-    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
+
     private static final String BASE_PACKAGE_PROPERTY = "org.neogroup.warp.basePackage";
 
     private int port;
@@ -69,13 +69,6 @@ public class WarpApplication {
 
     protected void initializeComponents() {
         getLogger().info("Initializing Warp Components ...");
-        try {
-            Warp.loadPropertiesFromResource(DEFAULT_PROPERTIES_RESOURCE_NAME);
-        }
-        catch (Exception ex) {
-            getLogger().warn("Unable to load properties from resource \"" + DEFAULT_PROPERTIES_RESOURCE_NAME + "\" !!", ex);
-        }
-
         String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
         Scanner scanner = new Scanner();
         scanner.findClasses(cls -> {
