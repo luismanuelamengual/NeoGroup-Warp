@@ -1,18 +1,16 @@
 package org.neogroup.warp;
 
+import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataSources;
 
-import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Map;
 
 public class WarpContext {
 
-    private static final String DEFAULT_DATASOURCE_NAME = "default";
-
     private final Request request;
     private final Response response;
-    private Map<String, Connection> connections;
+    private DataConnection connection;
+    private Map<String, DataConnection> connections;
 
     public WarpContext(Request request, Response response) {
         this.request = request;
@@ -27,31 +25,29 @@ public class WarpContext {
         return response;
     }
 
-    public Connection getConnection() {
-        if (connections == null) {
-            connections = new HashMap<>();
-        }
-        Connection connection = connections.get(DEFAULT_DATASOURCE_NAME);
+    public DataConnection getConnection() {
         if (connection == null) {
             connection = DataSources.getConnection();
         }
         return connection;
     }
 
-    public Connection getConnection(String sourceName) {
-        if (connections == null) {
-            connections = new HashMap<>();
-        }
-        Connection connection = connections.get(sourceName);
+    public DataConnection getConnection(String sourceName) {
+        DataConnection connection = connections.get(sourceName);
         if (connection == null) {
             connection = DataSources.getConnection(sourceName);
+            connections.put(sourceName, connection);
         }
         return connection;
     }
 
     public void release () {
+        if (connection != null) {
+            try { connection.close(); } catch (Exception ex) {}
+            connection = null;
+        }
         if (connections != null) {
-            for (Connection connection : connections.values()) {
+            for (DataConnection connection : connections.values()) {
                 try { connection.close(); } catch (Exception ex) {}
             }
             connections.clear();

@@ -1,6 +1,7 @@
 package org.neogroup.warp;
 
 import org.neogroup.warp.controllers.Controllers;
+import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataSources;
 import org.neogroup.warp.properties.Properties;
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -151,11 +151,11 @@ public abstract class Warp {
         return getContext().getResponse();
     }
 
-    public static Connection getConnection() {
+    public static DataConnection getConnection() {
         return getContext().getConnection();
     }
 
-    public static Connection getConnection(String dataSourceName) {
+    public static DataConnection getConnection(String dataSourceName) {
         return getContext().getConnection(dataSourceName);
     }
 }

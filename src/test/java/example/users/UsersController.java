@@ -14,11 +14,11 @@ public class UsersController {
 
     @Get("users/:id")
     public DataElement getUser(@Parameter("id") int customerId) {
-        return getResource("customer").where("id", customerId).first();
+        return getResource("user").where("id", customerId).first();
     }
 
     @Get("users")
     public Collection<DataElement> getUsers() {
-        return getResource("customer").find();
+        return getResource("user").find();
     }
 }

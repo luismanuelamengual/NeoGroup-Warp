@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@ResourceComponent("customer")
+@ResourceComponent("user")
 public class UsersResource extends Resource<DataElement> {
 
     @Override
