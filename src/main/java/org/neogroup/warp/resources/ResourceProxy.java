@@ -1,12 +1,12 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.query.Query;
-import org.neogroup.warp.query.conditions.*;
-import org.neogroup.warp.query.fields.Field;
-import org.neogroup.warp.query.fields.SelectField;
-import org.neogroup.warp.query.fields.SortDirection;
-import org.neogroup.warp.query.fields.SortField;
-import org.neogroup.warp.query.joins.Join;
+import org.neogroup.warp.data.query.Query;
+import org.neogroup.warp.data.query.conditions.*;
+import org.neogroup.warp.data.query.fields.Field;
+import org.neogroup.warp.data.query.fields.SelectField;
+import org.neogroup.warp.data.query.fields.SortDirection;
+import org.neogroup.warp.data.query.fields.SortField;
+import org.neogroup.warp.data.query.joins.Join;
 
 import java.util.Collection;
 import java.util.List;

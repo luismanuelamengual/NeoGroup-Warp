@@ -1,4 +1,4 @@
-package org.neogroup.warp.query;
+package org.neogroup.warp.data.query;
 
 import java.util.HashMap;
 import java.util.Map;

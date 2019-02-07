@@ -1,6 +1,6 @@
-package org.neogroup.warp.query.joins;
+package org.neogroup.warp.data.query.joins;
 
-import org.neogroup.warp.query.conditions.ConditionGroup;
+import org.neogroup.warp.data.query.conditions.ConditionGroup;
 
 public class Join extends ConditionGroup {
 

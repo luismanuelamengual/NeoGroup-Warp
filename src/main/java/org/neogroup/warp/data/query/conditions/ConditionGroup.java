@@ -1,6 +1,6 @@
-package org.neogroup.warp.query.conditions;
+package org.neogroup.warp.data.query.conditions;
 
-import org.neogroup.warp.query.fields.Field;
+import org.neogroup.warp.data.query.fields.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;

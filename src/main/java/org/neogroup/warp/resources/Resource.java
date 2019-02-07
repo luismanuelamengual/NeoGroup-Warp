@@ -1,6 +1,6 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.query.Query;
+import org.neogroup.warp.data.query.Query;
 
 import java.util.Collection;
 

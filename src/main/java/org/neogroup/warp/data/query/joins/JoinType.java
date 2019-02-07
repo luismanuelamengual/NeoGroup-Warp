@@ -1,4 +1,4 @@
-package org.neogroup.warp.query.joins;
+package org.neogroup.warp.data.query.joins;
 
 public enum JoinType {
     JOIN,

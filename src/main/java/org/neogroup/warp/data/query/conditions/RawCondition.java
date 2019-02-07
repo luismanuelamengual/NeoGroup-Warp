@@ -1,6 +1,6 @@
-package org.neogroup.warp.query.conditions;
+package org.neogroup.warp.data.query.conditions;
 
-import org.neogroup.warp.query.RawStatement;
+import org.neogroup.warp.data.query.RawStatement;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package example.persons;
 
-import org.neogroup.warp.query.Query;
+import org.neogroup.warp.data.query.Query;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 

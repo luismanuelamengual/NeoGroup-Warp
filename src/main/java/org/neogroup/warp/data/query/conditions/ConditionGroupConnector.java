@@ -1,4 +1,4 @@
-package org.neogroup.warp.query.conditions;
+package org.neogroup.warp.data.query.conditions;
 
 public enum ConditionGroupConnector {
     AND,

@@ -1,4 +1,4 @@
-package org.neogroup.warp.query.fields;
+package org.neogroup.warp.data.query.fields;
 
 public class Field {
     private String tableName;
