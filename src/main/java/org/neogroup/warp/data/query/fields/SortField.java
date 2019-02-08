@@ -21,4 +21,8 @@ public class SortField extends Field {
         super(tableName, name);
         this.direction = direction;
     }
+
+    public SortDirection getDirection() {
+        return direction;
+    }
 }

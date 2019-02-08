@@ -2,7 +2,6 @@ package example.users;
 
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataElement;
-import org.neogroup.warp.data.query.Query;
 import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
@@ -23,9 +22,9 @@ public class UsersResource extends Resource<DataElement> {
             .set("age", 35));
 
         list.add(Data.object()
-                .set("name", "Ratata")
-                .set("lastName", "Pipo")
-                .set("age", 23));
+            .set("name", "Ratata")
+            .set("lastName", "Pipo")
+            .set("age", 23));
         return list;
     }
 }

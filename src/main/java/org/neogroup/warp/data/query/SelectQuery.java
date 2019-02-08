@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SelectQuery extends Query implements
         HasTable<SelectQuery>,
+        HasSubQuery<SelectQuery>,
         HasTableAlias<SelectQuery>,
         HasDistinct<SelectQuery>,
         HasSelectFields<SelectQuery>,
@@ -26,6 +27,7 @@ public class SelectQuery extends Query implements
 
     private String tableName;
     private String tableAlias;
+    private SelectQuery subQuery;
     private List<SelectField> selectFields;
     private List<Field> groupByFields;
     private List<SortField> orderByFields;
@@ -39,6 +41,7 @@ public class SelectQuery extends Query implements
     public SelectQuery() {
         this.tableName = null;
         this.tableAlias = null;
+        this.subQuery = null;
         this.selectFields = new ArrayList<>();
         this.groupByFields = new ArrayList<>();
         this.orderByFields = new ArrayList<>();
@@ -69,6 +72,17 @@ public class SelectQuery extends Query implements
     @Override
     public SelectQuery setTableAlias(String tableAlias) {
         this.tableAlias = tableAlias;
+        return this;
+    }
+
+    @Override
+    public SelectQuery getSubQuery() {
+        return subQuery;
+    }
+
+    @Override
+    public SelectQuery setSubQuery(SelectQuery subQuery) {
+        this.subQuery = subQuery;
         return this;
     }
 

@@ -2,7 +2,7 @@ package org.neogroup.warp.data.query.conditions;
 
 import org.neogroup.warp.data.query.RawStatement;
 
-import java.util.Map;
+import java.util.List;
 
 public class RawCondition extends Condition {
 
@@ -16,7 +16,7 @@ public class RawCondition extends Condition {
         return statement.getStatement();
     }
 
-    public Map<String, Object> getBindings() {
+    public List<Object> getBindings() {
         return statement.getBindings();
     }
 
@@ -24,11 +24,7 @@ public class RawCondition extends Condition {
         return statement.clearBindings();
     }
 
-    public RawStatement set(String field, Object value) {
-        return statement.set(field, value);
-    }
-
-    public <V> V get(String field) {
-        return statement.get(field);
+    public RawStatement addBinding(Object value) {
+        return statement.addBinding(value);
     }
 }

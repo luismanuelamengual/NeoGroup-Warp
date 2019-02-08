@@ -16,6 +16,7 @@ import java.util.*;
 public class ResourceProxy<T> implements
     HasTable<ResourceProxy<T>>,
     HasTableAlias<ResourceProxy<T>>,
+    HasSubQuery<ResourceProxy<T>>,
     HasFields<ResourceProxy<T>>,
     HasDistinct<ResourceProxy<T>>,
     HasSelectFields<ResourceProxy<T>>,
@@ -30,6 +31,7 @@ public class ResourceProxy<T> implements
     private Resource<T> resource;
     private String tableName;
     private String tableAlias;
+    private SelectQuery subQuery;
     private Map<String, Object> fields;
     private List<SelectField> selectFields;
     private List<Field> groupByFields;
@@ -45,6 +47,7 @@ public class ResourceProxy<T> implements
         this.resource = resource;
         this.tableName = resourceName;
         this.tableAlias = null;
+        this.subQuery = null;
         this.fields = new HashMap<>();
         this.selectFields = new ArrayList<>();
         this.groupByFields = new ArrayList<>();
@@ -228,6 +231,17 @@ public class ResourceProxy<T> implements
     @Override
     public ResourceProxy<T> setWhereConditions(ConditionGroup conditionGroup) {
         this.whereConditionGroup = conditionGroup;
+        return this;
+    }
+
+    @Override
+    public SelectQuery getSubQuery() {
+        return subQuery;
+    }
+
+    @Override
+    public ResourceProxy<T> setSubQuery(SelectQuery subQuery) {
+        this.subQuery = subQuery;
         return this;
     }
 }

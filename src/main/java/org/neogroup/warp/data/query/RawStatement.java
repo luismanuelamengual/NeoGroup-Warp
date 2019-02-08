@@ -1,23 +1,23 @@
 package org.neogroup.warp.data.query;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RawStatement {
 
     private String statement;
-    private Map<String,Object> bindings;
+    private List<Object> bindings;
 
     public RawStatement(String statement) {
         this.statement = statement;
-        this.bindings = new HashMap<>();
+        this.bindings = new ArrayList<>();
     }
 
     public String getStatement() {
         return statement;
     }
 
-    public Map<String, Object> getBindings() {
+    public List<Object> getBindings() {
         return bindings;
     }
 
@@ -26,12 +26,8 @@ public class RawStatement {
         return this;
     }
 
-    public RawStatement set(String field, Object value) {
-        bindings.put(field, value);
+    public RawStatement addBinding(Object value) {
+        bindings.add(value);
         return this;
-    }
-
-    public <V extends Object> V get(String field) {
-        return (V)bindings.get(field);
     }
 }
