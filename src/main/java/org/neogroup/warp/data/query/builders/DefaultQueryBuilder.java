@@ -1,8 +1,6 @@
 package org.neogroup.warp.data.query.builders;
 
-import org.neogroup.warp.data.query.Query;
-import org.neogroup.warp.data.query.RawStatement;
-import org.neogroup.warp.data.query.SelectQuery;
+import org.neogroup.warp.data.query.*;
 import org.neogroup.warp.data.query.conditions.*;
 import org.neogroup.warp.data.query.fields.Field;
 import org.neogroup.warp.data.query.fields.SelectField;
@@ -13,6 +11,8 @@ import org.neogroup.warp.data.query.joins.Join;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DefaultQueryBuilder extends QueryBuilder {
 
@@ -22,6 +22,12 @@ public class DefaultQueryBuilder extends QueryBuilder {
     private static final String PARENTHESIS_START = "(";
     private static final String PARENTHESIS_END = ")";
     private static final String SELECT = "SELECT";
+    private static final String INSERT = "INSERT";
+    private static final String UPDATE = "UPDATE";
+    private static final String DELETE = "DELETE";
+    private static final String INTO = "INTO";
+    private static final String SET = "SET";
+    private static final String VALUES = "VALUES";
     private static final String DISTINCT = "DISTINCT";
     private static final String ALL = "*";
     private static final String AS = "AS";
@@ -87,6 +93,15 @@ public class DefaultQueryBuilder extends QueryBuilder {
     protected void buildQuery (StringWriter writer, Query query, List<Object> bindings) {
         if (query instanceof SelectQuery) {
             buildSelectQuery(writer, (SelectQuery)query, bindings);
+        }
+        else if (query instanceof InsertQuery) {
+            buildInsertQuery(writer, (InsertQuery)query, bindings);
+        }
+        else if (query instanceof UpdateQuery) {
+            buildUpdateQuery(writer, (UpdateQuery)query, bindings);
+        }
+        else if (query instanceof DeleteQuery) {
+            buildDeleteQuery(writer, (DeleteQuery)query, bindings);
         }
     }
 
@@ -206,6 +221,90 @@ public class DefaultQueryBuilder extends QueryBuilder {
             writer.write(LIMIT);
             writer.write(SPACE);
             writer.write(limit.toString());
+        }
+    }
+
+    protected void buildInsertQuery (StringWriter writer, InsertQuery query, List<Object> bindings) {
+        writer.write(INSERT);
+        writer.write(SPACE);
+        writer.write(INTO);
+        writer.write(SPACE);
+        writer.write(query.getTableName());
+        writer.write(SPACE);
+        writer.write(PARENTHESIS_START);
+        Map<String, Object> fields = query.getFields();
+        boolean isFirst = true;
+        for (String fieldName : fields.keySet()) {
+            if (!isFirst) {
+                writer.write(COMMA);
+                writer.write(SPACE);
+            }
+            writer.write(fieldName);
+            isFirst = false;
+        }
+        writer.write(PARENTHESIS_END);
+        writer.write(SPACE);
+        writer.write(VALUES);
+        writer.write(SPACE);
+        writer.write(PARENTHESIS_START);
+        isFirst = true;
+        for (Object fieldValue : fields.values()) {
+            if (!isFirst) {
+                writer.write(COMMA);
+                writer.write(SPACE);
+            }
+            writer.write(WILDCARD);
+            bindings.add(fieldValue);
+            isFirst = false;
+        }
+        writer.write(PARENTHESIS_END);
+    }
+
+    protected void buildUpdateQuery (StringWriter writer, UpdateQuery query, List<Object> bindings) {
+        writer.write(UPDATE);
+        writer.write(SPACE);
+        writer.write(query.getTableName());
+        writer.write(SPACE);
+        writer.write(SET);
+        writer.write(SPACE);
+        boolean isFirst = true;
+        Map<String, Object> fields = query.getFields();
+        for (String fieldName : fields.keySet()) {
+            if (!isFirst) {
+                writer.write(COMMA);
+                writer.write(SPACE);
+            }
+            Object fieldValue = fields.get(fieldName);
+            writer.write(fieldName);
+            writer.write(SPACE);
+            writer.write(OPERATOR_EQUALS);
+            writer.write(SPACE);
+            writer.write(WILDCARD);
+            bindings.add(fieldValue);
+            isFirst = false;
+        }
+
+        ConditionGroup whereConditionGroup = query.getWhereConditions();
+        if (!whereConditionGroup.isEmpty()) {
+            writer.write(SPACE);
+            writer.write(WHERE);
+            writer.write(SPACE);
+            buildConditionGroup(writer, whereConditionGroup, bindings);
+        }
+    }
+
+    protected void buildDeleteQuery (StringWriter writer, DeleteQuery query, List<Object> bindings) {
+        writer.write(DELETE);
+        writer.write(SPACE);
+        writer.write(FROM);
+        writer.write(query.getTableName());
+        writer.write(SPACE);
+        ConditionGroup whereConditionGroup = query.getWhereConditions();
+        if (!whereConditionGroup.isEmpty()) {
+            writer.write(SPACE);
+            writer.write(WHERE);
+            writer.write(SPACE);
+            buildConditionGroup(writer, whereConditionGroup, bindings);
         }
     }
 
