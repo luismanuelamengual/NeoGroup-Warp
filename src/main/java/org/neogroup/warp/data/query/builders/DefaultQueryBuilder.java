@@ -72,7 +72,7 @@ public class DefaultQueryBuilder extends QueryBuilder {
             if (binding instanceof String) {
                 replacement = DOUBLE_QUOTES + replacement + DOUBLE_QUOTES;
             }
-            sql.replaceFirst(WILDCARD, replacement);
+            sql = sql.replaceFirst("\\?", replacement);
         }
         return sql;
     }
@@ -197,7 +197,7 @@ public class DefaultQueryBuilder extends QueryBuilder {
             writer.write(SPACE);
             writer.write(OFFSET);
             writer.write(SPACE);
-            writer.write(offset);
+            writer.write(offset.toString());
         }
 
         Integer limit = query.getLimit();
@@ -205,7 +205,7 @@ public class DefaultQueryBuilder extends QueryBuilder {
             writer.write(SPACE);
             writer.write(LIMIT);
             writer.write(SPACE);
-            writer.write(limit);
+            writer.write(limit.toString());
         }
     }
 
