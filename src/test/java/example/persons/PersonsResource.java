@@ -1,6 +1,7 @@
 package example.persons;
 
 import org.neogroup.warp.data.query.Query;
+import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public class PersonsResource extends Resource<Person> {
 
     @Override
-    public Collection<Person> find(Query query) {
+    public Collection<Person> find(SelectQuery query) {
         List<Person> persons = new ArrayList<>();
 
         Person person1 = new Person();

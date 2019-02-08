@@ -3,6 +3,7 @@ package example.users;
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.query.Query;
+import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class UsersResource extends Resource<DataElement> {
 
     @Override
-    public Collection<DataElement> find(Query query) {
+    public Collection<DataElement> find(SelectQuery query) {
         List<DataElement> list = new ArrayList<>();
         list.add(Data.object()
             .set("name", "Pepech")
