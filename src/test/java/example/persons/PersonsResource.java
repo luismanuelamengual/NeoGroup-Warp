@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@ResourceComponent
+@ResourceComponent("person")
 public class PersonsResource extends Resource<Person> {
 
     @Override
     public Collection<Person> find(SelectQuery query) {
-        List<Person> persons = new ArrayList<>();
 
+        List<Person> persons = new ArrayList<>();
         Person person1 = new Person();
         person1.setName("Luis");
         person1.setLastName("Amengual");
@@ -25,7 +25,6 @@ public class PersonsResource extends Resource<Person> {
         person2.setLastName("Alba");
         person2.setAge(35);
         persons.add(person2);
-
         return persons;
     }
 }

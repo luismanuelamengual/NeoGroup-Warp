@@ -1,5 +1,6 @@
 package org.neogroup.warp.resources;
 
+import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
 import org.neogroup.warp.data.query.SelectQuery;
@@ -13,7 +14,7 @@ import org.neogroup.warp.data.query.traits.*;
 
 import java.util.*;
 
-public class ResourceProxy<T> implements
+public class ResourceProxy<T extends DataElement> implements
     HasTable<ResourceProxy<T>>,
     HasTableAlias<ResourceProxy<T>>,
     HasSubQuery<ResourceProxy<T>>,

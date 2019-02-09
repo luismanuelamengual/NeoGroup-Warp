@@ -4,46 +4,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class DataObject extends DataElement {
+public class DataObject<T extends Object> implements DataElement {
 
-    private Map<String, Object> properties;
+    private Map<String, T> properties;
 
     public DataObject() {
         properties = new LinkedHashMap<>();
     }
 
-    public DataObject set(String name, String value) {
+    public DataObject set(String name, T value) {
         properties.put(name, value);
         return this;
     }
 
-    public DataObject set(String name, int value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    public DataObject set(String name, float value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    public DataObject set(String name, double value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    public DataObject set(String name, boolean value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    public DataObject set(String name, DataElement value) {
-        properties.put(name, value);
-        return this;
-    }
-
-    public <V> V get(String name) {
-        return (V)properties.get(name);
+    public T get(String name) {
+        return properties.get(name);
     }
 
     public boolean has(String key) {

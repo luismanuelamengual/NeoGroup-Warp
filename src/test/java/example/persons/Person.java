@@ -1,6 +1,8 @@
 package example.persons;
 
-public class Person {
+import org.neogroup.warp.data.DataElement;
+
+public class Person implements DataElement {
 
     private String name;
     private String lastName;

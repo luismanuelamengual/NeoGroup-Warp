@@ -1,6 +1,6 @@
 package org.neogroup.warp.controllers.formatters;
 
-import org.neogroup.warp.data.DataArray;
+import org.neogroup.warp.data.DataList;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataObject;
 
@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
 public class JsonFormatter extends Formatter {
 
@@ -79,7 +80,7 @@ public class JsonFormatter extends Formatter {
                 }
                 String fieldName = field.getName();
                 Object fieldValue = null;
-                if (field.canAccess(object)) {
+                if (field.isAccessible()) {
                     fieldValue = field.get(object);
                 } else {
                     String fieldMethodName = (Boolean.class.isAssignableFrom(field.getType())? "is" : "get") + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
@@ -109,7 +110,8 @@ public class JsonFormatter extends Formatter {
             DataObject dataObject = (DataObject)dataElement;
             writer.append(JSON_OBJECT_START_CHAR);
             boolean isFirst = true;
-            for (String key : dataObject.keys()) {
+            Set<String> keys = dataObject.keys();
+            for (String key : keys) {
                 if (!isFirst) {
                     writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
                 }
@@ -122,8 +124,11 @@ public class JsonFormatter extends Formatter {
             }
             writer.append(JSON_OBJECT_END_CHAR);
         }
-        else if (dataElement instanceof DataArray) {
+        else if (dataElement instanceof DataList) {
             writeIterable((Iterable)dataElement, writer);
+        }
+        else {
+            writeObject(dataElement, writer);
         }
     }
 

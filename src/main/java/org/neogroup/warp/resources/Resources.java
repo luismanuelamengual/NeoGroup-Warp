@@ -1,6 +1,7 @@
 package org.neogroup.warp.resources;
 
 import org.neogroup.warp.data.DataElement;
+import org.neogroup.warp.data.DataObject;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,25 +28,34 @@ public abstract class Resources {
                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                 Class modelClass = (Class) fieldArgTypes[0];
                 Resource resource = resourceClass.getConstructor().newInstance();
-                if (modelClass.isAssignableFrom(DataElement.class)) {
-                    ResourceComponent resourceComponent = resourceClass.getAnnotation(ResourceComponent.class);
-                    String resourceName = (resourceComponent != null && !resourceComponent.value().isEmpty())? resourceComponent.value() : resourceClass.toString();
-                    resources.put(resourceName, resource);
-                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name=" + resourceName + "]");
-                }
-                else {
-                    resourcesByModelClass.put(modelClass, resource);
-                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass=" + modelClass.getName() + "]");
-                }
-            }
 
+                String resourceName = null;
+                ResourceComponent resourceComponent = resourceClass.getAnnotation(ResourceComponent.class);
+                if (resourceComponent != null) {
+                    resourceName = resourceComponent.value();
+                }
+
+                StringBuilder log = new StringBuilder();
+                log.append("Resource \"" + resourceClass.getName() + "\" registered !! [");
+                if (resourceName != null && !resourceName.isEmpty()) {
+                    resources.put(resourceName, resource);
+                    log.append("name: ").append(resourceName);
+                }
+                if (!modelClass.isAssignableFrom(DataObject.class)) {
+                    resourcesByModelClass.put(modelClass, resource);
+                    log.append(", class: ").append(modelClass.getName());
+                }
+                log.append("]");
+
+                getLogger().info(log.toString());
+            }
         }
         catch (Exception ex) {
             throw new RuntimeException("Error registering resource \"" + resourceClass.getName() + "\" !!", ex);
         }
     }
 
-    public static <M> ResourceProxy<M> get(Class<M> modelClass) {
+    public static <M extends DataElement> ResourceProxy<M> get(Class<M> modelClass) {
         Resource<M> resource = resourcesByModelClass.get(modelClass);
         if (resource == null) {
             throw new RuntimeException("Resource not found for model \"" + modelClass  + "\" !!");

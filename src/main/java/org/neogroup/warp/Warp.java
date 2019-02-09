@@ -3,6 +3,7 @@ package org.neogroup.warp;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataElement;
+import org.neogroup.warp.data.DataSource;
 import org.neogroup.warp.data.DataSources;
 import org.neogroup.warp.properties.Properties;
 import org.neogroup.warp.resources.Resource;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -111,7 +111,7 @@ public abstract class Warp {
         return Resources.get(resourceName);
     }
 
-    public static <M> ResourceProxy<M> getResource(Class<M> modelClass) {
+    public static <M extends DataElement> ResourceProxy<M> getResource(Class<M> modelClass) {
         return Resources.get(modelClass);
     }
 

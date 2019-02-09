@@ -1,7 +1,5 @@
 package org.neogroup.warp.data;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,12 +51,7 @@ public abstract class DataSources {
                     throw new RuntimeException("No data source with name \"" + dataSourceName + "\"");
                 }
             }
-            try {
-                connection = new DataConnection(source.getConnection());
-            }
-            catch (Exception ex) {
-                throw new RuntimeException("Error retrieving data connection");
-            }
+            connection = source.getConnection();
         }
         return connection;
     }
@@ -68,13 +61,6 @@ public abstract class DataSources {
         if (source == null) {
             throw new RuntimeException("No data source with name \"" + dataSourceName + "\"");
         }
-        DataConnection connection = null;
-        try {
-            connection = new DataConnection(source.getConnection());
-        }
-        catch (Exception ex) {
-            throw new RuntimeException("Error retrieving data connection");
-        }
-        return connection;
+        return source.getConnection();
     }
 }

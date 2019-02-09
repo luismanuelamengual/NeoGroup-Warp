@@ -45,18 +45,18 @@ public class RoutesController {
     @Get("elem")
     public DataElement getElement() {
         return Data.object()
-                .set("name", "Luis")
-                .set("lastName", "Amengual")
-                .set("projects", Data.array()
-                        .add("Ramach")
-                        .add("Pepech")
-                        .add(124.46)
-                        .add(true))
-                .set("rulex", "pepperonni")
-                .set("direction", Data.object()
-                        .set("country", "Argentina")
-                        .set("province", "Mendoza"))
-                .set("age", 36);
+            .set("name", "Luis")
+            .set("lastName", "Amengual")
+            .set("projects", Data.list()
+                .add("Ramach")
+                .add("Pepech")
+                .add(124.46)
+                .add(true))
+            .set("rulex", "pepperonni")
+            .set("direction", Data.object()
+                .set("country", "Argentina")
+                .set("province", "Mendoza"))
+            .set("age", 36);
     }
 
     @Get("rama")

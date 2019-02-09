@@ -1,4 +1,4 @@
 package org.neogroup.warp.data;
 
-public abstract class DataElement {
+public interface DataElement {
 }
