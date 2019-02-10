@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.neogroup.warp.controllers.ControllerComponent;
+import org.neogroup.warp.data.DataSource;
 import org.neogroup.warp.data.DataSourceComponent;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
@@ -15,7 +16,6 @@ import org.neogroup.warp.utils.Scanner;
 import org.neogroup.warp.views.ViewFactory;
 import org.neogroup.warp.views.ViewFactoryComponent;
 
-import javax.sql.DataSource;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;

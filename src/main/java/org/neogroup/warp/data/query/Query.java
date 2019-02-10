@@ -8,6 +8,12 @@ public abstract class Query {
 
     private final static QueryBuilder defaultQueryBuilder = new DefaultQueryBuilder();
 
+    public static SelectQuery selectFrom (String tableName) {
+        SelectQuery query = new SelectQuery();
+        query.setTableName(tableName);
+        return query;
+    }
+
     @Override
     public String toString() {
         return defaultQueryBuilder.buildQuery(this);

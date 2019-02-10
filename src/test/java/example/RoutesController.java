@@ -6,9 +6,13 @@ import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataElement;
+import org.neogroup.warp.data.DataObject;
+import org.neogroup.warp.data.query.Query;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
+import static org.neogroup.warp.Warp.getConnection;
 import static org.neogroup.warp.Warp.getLogger;
 import static org.neogroup.warp.Warp.getResponse;
 
@@ -89,5 +93,10 @@ public class RoutesController {
     @Get("tata")
     public Object[] rama () {
         return new Object[] {"asklj", 12354, new Double[] {65.0, 256.25}};
+    }
+
+    @Get("db")
+    public Collection<DataObject> dbTest (Response response) {
+         return getConnection().query(Query.selectFrom("person"));
     }
 }
