@@ -14,10 +14,12 @@ public abstract class Resources {
 
     private static Map<String, Resource> resources;
     private static Map<Class, Resource> resourcesByModelClass;
+    private static DataResource defaultDataResource;
 
     static {
         resources = new HashMap<>();
         resourcesByModelClass = new HashMap<>();
+        defaultDataResource = new DataResource();
     }
 
     public static void register(String resourceName, Class<? extends Resource> resourceClass) {
@@ -54,8 +56,7 @@ public abstract class Resources {
     public static ResourceProxy<DataObject> get(String resourceName) {
         Resource resource = resources.get(resourceName);
         if (resource == null) {
-            resource = new DataResource();
-            resources.put(resourceName, resource);
+            resource = defaultDataResource;
         }
         return new ResourceProxy<>(resourceName, resource);
     }
