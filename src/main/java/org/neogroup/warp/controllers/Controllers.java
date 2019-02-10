@@ -97,7 +97,7 @@ public abstract class Controllers {
         path = getNormalizedPath(path);
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority, auxiliary));
-        getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" route registered !!");
+        getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" => " + controller.getClass().getName() + "@" + controllerMethod.getName());
     }
 
     public static <C extends Object> C get (Class<? extends C> controllerClass) {
