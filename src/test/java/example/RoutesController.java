@@ -8,6 +8,7 @@ import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.data.query.Query;
+import org.neogroup.warp.data.query.fields.SortDirection;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -137,6 +138,6 @@ public class RoutesController {
 
     @Get("res")
     public Collection<DataObject> getCountries () {
-        return getResource("country").read();
+        return getResource("country").orderBy("name", SortDirection.DESC).read();
     }
 }
