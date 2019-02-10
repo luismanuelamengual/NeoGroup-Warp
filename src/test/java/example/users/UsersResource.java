@@ -14,7 +14,7 @@ import java.util.List;
 public class UsersResource extends Resource<DataObject> {
 
     @Override
-    public Collection<DataObject> find(SelectQuery query) {
+    public Collection<DataObject> read(SelectQuery query) {
         List<DataObject> list = new ArrayList<>();
         list.add(Data.object()
             .set("name", "Pepech")

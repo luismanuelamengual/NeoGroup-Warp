@@ -28,20 +28,14 @@ public abstract class Resources {
                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                 Class modelClass = (Class) fieldArgTypes[0];
                 Resource resource = resourceClass.getConstructor().newInstance();
-                StringBuilder log = new StringBuilder();
-
-                log.append("Resource \"").append(resourceClass.getName()).append("\" registered !! [");
-                if (resourceName != null && !resourceName.isEmpty()) {
+                if (modelClass.isAssignableFrom(DataObject.class)) {
                     resources.put(resourceName, resource);
-                    log.append("name: ").append(resourceName);
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name=" + resourceName + "]");
                 }
-                if (!modelClass.isAssignableFrom(DataObject.class)) {
+                else {
                     resourcesByModelClass.put(modelClass, resource);
-                    log.append(", class: ").append(modelClass.getName());
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass=" + modelClass.getName() + "]");
                 }
-                log.append("]");
-
-                getLogger().info(log.toString());
             }
         }
         catch (Exception ex) {
@@ -49,7 +43,7 @@ public abstract class Resources {
         }
     }
 
-    public static <M extends DataElement> ResourceProxy<M> get(Class<M> modelClass) {
+    public static <M> ResourceProxy<M> get(Class<M> modelClass) {
         Resource<M> resource = resourcesByModelClass.get(modelClass);
         if (resource == null) {
             throw new RuntimeException("Resource not found for model \"" + modelClass  + "\" !!");
@@ -58,7 +52,7 @@ public abstract class Resources {
     }
 
     public static ResourceProxy<DataObject> get(String resourceName) {
-        Resource<DataObject> resource = resources.get(resourceName);
+        Resource resource = resources.get(resourceName);
         if (resource == null) {
             throw new RuntimeException("Resource not found with name \"" + resourceName + "\" !!");
         }

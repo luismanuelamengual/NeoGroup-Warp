@@ -3,7 +3,6 @@ package example.persons;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
-import org.neogroup.warp.data.DataObject;
 
 import java.util.Collection;
 
@@ -19,11 +18,6 @@ public class PersonsController {
 
     @Get("persons")
     public Collection<Person> getPersons() {
-        return getResource(Person.class).find();
-    }
-
-    @Get("persons2")
-    public Collection<DataObject> getPersons2() {
-        return getResource("person").find();
+        return getResource(Person.class).read();
     }
 }

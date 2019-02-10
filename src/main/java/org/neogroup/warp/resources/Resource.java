@@ -1,6 +1,5 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
 import org.neogroup.warp.data.query.SelectQuery;
@@ -8,21 +7,37 @@ import org.neogroup.warp.data.query.UpdateQuery;
 
 import java.util.Collection;
 
-public abstract class Resource<R extends DataElement>  {
+public abstract class Resource<M extends Object>  {
 
-    public Collection<R> find(SelectQuery query) {
-        throw new RuntimeException ("Unimplemented \"find\" method !!");
+    public M read (Object id) {
+        throw new UnsupportedOperationException();
     }
 
-    public R insert(InsertQuery query) {
-        throw new RuntimeException ("Unimplemented \"insert\" method !!");
+    public Collection<M> read (SelectQuery query) {
+        throw new UnsupportedOperationException();
     }
 
-    public R update(UpdateQuery query) {
-        throw new RuntimeException ("Unimplemented \"update\" method !!");
+    public M create (M object) {
+        throw new UnsupportedOperationException();
     }
 
-    public R delete(DeleteQuery query) {
-        throw new RuntimeException ("Unimplemented \"delete\" method !!");
+    public M create (InsertQuery query) {
+        throw new UnsupportedOperationException();
+    }
+
+    public M update (M object) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Collection<M> update (UpdateQuery query) {
+        throw new UnsupportedOperationException();
+    }
+
+    public M delete (Object id) {
+        throw new UnsupportedOperationException();
+    }
+
+    public Collection<M> delete (DeleteQuery query) {
+        throw new UnsupportedOperationException();
     }
 }

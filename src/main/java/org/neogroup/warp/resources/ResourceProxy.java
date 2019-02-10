@@ -1,6 +1,5 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
 import org.neogroup.warp.data.query.SelectQuery;
@@ -14,7 +13,7 @@ import org.neogroup.warp.data.query.traits.*;
 
 import java.util.*;
 
-public class ResourceProxy<T extends DataElement> implements
+public class ResourceProxy<T extends Object> implements
     HasTable<ResourceProxy<T>>,
     HasTableAlias<ResourceProxy<T>>,
     HasSubQuery<ResourceProxy<T>>,
@@ -61,7 +60,11 @@ public class ResourceProxy<T extends DataElement> implements
         this.distinct = false;
     }
 
-    public Collection<T> find() {
+    public T read(Object id) {
+        return resource.read(id);
+    }
+
+    public Collection<T> read() {
         SelectQuery query = new SelectQuery();
         query.setTableName(tableName);
         query.setTableAlias(tableAlias);
@@ -74,17 +77,25 @@ public class ResourceProxy<T extends DataElement> implements
         query.limit(limit);
         query.offset(offset);
         query.setDistinct(distinct);
-        return resource.find(query);
+        return resource.read(query);
     }
 
-    public T insert () {
+    public T create (T object) {
+        return resource.create(object);
+    }
+
+    public T create () {
         InsertQuery query = new InsertQuery();
         query.setTableName(tableName);
         query.setFields(fields);
-        return resource.insert(query);
+        return resource.create(query);
     }
 
-    public T update () {
+    public T update (T object) {
+        return resource.update(object);
+    }
+
+    public Collection<T> update () {
         UpdateQuery query = new UpdateQuery();
         query.setTableName(tableName);
         query.setFields(fields);
@@ -92,7 +103,11 @@ public class ResourceProxy<T extends DataElement> implements
         return resource.update(query);
     }
 
-    public T delete () {
+    public T delete (Object id) {
+        return resource.delete(id);
+    }
+
+    public Collection<T> delete () {
         DeleteQuery query = new DeleteQuery();
         query.setTableName(tableName);
         query.setWhereConditions(whereConditionGroup);
@@ -100,7 +115,7 @@ public class ResourceProxy<T extends DataElement> implements
     }
 
     public T first () {
-        return limit(1).find().iterator().next();
+        return limit(1).read().iterator().next();
     }
 
     @Override

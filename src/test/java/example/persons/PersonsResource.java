@@ -12,7 +12,7 @@ import java.util.List;
 public class PersonsResource extends Resource<Person> {
 
     @Override
-    public Collection<Person> find(SelectQuery query) {
+    public Collection<Person> read(SelectQuery query) {
 
         List<Person> persons = new ArrayList<>();
         Person person1 = new Person();

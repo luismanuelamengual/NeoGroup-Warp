@@ -13,12 +13,12 @@ import static org.neogroup.warp.Warp.getResource;
 public class UsersController {
 
     @Get("users/:id")
-    public DataObject getUser(@Parameter("id") int customerId) {
-        return getResource("user").where("id", customerId).first();
+    public DataObject getUser(@Parameter("id") int userId) {
+        return getResource("user").where("id", userId).first();
     }
 
     @Get("users")
     public Collection<DataObject> getUsers() {
-        return getResource("user").find();
+        return getResource("user").read();
     }
 }
