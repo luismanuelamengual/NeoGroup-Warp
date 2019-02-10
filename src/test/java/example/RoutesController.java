@@ -105,6 +105,25 @@ public class RoutesController {
         response.print("Persona insertada !!");
     }
 
+    @Get("dbupdate")
+    public void dbUpdate () {
+        getTable("person")
+            .set("name", "pimba")
+            .set("lastname", "ruke")
+            .where("personid", 6)
+            .update();
+
+        getResponse().print("Persona actualizada");
+    }
+
+    @Get("dbdelete")
+    public void dbDelete () {
+
+        getTable("person").where("personid", 7).delete();
+
+        getResponse().print("Persona borrada");
+    }
+
     @Get("db")
     public Collection<DataObject> dbTest () {
          return getTable("person").read();

@@ -297,8 +297,8 @@ public class DefaultQueryBuilder extends QueryBuilder {
         writer.write(DELETE);
         writer.write(SPACE);
         writer.write(FROM);
-        writer.write(query.getTableName());
         writer.write(SPACE);
+        writer.write(query.getTableName());
         ConditionGroup whereConditionGroup = query.getWhereConditions();
         if (!whereConditionGroup.isEmpty()) {
             writer.write(SPACE);
