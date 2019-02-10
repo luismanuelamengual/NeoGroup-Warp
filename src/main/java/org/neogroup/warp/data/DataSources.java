@@ -16,15 +16,10 @@ public abstract class DataSources {
         dataSourcesByName = new HashMap<>();
     }
 
-    public static void registerDataSource(Class<? extends DataSource> dataSourceClass) {
+    public static void registerDataSource(String dataSourceName, Class<? extends DataSource> dataSourceClass) {
         try {
             DataSource dataConnection = dataSourceClass.getConstructor().newInstance();
-            DataSourceComponent dataSourceComponent = dataSourceClass.getAnnotation(DataSourceComponent.class);
-            String dataSourceName = null;
-            if (dataSourceComponent != null) {
-                dataSourceName = dataSourceComponent.value();
-                dataSourcesByName.put(dataSourceName, dataConnection);
-            }
+            dataSourcesByName.put(dataSourceName, dataConnection);
             getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null ? " [name=" + dataSourceName + "]" : ""));
         } catch (Exception ex) {
             throw new RuntimeException("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);

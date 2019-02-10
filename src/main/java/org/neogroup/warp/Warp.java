@@ -36,12 +36,12 @@ public abstract class Warp {
         Controllers.registerController(controllerClass);
     }
 
-    public static void registerViewFactory(Class<? extends ViewFactory> viewFactoryClass) {
-        Views.registerViewFactory(viewFactoryClass);
+    public static void registerViewFactory(String viewFactoryName, Class<? extends ViewFactory> viewFactoryClass) {
+        Views.registerViewFactory(viewFactoryName, viewFactoryClass);
     }
 
-    public static void registerDataSource(Class<? extends DataSource> dataSourceClass) {
-        DataSources.registerDataSource(dataSourceClass);
+    public static void registerDataSource(String dataSourceName, Class<? extends DataSource> dataSourceClass) {
+        DataSources.registerDataSource(dataSourceName, dataSourceClass);
     }
 
     public static void registerResource(String resourceName, Class<? extends Resource> resourceClass) {

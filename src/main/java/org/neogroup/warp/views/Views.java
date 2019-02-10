@@ -21,19 +21,12 @@ public abstract class Views {
         viewFactoriesByName = new HashMap<>();
     }
 
-    public static void registerViewFactory (Class<? extends ViewFactory> viewFactoryClass) {
+    public static void registerViewFactory (String viewFactoryName, Class<? extends ViewFactory> viewFactoryClass) {
 
         try {
             ViewFactory viewFactory = viewFactoryClass.getConstructor().newInstance();
             viewFactories.put(viewFactoryClass, viewFactory);
-
-            ViewFactoryComponent viewFactoryComponent = viewFactoryClass.getAnnotation(ViewFactoryComponent.class);
-            String viewFactoryName = null;
-            if (viewFactoryComponent != null) {
-                viewFactoryName = viewFactoryComponent.value();
-                viewFactoriesByName.put(viewFactoryName, viewFactory);
-            }
-
+            viewFactoriesByName.put(viewFactoryName, viewFactory);
             getLogger().info("View factory \"" + viewFactoryClass.getName() + "\" registered !!" + (viewFactoryName != null?" [name=" + viewFactoryName + "]":""));
         }
         catch (Exception ex) {

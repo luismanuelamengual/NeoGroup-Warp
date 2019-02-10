@@ -84,7 +84,7 @@ public class WarpApplication {
                     ViewFactoryComponent viewFactoryComponent = (ViewFactoryComponent)cls.getAnnotation(ViewFactoryComponent.class);
                     if (viewFactoryComponent != null) {
                         if (ViewFactory.class.isAssignableFrom(cls)) {
-                            registerViewFactory(cls);
+                            registerViewFactory(viewFactoryComponent.value(), cls);
                             return true;
                         }
                     }
@@ -100,7 +100,7 @@ public class WarpApplication {
                     DataSourceComponent dataSourceComponent = (DataSourceComponent)cls.getAnnotation(DataSourceComponent.class);
                     if (dataSourceComponent != null) {
                         if (DataSource.class.isAssignableFrom(cls)) {
-                            registerDataSource(cls);
+                            registerDataSource(dataSourceComponent.value(), cls);
                             return true;
                         }
                     }
