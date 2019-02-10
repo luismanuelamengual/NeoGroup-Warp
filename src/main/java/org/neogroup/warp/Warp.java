@@ -1,10 +1,7 @@
 package org.neogroup.warp;
 
 import org.neogroup.warp.controllers.Controllers;
-import org.neogroup.warp.data.DataConnection;
-import org.neogroup.warp.data.DataElement;
-import org.neogroup.warp.data.DataSource;
-import org.neogroup.warp.data.DataSources;
+import org.neogroup.warp.data.*;
 import org.neogroup.warp.properties.Properties;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceProxy;
@@ -107,7 +104,7 @@ public abstract class Warp {
         return Controllers.get(controllerClass);
     }
 
-    public static ResourceProxy<DataElement> getResource(String resourceName) {
+    public static ResourceProxy<DataObject> getResource(String resourceName) {
         return Resources.get(resourceName);
     }
 

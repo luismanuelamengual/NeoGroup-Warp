@@ -12,7 +12,7 @@ import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
 
-    private static Map<String, Resource<DataElement>> resources;
+    private static Map<String, Resource<DataObject>> resources;
     private static Map<Class, Resource> resourcesByModelClass;
 
     static {
@@ -36,7 +36,7 @@ public abstract class Resources {
                 }
 
                 StringBuilder log = new StringBuilder();
-                log.append("Resource \"" + resourceClass.getName() + "\" registered !! [");
+                log.append("Resource \"").append(resourceClass.getName()).append("\" registered !! [");
                 if (resourceName != null && !resourceName.isEmpty()) {
                     resources.put(resourceName, resource);
                     log.append("name: ").append(resourceName);
@@ -63,8 +63,8 @@ public abstract class Resources {
         return new ResourceProxy<>(modelClass.toString(), resource);
     }
 
-    public static ResourceProxy<DataElement> get(String resourceName) {
-        Resource<DataElement> resource = resources.get(resourceName);
+    public static ResourceProxy<DataObject> get(String resourceName) {
+        Resource<DataObject> resource = resources.get(resourceName);
         if (resource == null) {
             throw new RuntimeException("Resource not found with name \"" + resourceName + "\" !!");
         }
