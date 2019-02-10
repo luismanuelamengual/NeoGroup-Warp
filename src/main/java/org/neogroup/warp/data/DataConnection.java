@@ -76,7 +76,7 @@ public class DataConnection  {
             List data = new ArrayList();
             while (resultSet.next()) {
                 DataObject dataObject = Data.object();
-                for (int i = 0; i < columnCount; i++) {
+                for (int i = 1; i <= columnCount; i++) {
                     dataObject.set(metaData.getColumnLabel(i), resultSet.getObject(i));
                 }
                 data.add(dataObject);
