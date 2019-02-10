@@ -155,4 +155,8 @@ public abstract class Warp {
     public static DataConnection getConnection(String dataSourceName) {
         return getContext().getConnection(dataSourceName);
     }
+
+    public static DataTable getTable (String table) {
+        return getConnection().getTable(table);
+    }
 }

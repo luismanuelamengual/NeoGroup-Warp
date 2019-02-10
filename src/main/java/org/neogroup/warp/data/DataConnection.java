@@ -56,6 +56,10 @@ public class DataConnection  {
         }
     }
 
+    public DataTable getTable(String table) {
+        return new DataTable(this, table);
+    }
+
     public Collection<DataObject> query(Query query) {
         List<Object> bindings = new ArrayList<>();
         String sql = queryBuilder.buildQuery(query, bindings);
@@ -100,7 +104,7 @@ public class DataConnection  {
 
     public int execute (String sql, List<Object> bindings) {
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = getStatement(sql, bindings);
             getLogger().info("SQL: " + statement.toString());
             return statement.executeUpdate();
         }
@@ -112,7 +116,7 @@ public class DataConnection  {
     private PreparedStatement getStatement (String sql, List<Object> bindings) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(sql);
         if (bindings != null) {
-            int bindingIndex = 0;
+            int bindingIndex = 1;
             for (Object binding : bindings) {
                 statement.setObject(bindingIndex++, binding);
             }

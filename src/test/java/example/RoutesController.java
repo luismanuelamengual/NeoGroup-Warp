@@ -12,9 +12,7 @@ import org.neogroup.warp.data.query.Query;
 import java.text.MessageFormat;
 import java.util.Collection;
 
-import static org.neogroup.warp.Warp.getConnection;
-import static org.neogroup.warp.Warp.getLogger;
-import static org.neogroup.warp.Warp.getResponse;
+import static org.neogroup.warp.Warp.*;
 
 @ControllerComponent
 public class RoutesController {
@@ -95,8 +93,20 @@ public class RoutesController {
         return new Object[] {"asklj", 12354, new Double[] {65.0, 256.25}};
     }
 
+    @Get("dbinsert")
+    public void dbInsert (Response response) {
+
+        getTable("person")
+            .set("name", "pimba")
+            .set("lastname", "tuke")
+            .set("age", 27)
+            .create();
+
+        response.print("Persona insertada !!");
+    }
+
     @Get("db")
-    public Collection<DataObject> dbTest (Response response) {
-         return getConnection().query(Query.selectFrom("person"));
+    public Collection<DataObject> dbTest () {
+         return getTable("person").read();
     }
 }

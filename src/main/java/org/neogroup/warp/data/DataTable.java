@@ -1,4 +1,4 @@
-package org.neogroup.warp.resources;
+package org.neogroup.warp.data;
 
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
@@ -13,22 +13,22 @@ import org.neogroup.warp.data.query.traits.*;
 
 import java.util.*;
 
-public class ResourceProxy<T extends Object> implements
-    HasTable<ResourceProxy<T>>,
-    HasTableAlias<ResourceProxy<T>>,
-    HasSubQuery<ResourceProxy<T>>,
-    HasFields<ResourceProxy<T>>,
-    HasDistinct<ResourceProxy<T>>,
-    HasSelectFields<ResourceProxy<T>>,
-    HasJoins<ResourceProxy<T>>,
-    HasWhereConditions<ResourceProxy<T>>,
-    HasHavingConditions<ResourceProxy<T>>,
-    HasOrderByFields<ResourceProxy<T>>,
-    HasGroupByFields<ResourceProxy<T>>,
-    HasLimit<ResourceProxy<T>>,
-    HasOffset<ResourceProxy<T>> {
+public class DataTable implements
+        HasTable<DataTable>,
+        HasTableAlias<DataTable>,
+        HasSubQuery<DataTable>,
+        HasFields<DataTable>,
+        HasDistinct<DataTable>,
+        HasSelectFields<DataTable>,
+        HasJoins<DataTable>,
+        HasWhereConditions<DataTable>,
+        HasHavingConditions<DataTable>,
+        HasOrderByFields<DataTable>,
+        HasGroupByFields<DataTable>,
+        HasLimit<DataTable>,
+        HasOffset<DataTable> {
 
-    private Resource<T> resource;
+    private DataConnection connection;
     private String tableName;
     private String tableAlias;
     private SelectQuery subQuery;
@@ -43,9 +43,9 @@ public class ResourceProxy<T extends Object> implements
     private Integer limit;
     private Integer offset;
 
-    public ResourceProxy(String resourceName, Resource<T> resource) {
-        this.resource = resource;
-        this.tableName = resourceName;
+    public DataTable(DataConnection connection, String table) {
+        this.connection = connection;
+        this.tableName = table;
         this.tableAlias = null;
         this.subQuery = null;
         this.fields = new LinkedHashMap<>();
@@ -60,11 +60,7 @@ public class ResourceProxy<T extends Object> implements
         this.distinct = false;
     }
 
-    public T read(Object id) {
-        return resource.read(id);
-    }
-
-    public Collection<T> read() {
+    public Collection<DataObject> read() {
         SelectQuery query = new SelectQuery();
         query.setTableName(tableName);
         query.setTableAlias(tableAlias);
@@ -77,45 +73,29 @@ public class ResourceProxy<T extends Object> implements
         query.limit(limit);
         query.offset(offset);
         query.setDistinct(distinct);
-        return resource.read(query);
+        return connection.query(query);
     }
 
-    public T create (T object) {
-        return resource.create(object);
-    }
-
-    public T create () {
+    public int create () {
         InsertQuery query = new InsertQuery();
         query.setTableName(tableName);
         query.setFields(fields);
-        return resource.create(query);
+        return connection.execute(query);
     }
 
-    public T update (T object) {
-        return resource.update(object);
-    }
-
-    public Collection<T> update () {
+    public int update () {
         UpdateQuery query = new UpdateQuery();
         query.setTableName(tableName);
         query.setFields(fields);
         query.setWhereConditions(whereConditionGroup);
-        return resource.update(query);
+        return connection.execute(query);
     }
 
-    public T delete (Object id) {
-        return resource.delete(id);
-    }
-
-    public Collection<T> delete () {
+    public int delete () {
         DeleteQuery query = new DeleteQuery();
         query.setTableName(tableName);
         query.setWhereConditions(whereConditionGroup);
-        return resource.delete(query);
-    }
-
-    public T first () {
-        return limit(1).read().iterator().next();
+        return connection.execute(query);
     }
 
     @Override
@@ -124,7 +104,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setDistinct(Boolean distinct) {
+    public DataTable setDistinct(Boolean distinct) {
         this.distinct = distinct;
         return this;
     }
@@ -135,7 +115,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setFields(Map<String, Object> fields) {
+    public DataTable setFields(Map<String, Object> fields) {
         this.fields = fields;
         return this;
     }
@@ -146,7 +126,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setGroupByFields(List<Field> groupByFields) {
+    public DataTable setGroupByFields(List<Field> groupByFields) {
         this.groupByFields = groupByFields;
         return this;
     }
@@ -157,7 +137,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setHavingConditions(ConditionGroup conditionGroup) {
+    public DataTable setHavingConditions(ConditionGroup conditionGroup) {
         this.havingConditionGroup = conditionGroup;
         return this;
     }
@@ -168,7 +148,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setJoins(List<Join> joins) {
+    public DataTable setJoins(List<Join> joins) {
         this.joins = joins;
         return this;
     }
@@ -179,7 +159,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> limit(Integer limit) {
+    public DataTable limit(Integer limit) {
         this.limit = limit;
         return this;
     }
@@ -190,7 +170,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> offset(Integer offset) {
+    public DataTable offset(Integer offset) {
         this.offset = offset;
         return this;
     }
@@ -201,7 +181,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setOrderByFields(List<SortField> orderByFields) {
+    public DataTable setOrderByFields(List<SortField> orderByFields) {
         this.orderByFields = orderByFields;
         return this;
     }
@@ -212,7 +192,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setSelectFields(List<SelectField> selectFields) {
+    public DataTable setSelectFields(List<SelectField> selectFields) {
         this.selectFields = selectFields;
         return this;
     }
@@ -223,7 +203,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setTableName(String tableName) {
+    public DataTable setTableName(String tableName) {
         this.tableName = tableName;
         return this;
     }
@@ -234,7 +214,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setTableAlias(String tableAlias) {
+    public DataTable setTableAlias(String tableAlias) {
         this.tableAlias = tableAlias;
         return this;
     }
@@ -245,7 +225,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setWhereConditions(ConditionGroup conditionGroup) {
+    public DataTable setWhereConditions(ConditionGroup conditionGroup) {
         this.whereConditionGroup = conditionGroup;
         return this;
     }
@@ -256,7 +236,7 @@ public class ResourceProxy<T extends Object> implements
     }
 
     @Override
-    public ResourceProxy<T> setSubQuery(SelectQuery subQuery) {
+    public DataTable setSubQuery(SelectQuery subQuery) {
         this.subQuery = subQuery;
         return this;
     }
