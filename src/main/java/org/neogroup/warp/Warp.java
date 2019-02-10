@@ -44,8 +44,8 @@ public abstract class Warp {
         DataSources.registerDataSource(dataSourceClass);
     }
 
-    public static void registerResource(Class<? extends Resource> resourceClass) {
-        Resources.register(resourceClass);
+    public static void registerResource(String resourceName, Class<? extends Resource> resourceClass) {
+        Resources.register(resourceName, resourceClass);
     }
 
     public static <R> R getProperty(String property) {

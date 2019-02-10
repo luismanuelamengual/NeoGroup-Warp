@@ -12,7 +12,7 @@ import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
 
-    private static Map<String, Resource<DataObject>> resources;
+    private static Map<String, Resource> resources;
     private static Map<Class, Resource> resourcesByModelClass;
 
     static {
@@ -20,7 +20,7 @@ public abstract class Resources {
         resourcesByModelClass = new HashMap<>();
     }
 
-    public static void register(Class<? extends Resource> resourceClass) {
+    public static void register(String resourceName, Class<? extends Resource> resourceClass) {
         try {
             Type type = resourceClass.getGenericSuperclass();
             if (type instanceof ParameterizedType) {
@@ -28,14 +28,8 @@ public abstract class Resources {
                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                 Class modelClass = (Class) fieldArgTypes[0];
                 Resource resource = resourceClass.getConstructor().newInstance();
-
-                String resourceName = null;
-                ResourceComponent resourceComponent = resourceClass.getAnnotation(ResourceComponent.class);
-                if (resourceComponent != null) {
-                    resourceName = resourceComponent.value();
-                }
-
                 StringBuilder log = new StringBuilder();
+
                 log.append("Resource \"").append(resourceClass.getName()).append("\" registered !! [");
                 if (resourceName != null && !resourceName.isEmpty()) {
                     resources.put(resourceName, resource);
