@@ -1,13 +1,18 @@
 package org.neogroup.warp.data;
 
+import org.neogroup.warp.data.query.builders.DefaultQueryBuilder;
 import org.neogroup.warp.data.query.builders.QueryBuilder;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public abstract class DataSource<B extends QueryBuilder> {
+public abstract class DataSource {
 
     private QueryBuilder queryBuilder;
+
+    public DataSource () {
+        this(new DefaultQueryBuilder());
+    }
 
     public DataSource(QueryBuilder queryBuilder) {
         this.queryBuilder = queryBuilder;

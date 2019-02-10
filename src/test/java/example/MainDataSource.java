@@ -14,7 +14,6 @@ public class MainDataSource extends DataSource {
     private PGSimpleDataSource dataSource;
 
     public MainDataSource() {
-        super(new DefaultQueryBuilder());
         dataSource = new PGSimpleDataSource();
         dataSource.setServerName("localhost");
         dataSource.setPortNumber(5432);
