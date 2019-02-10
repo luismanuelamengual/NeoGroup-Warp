@@ -128,4 +128,15 @@ public class RoutesController {
     public Collection<DataObject> dbTest () {
          return getTable("person").read();
     }
+
+    @Get("resinsert")
+    public void insertCountry (@Parameter("name") String name) {
+        getResource("country").set("name", name).create();
+        getResponse().print("Pais \"" + name + "\" insertado !!");
+    }
+
+    @Get("res")
+    public Collection<DataObject> getCountries () {
+        return getResource("country").read();
+    }
 }

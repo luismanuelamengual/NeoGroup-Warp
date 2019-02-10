@@ -54,7 +54,8 @@ public abstract class Resources {
     public static ResourceProxy<DataObject> get(String resourceName) {
         Resource resource = resources.get(resourceName);
         if (resource == null) {
-            throw new RuntimeException("Resource not found with name \"" + resourceName + "\" !!");
+            resource = new DataResource();
+            resources.put(resourceName, resource);
         }
         return new ResourceProxy<>(resourceName, resource);
     }

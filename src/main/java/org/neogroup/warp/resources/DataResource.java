@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import static org.neogroup.warp.Warp.getConnection;
 
-public class DefaultResource extends Resource<DataObject> {
+public class DataResource extends Resource<DataObject> {
 
     @Override
     public Collection<DataObject> read(SelectQuery query) {
