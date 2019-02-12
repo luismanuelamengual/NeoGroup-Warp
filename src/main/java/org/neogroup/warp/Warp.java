@@ -104,7 +104,11 @@ public abstract class Warp {
         return Controllers.get(controllerClass);
     }
 
-    public static ResourceProxy getResource(String resourceName) {
+    public static <M> ResourceProxy<M> getResource(Class<M> modelClass) {
+        return Resources.get(modelClass);
+    }
+
+    public static ResourceProxy<DataObject> getResource(String resourceName) {
         return Resources.get(resourceName);
     }
 

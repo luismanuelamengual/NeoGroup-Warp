@@ -1,23 +1,28 @@
 package example.persons;
 
-import org.neogroup.warp.data.Data;
-import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @ResourceComponent("person")
-public class PersonsResource extends Resource {
+public class PersonsResource extends Resource<Person> {
 
     @Override
-    public DataCollection find(SelectQuery query) {
+    public Collection<Person> find(SelectQuery query) {
 
-        return Data.collection()
-            .add(Data.object()
-                .set("name", "Luis")
-                .set("lastName", "Amengual"))
-            .add(Data.object()
-                .set("name", "Jessica")
-                .set("lastName", "Alba"));
+        List<Person> persons = new ArrayList<>();
+
+        Person person1 = new Person();
+        person1.setId(1);
+        person1.setName("Luis");
+        person1.setLastName("Amengual");
+        person1.setAge(36);
+
+        persons.add(person1);
+        return persons;
     }
 }

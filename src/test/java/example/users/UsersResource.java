@@ -2,17 +2,22 @@ package example.users;
 
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataCollection;
+import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @ResourceComponent("user")
-public class UsersResource extends Resource {
+public class UsersResource extends Resource<DataObject> {
 
     @Override
-    public DataCollection find(SelectQuery query) {
+    public Collection<DataObject> find(SelectQuery query) {
 
-        DataCollection collection = Data.collection();
+        List<DataObject> collection = new ArrayList<>();
 
         collection.add(Data.object()
             .set("name", "Pepech")

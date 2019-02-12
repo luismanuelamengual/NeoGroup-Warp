@@ -1,26 +1,27 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
 import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.data.query.UpdateQuery;
 
-public abstract class Resource  {
+import java.util.Collection;
 
-    public DataCollection find (SelectQuery query) {
+public abstract class Resource<M extends Object>  {
+
+    public Collection<M> find (SelectQuery query) {
         throw new UnsupportedOperationException();
     }
 
-    public DataCollection insert (InsertQuery query) {
+    public M insert (InsertQuery query) {
         throw new UnsupportedOperationException();
     }
 
-    public DataCollection update (UpdateQuery query) {
+    public Collection<M> update (UpdateQuery query) {
         throw new UnsupportedOperationException();
     }
 
-    public DataCollection delete (DeleteQuery query) {
+    public Collection<M> delete (DeleteQuery query) {
         throw new UnsupportedOperationException();
     }
 }

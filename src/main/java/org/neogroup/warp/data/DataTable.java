@@ -11,10 +11,7 @@ import org.neogroup.warp.data.query.fields.SortField;
 import org.neogroup.warp.data.query.joins.Join;
 import org.neogroup.warp.data.query.traits.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataTable implements
         HasTable<DataTable>,
@@ -63,7 +60,7 @@ public class DataTable implements
         this.distinct = false;
     }
 
-    public DataCollection find() {
+    public Collection<DataObject> find() {
         SelectQuery query = new SelectQuery();
         query.setTableName(tableName);
         query.setTableAlias(tableAlias);

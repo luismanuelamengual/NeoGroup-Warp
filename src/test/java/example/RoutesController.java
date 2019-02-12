@@ -7,9 +7,12 @@ import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.data.Data;
 import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.DataElement;
+import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.data.query.fields.SortDirection;
+import org.neogroup.warp.resources.ResourceProxy;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 import static org.neogroup.warp.Warp.*;
 
@@ -124,7 +127,7 @@ public class RoutesController {
     }
 
     @Get("db")
-    public DataCollection dbTest () {
+    public Collection<DataObject> dbTest () {
          return getTable("person").find();
     }
 
@@ -135,7 +138,8 @@ public class RoutesController {
     }
 
     @Get("res")
-    public DataCollection getCountries () {
-        return getResource("country").orderBy("name", SortDirection.DESC).find();
+    public Collection<DataObject> getCountries () {
+        //return ((ResourceProxy<DataObject>)getResource("country")).orderBy("name", SortDirection.DESC).find();
+        return null;
     }
 }
