@@ -3,15 +3,15 @@ package org.neogroup.warp.data;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class DataList<T extends Object> implements DataElement,Iterable<T> {
+public class DataCollection implements DataElement,Iterable {
 
-    private List<T> elements;
+    private List<Object> elements;
 
-    public DataList() {
+    public DataCollection() {
         this.elements = new ArrayList<>();
     }
 
-    public DataList add(T value) {
+    public DataCollection add(Object value) {
         elements.add(value);
         return this;
     }
@@ -24,13 +24,13 @@ public class DataList<T extends Object> implements DataElement,Iterable<T> {
         return elements.isEmpty();
     }
 
-    public DataList clear() {
+    public DataCollection clear() {
         elements.clear();
         return this;
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<Object> iterator() {
         return elements.iterator();
     }
 

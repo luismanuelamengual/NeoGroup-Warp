@@ -30,7 +30,7 @@ public class DataObject implements DataElement {
         return this;
     }
 
-    public Set<String> keys() {
+    public Set<String> properties() {
         return properties.keySet();
     }
 

@@ -11,7 +11,10 @@ import org.neogroup.warp.data.query.fields.SortField;
 import org.neogroup.warp.data.query.joins.Join;
 import org.neogroup.warp.data.query.traits.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataTable implements
         HasTable<DataTable>,
@@ -60,7 +63,7 @@ public class DataTable implements
         this.distinct = false;
     }
 
-    public Collection<DataObject> read() {
+    public DataCollection find() {
         SelectQuery query = new SelectQuery();
         query.setTableName(tableName);
         query.setTableAlias(tableAlias);
@@ -76,7 +79,7 @@ public class DataTable implements
         return connection.query(query);
     }
 
-    public int create () {
+    public int insert () {
         InsertQuery query = new InsertQuery();
         query.setTableName(tableName);
         query.setFields(fields);
@@ -96,6 +99,10 @@ public class DataTable implements
         query.setTableName(tableName);
         query.setWhereConditions(whereConditionGroup);
         return connection.execute(query);
+    }
+
+    public DataObject first () {
+        return (DataObject)limit(1).find().iterator().next();
     }
 
     @Override

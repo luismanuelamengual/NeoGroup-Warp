@@ -5,13 +5,11 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.data.Data;
+import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.DataElement;
-import org.neogroup.warp.data.DataObject;
-import org.neogroup.warp.data.query.Query;
 import org.neogroup.warp.data.query.fields.SortDirection;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 
 import static org.neogroup.warp.Warp.*;
 
@@ -50,7 +48,7 @@ public class RoutesController {
         return Data.object()
             .set("name", "Luis")
             .set("lastName", "Amengual")
-            .set("projects", Data.list()
+            .set("projects", Data.collection()
                 .add("Ramach")
                 .add("Pepech")
                 .add(124.46)
@@ -101,7 +99,7 @@ public class RoutesController {
             .set("name", "pimba")
             .set("lastname", "tuke")
             .set("age", 27)
-            .create();
+            .insert();
 
         response.print("Persona insertada !!");
     }
@@ -126,18 +124,18 @@ public class RoutesController {
     }
 
     @Get("db")
-    public Collection<DataObject> dbTest () {
-         return getTable("person").read();
+    public DataCollection dbTest () {
+         return getTable("person").find();
     }
 
     @Get("resinsert")
     public void insertCountry (@Parameter("name") String name) {
-        getResource("country").set("name", name).create();
+        getResource("country").set("name", name).insert();
         getResponse().print("Pais \"" + name + "\" insertado !!");
     }
 
     @Get("res")
-    public Collection<DataObject> getCountries () {
-        return getResource("country").orderBy("name", SortDirection.DESC).read();
+    public DataCollection getCountries () {
+        return getResource("country").orderBy("name", SortDirection.DESC).find();
     }
 }

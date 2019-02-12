@@ -60,24 +60,24 @@ public class DataConnection  {
         return new DataTable(this, table);
     }
 
-    public Collection<DataObject> query(Query query) {
+    public DataCollection query(Query query) {
         List<Object> bindings = new ArrayList<>();
         String sql = queryBuilder.buildQuery(query, bindings);
         return query(sql, bindings);
     }
 
-    public Collection<DataObject> query(String sql) {
+    public DataCollection query(String sql) {
         return query(sql, null);
     }
 
-    public Collection<DataObject> query(String sql, List<Object> bindings) {
+    public DataCollection query(String sql, List<Object> bindings) {
         try {
             PreparedStatement statement = getStatement(sql, bindings);
             getLogger().info("SQL: " + statement.toString());
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
-            List data = new ArrayList();
+            DataCollection data = Data.collection();
             while (resultSet.next()) {
                 DataObject dataObject = Data.object();
                 for (int i = 1; i <= columnCount; i++) {

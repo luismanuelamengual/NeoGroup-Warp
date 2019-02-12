@@ -3,8 +3,8 @@ package example.persons;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
 import org.neogroup.warp.controllers.routing.Parameter;
-
-import java.util.Collection;
+import org.neogroup.warp.data.DataCollection;
+import org.neogroup.warp.data.DataObject;
 
 import static org.neogroup.warp.Warp.getResource;
 
@@ -12,12 +12,12 @@ import static org.neogroup.warp.Warp.getResource;
 public class PersonsController {
 
     @Get("persons/:id")
-    public Person getPerson(@Parameter("id") int personId) {
-        return getResource(Person.class).where("id", personId).first();
+    public DataObject getPerson(@Parameter("id") int personId) {
+        return getResource("person").where("id", personId).first();
     }
 
     @Get("persons")
-    public Collection<Person> getPersons() {
-        return getResource(Person.class).read();
+    public DataCollection getPersons() {
+        return getResource("person").find();
     }
 }

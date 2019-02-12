@@ -1,17 +1,19 @@
 package org.neogroup.warp.controllers.formatters;
 
-import org.neogroup.warp.data.DataList;
+import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataObject;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 public class JsonFormatter extends Formatter {
 
+    private static final String JSON_NULL = "null";
     private static final char JSON_ARRAY_START_CHAR = '[';
     private static final char JSON_ARRAY_END_CHAR = ']';
     private static final char JSON_OBJECT_START_CHAR = '{';
@@ -28,30 +30,35 @@ public class JsonFormatter extends Formatter {
     }
 
     private void write (Object object, StringWriter writer) {
-        if ((object instanceof Number)) {
-            writeNumber((Number)object, writer);
-        }
-        else if (object instanceof Boolean) {
-            writeBoolean((Boolean)object, writer);
-        }
-        else if (object instanceof CharSequence) {
-            writeString((CharSequence)object, writer);
-        }
-        else if (object instanceof DataElement) {
-            writeDataElement((DataElement)object, writer);
-        }
-        else if (object.getClass().isArray()) {
-            writeArray((Object[])object, writer);
-        }
-        else if (object instanceof Iterable) {
-            writeIterable((Iterable)object, writer);
-        }
-        else if (object instanceof Map) {
-            writeMap((Map)object, writer);
-        }
-        else {
+        if (object == null) {
+            writeNull(writer);
+        } else if ((object instanceof Number)) {
+            writeNumber((Number) object, writer);
+        } else if (object instanceof Boolean) {
+            writeBoolean((Boolean) object, writer);
+        } else if (object instanceof CharSequence) {
+            writeString((CharSequence) object, writer);
+        } else if (object instanceof DataElement) {
+            writeDataElement((DataElement) object, writer);
+        } else if (object.getClass().isArray()) {
+            writeArray((Object[]) object, writer);
+        } else if (object instanceof Iterable) {
+            writeIterable((Iterable) object, writer);
+        } else if (object instanceof Map) {
+            writeMap((Map) object, writer);
+        } else if (object instanceof Date) {
+            writeDate((Date) object, writer);
+        } else {
             writeObject(object, writer);
         }
+    }
+
+    private void writeNull (StringWriter writer) {
+        writer.append(JSON_NULL);
+    }
+
+    private void writeDate (Date date, StringWriter writer) {
+        writer.append(date.toString());
     }
 
     private void writeNumber (Number number, StringWriter writer) {
@@ -110,7 +117,7 @@ public class JsonFormatter extends Formatter {
             DataObject dataObject = (DataObject)dataElement;
             writer.append(JSON_OBJECT_START_CHAR);
             boolean isFirst = true;
-            Set<String> keys = dataObject.keys();
+            Set<String> keys = dataObject.properties();
             for (String key : keys) {
                 if (!isFirst) {
                     writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
@@ -124,7 +131,7 @@ public class JsonFormatter extends Formatter {
             }
             writer.append(JSON_OBJECT_END_CHAR);
         }
-        else if (dataElement instanceof DataList) {
+        else if (dataElement instanceof DataCollection) {
             writeIterable((Iterable)dataElement, writer);
         }
         else {
