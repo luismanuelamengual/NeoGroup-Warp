@@ -57,16 +57,18 @@ public class JsonFormatter extends Formatter {
         writer.append(JSON_NULL);
     }
 
-    private void writeDate (Date date, StringWriter writer) {
-        writer.append(date.toString());
-    }
-
     private void writeNumber (Number number, StringWriter writer) {
         writer.append(number.toString());
     }
 
     private void writeBoolean (Boolean bool, StringWriter writer) {
         writer.append(bool.toString());
+    }
+
+    private void writeDate (Date date, StringWriter writer) {
+        writer.append(JSON_DOUBLE_COLON_CHAR);
+        writer.append(date.toString());
+        writer.append(JSON_DOUBLE_COLON_CHAR);
     }
 
     private void writeString (CharSequence string, StringWriter writer) {
