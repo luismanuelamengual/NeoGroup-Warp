@@ -29,11 +29,14 @@ public abstract class Resources {
                 Type[] fieldArgTypes = parameterizedType.getActualTypeArguments();
                 Class modelClass = (Class) fieldArgTypes[0];
                 Resource resource = resourceClass.getConstructor().newInstance();
-                resources.put(resourceName, resource);
                 if (!modelClass.isAssignableFrom(DataObject.class)) {
                     resourcesByModelClass.put(modelClass, resource);
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass: " + modelClass.getName() + "]");
                 }
-                getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !!");
+                else {
+                    resources.put(resourceName, resource);
+                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
+                }
             }
         }
         catch (Exception ex) {
