@@ -181,7 +181,7 @@ public class SelectQuery extends Query implements
 
     @Override
     public SelectQuery offset(Integer offset) {
-        this.limit = offset;
+        this.offset = offset;
         return this;
     }
 }

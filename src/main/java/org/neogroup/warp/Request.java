@@ -13,7 +13,7 @@ import java.util.*;
 public class Request {
 
     private final HttpServletRequest request;
-    private Map<String,String> parameters;
+    private Map<String,Object> parameters;
 
     /**
      * Servlet Request
@@ -162,34 +162,34 @@ public class Request {
      * @param key key of parameter
      * @return value of parameter
      */
-    public String get(String key) {
-        String value = parameters.get(key);
+    public <V> V get(String key) {
+        Object value = parameters.get(key);
         if (value == null) {
             value = request.getParameter(key);
         }
-        return value;
+        return (V)value;
     }
 
-    public String get(String key, String defaultValue) {
+    public <V> V get(String key, V defaultValue) {
         String value = get(key);
-        return value != null? value : defaultValue;
+        return value != null? (V)value : defaultValue;
     }
 
     public <V> V get(String key, Class<? extends V> valueClass) {
         Object value = get(key);
         if (value != null) {
-            if (!String.class.isAssignableFrom(valueClass)) {
-                if (int.class.isAssignableFrom(valueClass) || Integer.class.isAssignableFrom(valueClass)) {
-                    value = Integer.parseInt((String)value);
-                } else if (float.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
-                    value = Float.parseFloat((String)value);
-                } else if (double.class.isAssignableFrom(valueClass) || Double.class.isAssignableFrom(valueClass)) {
-                    value = Double.parseDouble((String)value);
-                } else if (boolean.class.isAssignableFrom(valueClass) || Boolean.class.isAssignableFrom(valueClass)) {
-                    value = Boolean.parseBoolean((String)value);
-                } else {
-                    throw new RuntimeException("Parameter type \"" + valueClass.getName() + "\" not supported !!");
-                }
+            if (String.class.isAssignableFrom(valueClass)) {
+                value = value.toString();
+            } else if (int.class.isAssignableFrom(valueClass) || Integer.class.isAssignableFrom(valueClass)) {
+                value = Integer.parseInt((String)value);
+            } else if (float.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
+                value = Float.parseFloat((String)value);
+            } else if (double.class.isAssignableFrom(valueClass) || Double.class.isAssignableFrom(valueClass)) {
+                value = Double.parseDouble((String)value);
+            } else if (boolean.class.isAssignableFrom(valueClass) || Boolean.class.isAssignableFrom(valueClass)) {
+                value = Boolean.parseBoolean((String)value);
+            } else {
+                throw new RuntimeException("Parameter type \"" + valueClass.getName() + "\" not supported !!");
             }
         }
         return (V)value;
@@ -198,6 +198,14 @@ public class Request {
     public <V> V get(String key, Class<? extends V> valueClass, V defaultValue) {
         V value = get(key, valueClass);
         return value != null? value : defaultValue;
+    }
+
+    public String getString(String key) {
+        return get(key, String.class);
+    }
+
+    public String getString(String key, String defaultValue) {
+        return get(key, String.class, defaultValue);
     }
 
     public Integer getInt(String key) {
