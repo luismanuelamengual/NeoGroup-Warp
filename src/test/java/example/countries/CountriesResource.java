@@ -1,7 +1,6 @@
 package example.countries;
 
 import org.neogroup.warp.data.Data;
-import org.neogroup.warp.data.DataCollection;
 import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;

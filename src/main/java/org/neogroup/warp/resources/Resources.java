@@ -1,5 +1,8 @@
 package org.neogroup.warp.resources;
 
+import org.neogroup.warp.Request;
+import org.neogroup.warp.controllers.Controllers;
+import org.neogroup.warp.controllers.routing.RoutingPriority;
 import org.neogroup.warp.data.DataObject;
 
 import java.lang.reflect.ParameterizedType;
@@ -37,6 +40,10 @@ public abstract class Resources {
                     resources.put(resourceName, resource);
                     getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
                 }
+
+                ResourceController resourceController = new ResourceController(resourceName, resource);
+                Class resourceControllerClass = resourceController.getClass();
+                Controllers.registerRoute("GET", resourceName, resourceController, resourceControllerClass.getDeclaredMethod("getResources", Request.class), RoutingPriority.NORMAL, false);
             }
         }
         catch (Exception ex) {

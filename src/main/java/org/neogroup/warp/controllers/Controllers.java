@@ -87,13 +87,25 @@ public abstract class Controllers {
         }
     }
 
-    public static void registerRoutes (Routes routes, String method, String[] paths, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+    public static void registerRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+        registerRoute(routes, method, path, controller, controllerMethod, priority, auxiliary);
+    }
+
+    public static void registerNotFoundRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+        registerRoute(notFoundRoutes, method, path, controller, controllerMethod, priority, auxiliary);
+    }
+
+    public static void registerErrorRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+        registerRoute(errorRoutes, method, path, controller, controllerMethod, priority, auxiliary);
+    }
+
+    private static void registerRoutes (Routes routes, String method, String[] paths, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
         for (String path : paths) {
             registerRoute(routes, method, path, controller, controllerMethod, priority, auxiliary);
         }
     }
 
-    public static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+    private static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
         path = getNormalizedPath(path);
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority, auxiliary));

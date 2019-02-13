@@ -5,9 +5,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that wraps a servlet request
@@ -124,6 +122,21 @@ public class Request {
      */
     public ServletInputStream getInputStream() throws IOException {
         return request.getInputStream();
+    }
+
+    /**
+     * Returns the parameter names in the request
+     * @return set of parameter names
+     */
+    public Set<String> getParameterNames() {
+        Enumeration<String> requestParameterNames = request.getParameterNames();
+        Set<String> parameterNames = new HashSet<>();
+        while (requestParameterNames.hasMoreElements()) {
+            String parameterName = requestParameterNames.nextElement();
+            parameterNames.add(parameterName);
+        }
+        parameterNames.addAll(parameters.keySet());
+        return parameterNames;
     }
 
     /**
