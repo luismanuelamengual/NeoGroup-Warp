@@ -25,11 +25,8 @@ public class ResourceController<M extends Object> {
     }
 
     public M getResource (Request request) {
-        SelectQuery query = new SelectQuery();
-        query.setTableName(resourceName);
-        query.where(resource.getIdField(), request.get("id"));
-        query.limit(1);
-        return resource.find(query).iterator().next();
+        Object id = request.get("id");
+        return resource.find(id);
     }
 
     public Collection<M> getResources (Request request) {
