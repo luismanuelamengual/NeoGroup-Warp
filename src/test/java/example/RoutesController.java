@@ -13,6 +13,7 @@ import org.neogroup.warp.resources.ResourceProxy;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Locale;
 
 import static org.neogroup.warp.Warp.*;
 
@@ -141,5 +142,13 @@ public class RoutesController {
     public Collection<DataObject> getCountries () {
         //return ((ResourceProxy<DataObject>)getResource("country")).orderBy("name", SortDirection.DESC).find();
         return null;
+    }
+
+    @Get("mes")
+    public void messagesTest (Request request, Response response) {
+        getContext().setLocale(Locale.forLanguageTag("es_AR"));
+
+        String text = request.get("text");
+        response.print(getMessage(text));
     }
 }

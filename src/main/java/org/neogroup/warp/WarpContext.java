@@ -3,12 +3,16 @@ package org.neogroup.warp;
 import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataSources;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class WarpContext {
 
     private final Request request;
     private final Response response;
+    private Locale locale;
+    private TimeZone timeZone;
     private DataConnection connection;
     private Map<String, DataConnection> connections;
 
@@ -23,6 +27,22 @@ public class WarpContext {
 
     public Response getResponse() {
         return response;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
     public DataConnection getConnection() {
@@ -53,5 +73,7 @@ public class WarpContext {
             connections.clear();
             connections = null;
         }
+        locale = null;
+        timeZone = null;
     }
 }

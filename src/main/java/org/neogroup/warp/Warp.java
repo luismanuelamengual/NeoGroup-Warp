@@ -2,6 +2,7 @@ package org.neogroup.warp;
 
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.data.*;
+import org.neogroup.warp.messages.Messages;
 import org.neogroup.warp.properties.Properties;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceProxy;
@@ -72,17 +73,20 @@ public abstract class Warp {
         return LoggerFactory.getLogger(clazz);
     }
 
+    public static String getMessage(String key, Object... args) {
+        return Messages.get(key, args);
+    }
+
+    public static String getMessage(String bundleName, String key, Object... args) {
+        return Messages.get(bundleName, key, args);
+    }
+
+    public static String getMessage(Locale locale, String key, Object... args) {
+        return Messages.get(locale, key, args);
+    }
+
     public static String getMessage(String bundleName, Locale locale, String key, Object... args) {
-        String value = null;
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
-        if (bundle != null && bundle.containsKey(key)) {
-            value = MessageFormat.format(bundle.getString(key), args);
-        }
-        else {
-            value = "{" + key + "}";
-            getLogger().warn("Message key \"" + key + "\" not found in bundle \"" + bundleName + "\" and locale \"" + locale + "\"");
-        }
-        return value;
+        return Messages.get(bundleName, locale, key, args);
     }
 
     public static void handleRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
