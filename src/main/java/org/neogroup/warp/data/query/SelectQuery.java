@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SelectQuery extends Query implements
         HasTable<SelectQuery>,
-        HasSubQuery<SelectQuery>,
+        HasTableSubQuery<SelectQuery>,
         HasTableAlias<SelectQuery>,
         HasDistinct<SelectQuery>,
         HasSelectFields<SelectQuery>,
@@ -76,12 +76,12 @@ public class SelectQuery extends Query implements
     }
 
     @Override
-    public SelectQuery getSubQuery() {
+    public SelectQuery getTableSubQuery() {
         return subQuery;
     }
 
     @Override
-    public SelectQuery setSubQuery(SelectQuery subQuery) {
+    public SelectQuery setTableSubQuery(SelectQuery subQuery) {
         this.subQuery = subQuery;
         return this;
     }

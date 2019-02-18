@@ -15,7 +15,7 @@ import java.util.Map;
 public class QueryObject<R extends QueryObject> implements
         HasTable<R>,
         HasTableAlias<R>,
-        HasSubQuery<R>,
+        HasTableSubQuery<R>,
         HasFields<R>,
         HasDistinct<R>,
         HasSelectFields<R>,
@@ -232,12 +232,12 @@ public class QueryObject<R extends QueryObject> implements
     }
 
     @Override
-    public SelectQuery getSubQuery() {
+    public SelectQuery getTableSubQuery() {
         return subQuery;
     }
 
     @Override
-    public R setSubQuery(SelectQuery subQuery) {
+    public R setTableSubQuery(SelectQuery subQuery) {
         this.subQuery = subQuery;
         return (R)this;
     }

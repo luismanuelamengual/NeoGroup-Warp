@@ -12,7 +12,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class DefaultQueryBuilder extends QueryBuilder {
 
@@ -130,7 +129,7 @@ public class DefaultQueryBuilder extends QueryBuilder {
         writer.write(SPACE);
         writer.write(FROM);
         writer.write(SPACE);
-        SelectQuery subQuery = query.getSubQuery();
+        SelectQuery subQuery = query.getTableSubQuery();
         if (subQuery != null) {
             writer.write(PARENTHESIS_START);
             buildSelectQuery(writer, subQuery, bindings);
