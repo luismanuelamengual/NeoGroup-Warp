@@ -5,7 +5,7 @@ import org.neogroup.warp.data.query.fields.SelectField;
 import java.util.Collections;
 import java.util.List;
 
-public interface HasSelectFields<R extends HasSelectFields<R>> {
+public interface HasSelectFields<R> {
 
     List<SelectField> getSelectFields();
 

@@ -1,6 +1,6 @@
 package org.neogroup.warp.data.query.traits;
 
-public interface HasLimit<R extends HasLimit<R>> {
+public interface HasLimit<R> {
 
     Integer getLimit();
 

@@ -5,7 +5,7 @@ import org.neogroup.warp.data.query.fields.Field;
 import java.util.Collections;
 import java.util.List;
 
-public interface HasGroupByFields<R extends HasGroupByFields<R>> {
+public interface HasGroupByFields<R> {
 
     List<Field> getGroupByFields();
 

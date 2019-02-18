@@ -6,7 +6,7 @@ import org.neogroup.warp.data.query.joins.JoinType;
 
 import java.util.List;
 
-public interface HasJoins<R extends HasJoins<R>> {
+public interface HasJoins<R> {
 
     List<Join> getJoins ();
 

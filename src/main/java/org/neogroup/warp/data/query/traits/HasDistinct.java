@@ -1,6 +1,6 @@
 package org.neogroup.warp.data.query.traits;
 
-public interface HasDistinct<R extends HasDistinct<R>> {
+public interface HasDistinct<R> {
 
     Boolean isDistinct();
 

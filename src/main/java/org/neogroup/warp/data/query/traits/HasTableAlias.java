@@ -1,6 +1,6 @@
 package org.neogroup.warp.data.query.traits;
 
-public interface HasTableAlias<R extends HasTableAlias<R>> {
+public interface HasTableAlias<R> {
 
     String getTableAlias();
 

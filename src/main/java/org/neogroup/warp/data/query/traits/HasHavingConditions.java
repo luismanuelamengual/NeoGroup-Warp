@@ -5,7 +5,7 @@ import org.neogroup.warp.data.query.fields.Field;
 
 import java.util.Collection;
 
-public interface HasHavingConditions<R extends HasHavingConditions<R>> {
+public interface HasHavingConditions<R> {
 
     ConditionGroup getHavingConditions();
 

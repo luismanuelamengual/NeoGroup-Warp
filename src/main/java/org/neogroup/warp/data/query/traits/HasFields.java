@@ -2,7 +2,7 @@ package org.neogroup.warp.data.query.traits;
 
 import java.util.Map;
 
-public interface HasFields<R extends HasFields<R>> {
+public interface HasFields<R> {
 
     Map<String, Object> getFields();
 

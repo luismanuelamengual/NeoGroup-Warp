@@ -2,7 +2,7 @@ package org.neogroup.warp.data.query.traits;
 
 import org.neogroup.warp.data.query.SelectQuery;
 
-public interface HasSubQuery<R extends HasSubQuery<R>> {
+public interface HasSubQuery<R> {
 
     SelectQuery getSubQuery();
 

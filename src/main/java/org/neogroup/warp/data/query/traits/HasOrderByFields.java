@@ -6,7 +6,7 @@ import org.neogroup.warp.data.query.fields.SortField;
 import java.util.Collections;
 import java.util.List;
 
-public interface HasOrderByFields<R extends HasOrderByFields<R>> {
+public interface HasOrderByFields<R> {
 
     List<SortField> getOrderByFields();
 

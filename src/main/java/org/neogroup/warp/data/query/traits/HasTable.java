@@ -1,6 +1,6 @@
 package org.neogroup.warp.data.query.traits;
 
-public interface HasTable<R extends HasTable<R>> {
+public interface HasTable<R> {
 
     String getTableName();
 
