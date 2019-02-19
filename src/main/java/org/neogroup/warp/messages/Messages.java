@@ -2,7 +2,6 @@ package org.neogroup.warp.messages;
 
 import java.text.MessageFormat;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import static org.neogroup.warp.Warp.getContext;
@@ -10,18 +9,18 @@ import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Messages {
 
-    private static final String DEFAULT_BUNDLE_PREFIX = "localization";
+    private static final String DEFAULT_BUNDLE_FOLDER_NAME = "localization";
     private static final String DEFAULT_BUNDLE_NAME = "main";
     private static final String BUNDLE_NAME_SEPARATOR = ".";
 
-    private static String messagesBasePrefix = DEFAULT_BUNDLE_PREFIX;
+    private static String messagesResourcesFolder = DEFAULT_BUNDLE_FOLDER_NAME;
 
-    public static String getMessagesBasePrefix() {
-        return messagesBasePrefix;
+    public static String getMessagesResourcesFolder() {
+        return messagesResourcesFolder;
     }
 
-    public static void setMessagesBasePrefix(String messagesBasePrefix) {
-        Messages.messagesBasePrefix = messagesBasePrefix;
+    public static void setMessagesResourcesFolder(String messagesResourcesFolder) {
+        Messages.messagesResourcesFolder = messagesResourcesFolder;
     }
 
     public static String get(String key, Object... args) {
@@ -40,8 +39,8 @@ public abstract class Messages {
             bundleName = key.substring(0, index);
             bundleKey = key.substring(index+1);
         }
-        if (messagesBasePrefix != null) {
-            bundleName = messagesBasePrefix + BUNDLE_NAME_SEPARATOR + bundleName;
+        if (messagesResourcesFolder != null) {
+            bundleName = messagesResourcesFolder + BUNDLE_NAME_SEPARATOR + bundleName;
         }
         return get(bundleName, locale, bundleKey, args);
     }
