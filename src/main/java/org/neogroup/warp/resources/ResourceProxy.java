@@ -17,7 +17,7 @@ public class ResourceProxy<T extends Object> extends QueryObject<ResourceProxy<T
         return resource.find(createSelectQuery());
     }
 
-    public T insert () {
+    public Collection<T> insert () {
         return resource.insert(createInsertQuery());
     }
 

@@ -6,32 +6,24 @@ import org.neogroup.warp.data.query.SelectQuery;
 import org.neogroup.warp.resources.Resource;
 import org.neogroup.warp.resources.ResourceComponent;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @ResourceComponent("country")
 public class CountriesResource extends Resource<DataObject> {
 
-    private Map<Integer, DataObject> store;
+    private List<DataObject> store;
 
     public CountriesResource() {
-        this.store = new HashMap<>();
-        this.store.put(1, Data.object().set("id", 1).set("name", "Argentina"));
-        this.store.put(2, Data.object().set("id", 2).set("name", "Brazil"));
-        this.store.put(3, Data.object().set("id", 3).set("name", "Chile"));
-        this.store.put(4, Data.object().set("id", 4).set("name", "Uruguay"));
-    }
-
-    @Override
-    public DataObject find(Object id) {
-        if (!(id instanceof Integer)) {
-            id = Integer.parseInt(id.toString());
-        }
-        return store.get(id);
+        this.store = new ArrayList<>();
+        this.store.add(Data.object().set("id", 1).set("name", "Argentina"));
+        this.store.add(Data.object().set("id", 2).set("name", "Brazil"));
+        this.store.add(Data.object().set("id", 3).set("name", "Chile"));
+        this.store.add(Data.object().set("id", 4).set("name", "Uruguay"));
     }
 
     public Collection<DataObject> find(SelectQuery query) {
-        return this.store.values();
+        return this.store;
     }
 }

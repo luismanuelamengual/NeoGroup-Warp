@@ -1,7 +1,5 @@
 package org.neogroup.warp.controllers.formatters;
 
-import org.neogroup.warp.data.DataCollection;
-import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataObject;
 
 import java.io.StringWriter;
@@ -38,8 +36,8 @@ public class JsonFormatter extends Formatter {
             writeBoolean((Boolean) object, writer);
         } else if (object instanceof CharSequence) {
             writeString((CharSequence) object, writer);
-        } else if (object instanceof DataElement) {
-            writeDataElement((DataElement) object, writer);
+        } else if (object instanceof DataObject) {
+            writeDataObject((DataObject) object, writer);
         } else if (object.getClass().isArray()) {
             writeArray((Object[]) object, writer);
         } else if (object instanceof Iterable) {
@@ -114,31 +112,22 @@ public class JsonFormatter extends Formatter {
         }
     }
 
-    private void writeDataElement (DataElement dataElement, StringWriter writer) {
-        if (dataElement instanceof DataObject) {
-            DataObject dataObject = (DataObject)dataElement;
-            writer.append(JSON_OBJECT_START_CHAR);
-            boolean isFirst = true;
-            Set<String> keys = dataObject.properties();
-            for (String key : keys) {
-                if (!isFirst) {
-                    writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
-                }
-                writer.append(JSON_DOUBLE_COLON_CHAR);
-                writer.append(key);
-                writer.append(JSON_DOUBLE_COLON_CHAR);
-                writer.append(JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
-                write(dataObject.get(key), writer);
-                isFirst = false;
+    private void writeDataObject (DataObject dataObject, StringWriter writer) {
+        writer.append(JSON_OBJECT_START_CHAR);
+        boolean isFirst = true;
+        Set<String> keys = dataObject.properties();
+        for (String key : keys) {
+            if (!isFirst) {
+                writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
             }
-            writer.append(JSON_OBJECT_END_CHAR);
+            writer.append(JSON_DOUBLE_COLON_CHAR);
+            writer.append(key);
+            writer.append(JSON_DOUBLE_COLON_CHAR);
+            writer.append(JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
+            write(dataObject.get(key), writer);
+            isFirst = false;
         }
-        else if (dataElement instanceof DataCollection) {
-            writeIterable((Iterable)dataElement, writer);
-        }
-        else {
-            writeObject(dataElement, writer);
-        }
+        writer.append(JSON_OBJECT_END_CHAR);
     }
 
     private void writeMap (Map map, StringWriter writer) {

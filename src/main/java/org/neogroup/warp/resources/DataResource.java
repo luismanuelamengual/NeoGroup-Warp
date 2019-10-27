@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import static org.neogroup.warp.Warp.getConnection;
 
-public class DataResource extends Resource {
+public class DataResource extends Resource<DataObject> {
 
     @Override
     public Collection<DataObject> find(SelectQuery query) {
@@ -18,7 +18,7 @@ public class DataResource extends Resource {
     }
 
     @Override
-    public DataObject insert(InsertQuery query) {
+    public Collection<DataObject> insert(InsertQuery query) {
         getConnection().execute(query);
         return null;
     }

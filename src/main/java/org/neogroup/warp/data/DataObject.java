@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class DataObject implements DataElement {
+public class DataObject {
 
     private Map<String, Object> properties;
 

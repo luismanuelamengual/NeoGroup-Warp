@@ -5,11 +5,7 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.data.Data;
-import org.neogroup.warp.data.DataCollection;
-import org.neogroup.warp.data.DataElement;
 import org.neogroup.warp.data.DataObject;
-import org.neogroup.warp.data.query.fields.SortDirection;
-import org.neogroup.warp.resources.ResourceProxy;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -48,15 +44,15 @@ public class RoutesController {
     }
 
     @Get("elem")
-    public DataElement getElement() {
+    public DataObject getElement() {
         return Data.object()
             .set("name", "Luis")
             .set("lastName", "Amengual")
-            .set("projects", Data.collection()
-                .add("Ramach")
-                .add("Pepech")
-                .add(124.46)
-                .add(true))
+            .set("projects", Data.list(
+                "Ramach",
+                "Pepech",
+                124.46,
+                true))
             .set("rulex", "pepperonni")
             .set("direction", Data.object()
                 .set("country", "Argentina")
