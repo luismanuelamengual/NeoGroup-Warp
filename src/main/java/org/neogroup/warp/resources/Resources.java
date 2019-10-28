@@ -15,12 +15,14 @@ import static org.neogroup.warp.Warp.getLogger;
 public abstract class Resources {
 
     private static Map<String, Resource> resources;
+    private static Map<String, Class> modelClassByResourceName;
     private static Map<Class, Resource> resourcesByModelClass;
     private static DataResource defaultDataResource;
 
     static {
         resources = new HashMap<>();
         resourcesByModelClass = new HashMap<>();
+        modelClassByResourceName = new HashMap<>();
         defaultDataResource = new DataResource();
     }
 
@@ -34,12 +36,11 @@ public abstract class Resources {
                 Resource resource = resourceClass.getConstructor().newInstance();
                 if (!modelClass.isAssignableFrom(DataObject.class)) {
                     resourcesByModelClass.put(modelClass, resource);
+                    modelClassByResourceName.put(resourceName, modelClass);
                     getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass: " + modelClass.getName() + "]");
                 }
-                else {
-                    resources.put(resourceName, resource);
-                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
-                }
+                resources.put(resourceName, resource);
+                getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
 
                 ResourceController resourceController = new ResourceController(resourceName, resource);
                 Class resourceControllerClass = resourceController.getClass();
@@ -61,9 +62,18 @@ public abstract class Resources {
 
     public static ResourceProxy<DataObject> get(String resourceName) {
         Resource resource = resources.get(resourceName);
+        ResourceProxy<DataObject> resourceProxy = null;
         if (resource == null) {
-            resource = defaultDataResource;
+            resourceProxy = new ResourceProxy<>(resourceName, defaultDataResource);
         }
-        return new ResourceProxy<>(resourceName, resource);
+        else {
+            Class modelClass = modelClassByResourceName.get(resourceName);
+            if (modelClass.equals(DataObject.class)) {
+                resourceProxy = new ResourceProxy<>(resourceName, resource);
+            } else {
+                resourceProxy = new DataResourceProxy(resourceName, resource);
+            }
+        }
+        return resourceProxy;
     }
 }
