@@ -16,6 +16,7 @@ import org.neogroup.warp.utils.Scanner;
 import org.neogroup.warp.views.ViewFactory;
 import org.neogroup.warp.views.ViewFactoryComponent;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,6 @@ import java.nio.file.Paths;
 import static org.neogroup.warp.Warp.*;
 
 public class WarpApplication {
-
 
     private static final String BASE_PACKAGE_PROPERTY = "org.neogroup.warp.basePackage";
 
@@ -176,9 +176,9 @@ public class WarpApplication {
     }
 
     private String guessWebRootFolder() {
-
         URL location = getMainClass().getProtectionDomain().getCodeSource().getLocation();
-        Path webappPath = Paths.get (location.getFile());
+        File locationFile = new File(location.getFile());
+        Path webappPath = Paths.get (locationFile.getPath());
         String baseFolderName = webappPath.getFileName().toString();
         if (baseFolderName.equals("classes")) {
             webappPath = webappPath.getParent().getParent().resolve("src").resolve("main").resolve("webapp");
