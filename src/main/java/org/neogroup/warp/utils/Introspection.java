@@ -14,7 +14,8 @@ public final class Introspection {
     public static List<Property> getProperties(Class implementationClass) {
         List<Property> properties = Introspection.properties.get(implementationClass);
         if (properties == null) {
-            properties = Introspection.properties.put(implementationClass, new ArrayList<>());
+            properties = new ArrayList<>();
+            Introspection.properties.put(implementationClass, properties);
             Field[] declaredFields = implementationClass.getDeclaredFields();
             for (Field field : declaredFields) {
                 String propertyName = field.getName();
@@ -30,14 +31,15 @@ public final class Introspection {
                     setterMethod = implementationClass.getDeclaredMethod(setterMethodName);
                 } catch (NoSuchMethodException e) {}
                 if (getterMethod != null || setterMethod != null) {
-                    properties.add(new Property(propertyName, getterMethod, setterMethod));
+                    Property property = new Property(propertyName, getterMethod, setterMethod);
+                    properties.add(property);
                 }
             }
         }
         return properties;
     }
 
-    public static class Property<T> {
+    public static class Property {
 
         private final String name;
         private final Method getterMethod;
@@ -53,7 +55,7 @@ public final class Introspection {
             return name;
         }
 
-        public <O extends Object> O getValue(T instance) {
+        public <O extends Object> O getValue(Object instance) {
             Object result = null;
             try {
                 result = getterMethod.invoke(instance);
@@ -61,7 +63,7 @@ public final class Introspection {
             return (O)result;
         }
 
-        public void setValue(T instance, Object value) {
+        public void setValue(Object instance, Object value) {
             try {
                 setterMethod.invoke(instance, value);
             } catch (Exception e) {}

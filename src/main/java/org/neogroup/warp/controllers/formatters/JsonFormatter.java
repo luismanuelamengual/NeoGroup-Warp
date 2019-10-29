@@ -1,11 +1,11 @@
 package org.neogroup.warp.controllers.formatters;
 
 import org.neogroup.warp.data.DataObject;
+import org.neogroup.warp.utils.Introspection;
 
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,32 +78,19 @@ public class JsonFormatter extends Formatter {
     private void writeObject(Object object, StringWriter writer) {
         try {
             Class objectClass = object.getClass();
-            Field[] declaredFields = objectClass.getDeclaredFields();
             writer.append(JSON_OBJECT_START_CHAR);
             boolean isFirst = true;
-            for (Field field : declaredFields) {
+            List<Introspection.Property> properties = Introspection.getProperties(objectClass);
+            for (Introspection.Property property : properties) {
                 if (!isFirst) {
                     writer.append(JSON_ELEMENT_SEPARATOR_CHAR);
                 }
-                String fieldName = field.getName();
-                Object fieldValue = null;
-                if (field.isAccessible()) {
-                    fieldValue = field.get(object);
-                } else {
-                    String fieldMethodName = (Boolean.class.isAssignableFrom(field.getType())? "is" : "get") + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    Method fieldMethod = objectClass.getDeclaredMethod(fieldMethodName);
-                    if (fieldMethod != null) {
-                        fieldValue = fieldMethod.invoke(object);
-                    }
-                }
-                if (fieldValue != null) {
-                    writer.append(JSON_DOUBLE_COLON_CHAR);
-                    writer.append(fieldName);
-                    writer.append(JSON_DOUBLE_COLON_CHAR);
-                    writer.append(JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
-                    write(fieldValue, writer);
-                    isFirst = false;
-                }
+                writer.append(JSON_DOUBLE_COLON_CHAR);
+                writer.append(property.getName());
+                writer.append(JSON_DOUBLE_COLON_CHAR);
+                writer.append(JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR);
+                write(property.getValue(object), writer);
+                isFirst = false;
             }
             writer.append(JSON_OBJECT_END_CHAR);
         }
