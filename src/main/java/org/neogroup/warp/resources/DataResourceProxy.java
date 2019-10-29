@@ -1,9 +1,11 @@
 package org.neogroup.warp.resources;
 
 import org.neogroup.warp.data.DataObject;
+import org.neogroup.warp.utils.Introspection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class DataResourceProxy extends ResourceProxy<DataObject> {
 
@@ -28,9 +30,17 @@ public class DataResourceProxy extends ResourceProxy<DataObject> {
     }
 
     private Collection<DataObject> createDataCollection(Collection collection) {
-        Collection<DataObject> dataCollection = null;
+        List<DataObject> dataCollection = null;
         if (collection != null) {
             dataCollection = new ArrayList<>();
+            for (Object object : collection) {
+                DataObject dataObject = new DataObject();
+                List<Introspection.Property> properties = Introspection.getProperties(object.getClass());
+                for (Introspection.Property property : properties) {
+                    dataObject.set(property.getName(), property.getValue(object));
+                }
+                dataCollection.add(dataObject);
+            }
         }
         return dataCollection;
     }
