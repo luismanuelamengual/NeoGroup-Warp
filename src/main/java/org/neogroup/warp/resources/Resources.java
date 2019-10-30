@@ -71,7 +71,7 @@ public abstract class Resources {
             if (modelClass.equals(DataObject.class)) {
                 resourceProxy = new ResourceProxy<>(resourceName, resource);
             } else {
-                resourceProxy = new DataResourceProxy(resourceName, resource);
+                resourceProxy = new GenericResourceProxy(resourceName, resource);
             }
         }
         return resourceProxy;

@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DataResourceProxy extends ResourceProxy<DataObject> {
+public class GenericResourceProxy extends ResourceProxy<DataObject> {
 
-    public DataResourceProxy(String resourceName, Resource resource) {
+    public GenericResourceProxy(String resourceName, Resource resource) {
         super(resourceName, resource);
     }
 
