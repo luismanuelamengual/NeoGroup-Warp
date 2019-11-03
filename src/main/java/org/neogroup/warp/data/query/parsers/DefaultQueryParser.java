@@ -1,18 +1,12 @@
 package org.neogroup.warp.data.query.parsers;
 
 import org.neogroup.warp.data.query.Query;
+import org.neogroup.warp.data.query.QueryStatement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultQueryParser extends QueryParser {
-
-    private static char OPENING_PARENTHESIS = '(';
-    private static char CLOSING_PARENTHESIS = ')';
-    private static char COMMA = ',';
-    private static char QUOTATION_MARK = '\'';
-    private static char DOUBLE_QUOTATION_MARK = '"';
-    private static char BACK_SLASH = '\\';
 
     @Override
     public Query parseQuery(String query) {
@@ -30,7 +24,7 @@ public class DefaultQueryParser extends QueryParser {
 
             if (token != null) {
                 if (tokenQuotationCharacter != 0) {
-                    if (character == BACK_SLASH) {
+                    if (character == QueryStatement.BACK_SLASH) {
                         pos++;
                         token.append(query.charAt(pos));
                     }
@@ -48,7 +42,7 @@ public class DefaultQueryParser extends QueryParser {
                     }
                 }
                 else {
-                    if (Character.isWhitespace(character) || character == COMMA ||character == OPENING_PARENTHESIS || character == CLOSING_PARENTHESIS) {
+                    if (Character.isWhitespace(character) || character == QueryStatement.COMMA ||character == QueryStatement.OPENING_PARENTHESIS || character == QueryStatement.CLOSING_PARENTHESIS) {
                         tokens.add(token.toString());
                         token = null;
                     }
@@ -60,11 +54,11 @@ public class DefaultQueryParser extends QueryParser {
 
             if (token == null) {
                 if (!Character.isWhitespace(character)) {
-                    if (character == OPENING_PARENTHESIS || character == CLOSING_PARENTHESIS || character == COMMA) {
+                    if (character == QueryStatement.OPENING_PARENTHESIS || character == QueryStatement.CLOSING_PARENTHESIS || character == QueryStatement.COMMA) {
                         tokens.add(String.valueOf(character));
                     } else {
                         token = new StringBuilder();
-                        if (character == QUOTATION_MARK || character == DOUBLE_QUOTATION_MARK) {
+                        if (character == QueryStatement.QUOTATION_MARK || character == QueryStatement.DOUBLE_QUOTATION_MARK) {
                             tokenQuotationCharacter = character;
                         }
                         else {
