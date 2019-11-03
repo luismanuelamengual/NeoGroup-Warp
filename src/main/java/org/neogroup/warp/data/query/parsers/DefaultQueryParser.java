@@ -1,7 +1,6 @@
 package org.neogroup.warp.data.query.parsers;
 
-import org.neogroup.warp.data.query.Query;
-import org.neogroup.warp.data.query.QueryStatement;
+import org.neogroup.warp.data.query.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +8,43 @@ import java.util.List;
 public class DefaultQueryParser extends QueryParser {
 
     @Override
-    public Query parseQuery(String query) {
+    public Query parseQuery(String query) throws QueryParseException{
         List<String> tokens = getQueryTokens(query);
+        if (tokens.isEmpty()) {
+            throw new QueryParseException("No tokens found in query");
+        }
+        Query parsedQuery = null;
+        switch (tokens.get(0)) {
+            case QueryStatement.SELECT:
+                parsedQuery = createSelectQuery(tokens);
+                break;
+            case QueryStatement.INSERT:
+                parsedQuery = createInsertQuery(tokens);
+                break;
+            case QueryStatement.UPDATE:
+                parsedQuery = createUpdateQuery(tokens);
+                break;
+            case QueryStatement.DELETE:
+                parsedQuery = createDeleteQuery(tokens);
+                break;
+        }
+        return parsedQuery;
+    }
+
+    private SelectQuery createSelectQuery(List<String> tokens) {
         return null;
+    }
+
+    private InsertQuery createInsertQuery(List<String> tokens) {
+        throw new UnsupportedOperationException();
+    }
+
+    private UpdateQuery createUpdateQuery(List<String> tokens) {
+        throw new UnsupportedOperationException();
+    }
+
+    private DeleteQuery createDeleteQuery(List<String> tokens) {
+        throw new UnsupportedOperationException();
     }
 
     private List<String> getQueryTokens(String query) {
