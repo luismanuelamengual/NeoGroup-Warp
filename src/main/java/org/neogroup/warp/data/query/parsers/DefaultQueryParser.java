@@ -7,48 +7,12 @@ import java.util.List;
 
 public class DefaultQueryParser extends QueryParser {
 
-    @Override
-    public Query parseQuery(String query) throws QueryParseException{
-        List<QueryToken> tokens = getQueryTokens(query);
-        if (tokens.isEmpty()) {
-            throw new QueryParseException("No tokens found in query");
-        }
-        QueryToken firstToken = tokens.get(0);
-        if (firstToken.getType() != QueryTokenType.WORD) {
-            throw new QueryParseException("Unexpected query token \"" + firstToken.getValue() + "\"");
-        }
-        Query parsedQuery = null;
-        switch (firstToken.getValue().toString()) {
-            case QueryStatement.SELECT:
-                parsedQuery = createSelectQuery(tokens);
-                break;
-            case QueryStatement.INSERT:
-                parsedQuery = createInsertQuery(tokens);
-                break;
-            case QueryStatement.UPDATE:
-                parsedQuery = createUpdateQuery(tokens);
-                break;
-            case QueryStatement.DELETE:
-                parsedQuery = createDeleteQuery(tokens);
-                break;
-        }
-        return parsedQuery;
-    }
-
-    private SelectQuery createSelectQuery(List<QueryToken> tokens) {
-        return null;
-    }
-
-    private InsertQuery createInsertQuery(List<QueryToken> tokens) {
-        throw new UnsupportedOperationException();
-    }
-
-    private UpdateQuery createUpdateQuery(List<QueryToken> tokens) {
-        throw new UnsupportedOperationException();
-    }
-
-    private DeleteQuery createDeleteQuery(List<QueryToken> tokens) {
-        throw new UnsupportedOperationException();
+    private enum SelectQueryPhase {
+        NONE,
+        SELECT,
+        JOIN,
+        WHERE,
+        HAVING
     }
 
     private enum QueryTokenType {
@@ -80,6 +44,53 @@ public class DefaultQueryParser extends QueryParser {
         public String toString() {
             return value.toString();
         }
+    }
+
+    @Override
+    public Query parseQuery(String query) throws QueryParseException{
+        List<QueryToken> tokens = getQueryTokens(query);
+        if (tokens.isEmpty()) {
+            throw new QueryParseException("No tokens found in query");
+        }
+        QueryToken firstToken = tokens.get(0);
+        if (firstToken.getType() != QueryTokenType.WORD) {
+            throw new QueryParseException("Unexpected query token \"" + firstToken.getValue() + "\"");
+        }
+        Query parsedQuery = null;
+        switch (firstToken.getValue().toString()) {
+            case QueryStatement.SELECT:
+                parsedQuery = createSelectQuery(tokens);
+                break;
+            case QueryStatement.INSERT:
+                parsedQuery = createInsertQuery(tokens);
+                break;
+            case QueryStatement.UPDATE:
+                parsedQuery = createUpdateQuery(tokens);
+                break;
+            case QueryStatement.DELETE:
+                parsedQuery = createDeleteQuery(tokens);
+                break;
+        }
+        return parsedQuery;
+    }
+
+    private SelectQuery createSelectQuery(List<QueryToken> tokens) {
+        for (QueryToken token : tokens) {
+
+        }
+        return null;
+    }
+
+    private InsertQuery createInsertQuery(List<QueryToken> tokens) {
+        throw new UnsupportedOperationException();
+    }
+
+    private UpdateQuery createUpdateQuery(List<QueryToken> tokens) {
+        throw new UnsupportedOperationException();
+    }
+
+    private DeleteQuery createDeleteQuery(List<QueryToken> tokens) {
+        throw new UnsupportedOperationException();
     }
 
     private List<QueryToken> getQueryTokens(String query) {
