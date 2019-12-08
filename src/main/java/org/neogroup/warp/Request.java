@@ -4,7 +4,9 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -120,8 +122,24 @@ public class Request {
      * @return input stream
      * @throws IOException io exception
      */
-    public ServletInputStream getInputStream() throws IOException {
+    public ServletInputStream getBodyInputStream() throws IOException {
         return request.getInputStream();
+    }
+
+    /**
+     * Returns the body of the request
+     * @return String body of the request
+     * @throws IOException
+     */
+    public String getBody() throws IOException {
+        StringBuffer bodyBuffer = new StringBuffer();
+        String str;
+        try (InputStreamReader isReader = new InputStreamReader(getBodyInputStream()); BufferedReader reader = new BufferedReader(isReader)) {
+            while((str = reader.readLine())!= null){
+                bodyBuffer.append(str);
+            }
+        }
+        return bodyBuffer.toString();
     }
 
     /**
