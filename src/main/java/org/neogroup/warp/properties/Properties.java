@@ -11,7 +11,9 @@ public abstract class Properties {
     static {
         properties = new java.util.Properties();
         try (InputStream in = Properties.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_RESOURCE_NAME)) {
-            properties.load(in);
+            if (in != null) {
+                properties.load(in);
+            }
         }
         catch (IOException exception) {
             throw new RuntimeException("Error reading properties resource file", exception);
