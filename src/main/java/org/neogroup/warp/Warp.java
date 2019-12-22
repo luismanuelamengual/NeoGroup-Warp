@@ -33,8 +33,8 @@ public abstract class Warp {
         contexts = new HashMap<>();
     }
 
-    public static void registerController(Class controllerClass) {
-        Controllers.registerController(controllerClass);
+    public static void registerController(String basePath, Class controllerClass) {
+        Controllers.registerController(basePath, controllerClass);
     }
 
     public static void registerViewFactory(String viewFactoryName, Class<? extends ViewFactory> viewFactoryClass) {

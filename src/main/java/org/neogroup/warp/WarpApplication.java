@@ -77,7 +77,7 @@ public class WarpApplication {
 
                     ControllerComponent controllerAnnotation = (ControllerComponent)cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
-                        registerController(cls);
+                        registerController(controllerAnnotation.value(), cls);
                         return true;
                     }
 
