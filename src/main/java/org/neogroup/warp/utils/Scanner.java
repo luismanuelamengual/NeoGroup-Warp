@@ -69,12 +69,12 @@ public class Scanner {
 
         Set<Class> classes = new HashSet<>();
         for (URI classPath : classPaths) {
-            File resource = new File(classPath);
-            if(resource.isDirectory()) {
-                findClasses(classes, resource, "", classFilter);
-            }
-            else {
-                try {
+            try {
+                File resource = new File(classPath);
+                if(resource.isDirectory()) {
+                    findClasses(classes, resource, "", classFilter);
+                }
+                else {
                     JarFile jar = new JarFile(resource);
                     Enumeration<JarEntry> en = jar.entries();
                     while (en.hasMoreElements()) {
@@ -82,8 +82,8 @@ public class Scanner {
                         findJarClasses(classes, jar, entry, "", classFilter);
                     }
                 }
-                catch (Exception ex) {}
             }
+            catch (Exception ex) {}
         }
         return classes;
     }
