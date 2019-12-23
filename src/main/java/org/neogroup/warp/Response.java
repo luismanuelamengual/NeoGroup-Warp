@@ -265,6 +265,15 @@ public class Response {
         }
     }
 
+    public Response print(byte[] bytes) {
+        try {
+            getOutputStream().write(bytes);
+            return this;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Response print(Object o) {
         try {
             getWriter().print(o);

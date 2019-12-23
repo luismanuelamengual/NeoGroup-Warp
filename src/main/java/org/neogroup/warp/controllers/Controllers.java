@@ -262,6 +262,8 @@ public abstract class Controllers {
                 response.print(((View) responseObject).render());
             } else if (responseObject instanceof String) {
                 response.print(responseObject);
+            } else if (responseObject instanceof byte[]) {
+                response.print((byte[])responseObject);
             } else {
                 if (response.getContentType() == null) {
                     response.setContentType(JSON_CONTENT_TYPE);
