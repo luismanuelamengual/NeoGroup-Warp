@@ -4,9 +4,9 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -14,8 +14,10 @@ import java.util.*;
  */
 public class Request {
 
+    private static final String X_WWW_FORM_URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
+
     private final HttpServletRequest request;
-    private Map<String,Object> parameters;
+    private Map<String,Object> extraParameters;
 
     /**
      * Servlet Request
@@ -23,7 +25,6 @@ public class Request {
      */
     public Request (HttpServletRequest request) {
         this.request = request;
-        this.parameters = new HashMap<>();
     }
 
     /**
@@ -122,8 +123,26 @@ public class Request {
      * @return input stream
      * @throws IOException io exception
      */
-    public ServletInputStream getBodyInputStream() throws IOException {
-        return request.getInputStream();
+    public ServletInputStream getBodyInputStream() {
+        try {
+            return request.getInputStream();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Returns the body in bytess
+     * @return
+     */
+    public byte[] getBodyBytes() {
+        try {
+            return request.getInputStream().readAllBytes();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -131,15 +150,8 @@ public class Request {
      * @return String body of the request
      * @throws IOException
      */
-    public String getBody() throws IOException {
-        StringBuffer bodyBuffer = new StringBuffer();
-        String str;
-        try (InputStreamReader isReader = new InputStreamReader(getBodyInputStream()); BufferedReader reader = new BufferedReader(isReader)) {
-            while((str = reader.readLine())!= null){
-                bodyBuffer.append(str);
-            }
-        }
-        return bodyBuffer.toString();
+    public String getBody() {
+        return new String(this.getBodyBytes());
     }
 
     /**
@@ -153,7 +165,7 @@ public class Request {
             String parameterName = requestParameterNames.nextElement();
             parameterNames.add(parameterName);
         }
-        parameterNames.addAll(parameters.keySet());
+        parameterNames.addAll(extraParameters.keySet());
         return parameterNames;
     }
 
@@ -172,7 +184,7 @@ public class Request {
      * @param value value of parameter
      */
     public void set(String key, String value) {
-        parameters.put(key, value);
+        getExtraParameters().put(key, value);
     }
 
     /**
@@ -181,11 +193,31 @@ public class Request {
      * @return value of parameter
      */
     public <V> V get(String key) {
-        Object value = parameters.get(key);
+        Object value = getExtraParameters().get(key);
         if (value == null) {
             value = request.getParameter(key);
         }
         return (V)value;
+    }
+
+    private Map<String,Object> getExtraParameters() {
+        if (extraParameters == null) {
+            extraParameters = new HashMap<>();
+            String contentType = getContentType().trim();
+            if (contentType.equals(X_WWW_FORM_URLENCODED_CONTENT_TYPE)) {
+                String content = getBody();
+                String[] pairs = content.split("\\&");
+                for (String pair : pairs) {
+                    try {
+                        String[] fields = pair.split("=");
+                        String name = URLDecoder.decode(fields[0], "UTF-8");
+                        String value = URLDecoder.decode(fields[1], "UTF-8");
+                        extraParameters.put(name, value);
+                    } catch (UnsupportedEncodingException ex) {}
+                }
+            }
+        }
+        return extraParameters;
     }
 
     public <V> V get(String key, V defaultValue) {

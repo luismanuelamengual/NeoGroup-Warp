@@ -147,4 +147,9 @@ public class RoutesController {
         String text = request.get("text");
         response.print(getMessage(text));
     }
+
+    @Post("urlencoded")
+    public String processUrlEncoded(@Parameter("lastName") String name) {
+        return "Hola " + name;
+    }
 }
