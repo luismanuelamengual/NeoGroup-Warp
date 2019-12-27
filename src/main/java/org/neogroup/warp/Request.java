@@ -15,6 +15,9 @@ import java.util.*;
 public class Request {
 
     private static final String X_WWW_FORM_URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
+    private static final String X_WWW_FORM_URLENCODED_PARTS_SEPARATOR = "\\&";
+    private static final String X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR = "=";
+    private static final String X_WWW_FORM_URLENCODED_CHARSET = "UTF-8";
 
     private final HttpServletRequest request;
     private Map<String,Object> extraParameters;
@@ -206,14 +209,14 @@ public class Request {
             String contentType = getContentType().trim();
             if (contentType.equals(X_WWW_FORM_URLENCODED_CONTENT_TYPE)) {
                 String content = getBody();
-                String[] pairs = content.split("\\&");
+                String[] pairs = content.split(X_WWW_FORM_URLENCODED_PARTS_SEPARATOR);
                 for (String pair : pairs) {
                     try {
-                        String[] fields = pair.split("=");
-                        String name = URLDecoder.decode(fields[0], "UTF-8");
-                        String value = URLDecoder.decode(fields[1], "UTF-8");
+                        String[] fields = pair.split(X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR);
+                        String name = URLDecoder.decode(fields[0], X_WWW_FORM_URLENCODED_CHARSET);
+                        String value = URLDecoder.decode(fields[1], X_WWW_FORM_URLENCODED_CHARSET);
                         extraParameters.put(name, value);
-                    } catch (UnsupportedEncodingException ex) {}
+                    } catch (Exception ex) {}
                 }
             }
         }
