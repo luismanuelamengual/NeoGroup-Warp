@@ -5,7 +5,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -18,6 +17,9 @@ public class Request {
     private static final String X_WWW_FORM_URLENCODED_PARTS_SEPARATOR = "\\&";
     private static final String X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR = "=";
     private static final String X_WWW_FORM_URLENCODED_CHARSET = "UTF-8";
+
+    private static final String MULTIPART_FORM_DATA_CONTENT_TYPE = "multipart/form-data";
+    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 
     private final HttpServletRequest request;
     private Map<String,Object> extraParameters;
@@ -217,6 +219,32 @@ public class Request {
                         String value = URLDecoder.decode(fields[1], X_WWW_FORM_URLENCODED_CHARSET);
                         extraParameters.put(name, value);
                     } catch (Exception ex) {}
+                }
+            }
+            else if (contentType.contains(MULTIPART_FORM_DATA_CONTENT_TYPE)) {
+                String boundary = contentType.substring(contentType.lastIndexOf("=")+1);
+                MultipartItemsReader reader = new MultipartItemsReader(getBodyBytes(), boundary.getBytes());
+                List<MultipartItem> items = reader.readItems();
+                for(MultipartItem item : items) {
+                    String dispositionHeader = item.getHeader(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER);
+                    if (dispositionHeader != null) {
+                        String[] dispositionHeaderTokens = dispositionHeader.split(";");
+                        if (dispositionHeaderTokens[0].equals("form-data")) {
+                            for (int i = 1; i < dispositionHeaderTokens.length; i++) {
+                                String dispositionToken = dispositionHeaderTokens[i].trim();
+                                String[] dispositionTokenParts = dispositionToken.split("=");
+                                String dispositionTokenProperty = dispositionTokenParts[0].trim();
+                                if (dispositionTokenProperty.equals("name")) {
+                                    String parameterName = dispositionTokenParts[1].trim();
+                                    if (parameterName.startsWith("\"") && parameterName.endsWith("\"")) {
+                                        parameterName = parameterName.substring(1, parameterName.length()-1);
+                                    }
+                                    extraParameters.put(parameterName, item);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -152,4 +152,12 @@ public class RoutesController {
     public String processUrlEncoded(@Parameter("lastName") String name) {
         return "Hola " + name;
     }
+
+    @Post("multipart")
+    public String processMultipart(@Parameter("name") String name) {
+        return name;
+    }
+
+
+
 }
