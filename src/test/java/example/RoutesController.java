@@ -154,10 +154,8 @@ public class RoutesController {
     }
 
     @Post("multipart")
-    public String processMultipart(@Parameter("name") String name) {
-        return name;
+    public byte[] processMultipart(@Parameter("selfie") byte[] selfie) {
+        return selfie;
     }
-
-
 
 }

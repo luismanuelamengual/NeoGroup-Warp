@@ -258,9 +258,19 @@ public class Request {
 
     public <V> V get(String key, Class<? extends V> valueClass) {
         Object value = get(key);
-        if (value != null && !valueClass.isAssignableFrom(Object.class)) {
+        if (value != null && !valueClass.isAssignableFrom(value.getClass())) {
             if (String.class.isAssignableFrom(valueClass)) {
-                value = value.toString();
+                if (value instanceof MultipartItem) {
+                    value = new String(((MultipartItem) value).getContent());
+                } else {
+                    value = value.toString();
+                }
+            } else if (byte[].class.isAssignableFrom(valueClass)) {
+                if (value instanceof MultipartItem) {
+                    value = ((MultipartItem) value).getContent();
+                } else {
+                    value = value.toString().getBytes();
+                }
             } else if (int.class.isAssignableFrom(valueClass) || Integer.class.isAssignableFrom(valueClass)) {
                 value = Integer.parseInt((String) value);
             } else if (float.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
