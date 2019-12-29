@@ -175,7 +175,7 @@ public class Request {
             String parameterName = requestParameterNames.nextElement();
             parameterNames.add(parameterName);
         }
-        parameterNames.addAll(extraParameters.keySet());
+        parameterNames.addAll(getExtraParameters().keySet());
         return parameterNames;
     }
 
