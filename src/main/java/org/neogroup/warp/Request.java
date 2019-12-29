@@ -20,6 +20,11 @@ public class Request {
 
     private static final String MULTIPART_FORM_DATA_CONTENT_TYPE = "multipart/form-data";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER = "Content-Disposition";
+    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR = ";";
+    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE = "form-data";
+    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY = "name";
+    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES = "\"";
+    private static final String MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR = "=";
 
     private final HttpServletRequest request;
     private Map<String,Object> extraParameters;
@@ -222,21 +227,21 @@ public class Request {
                 }
             }
             else if (contentType.contains(MULTIPART_FORM_DATA_CONTENT_TYPE)) {
-                String boundary = contentType.substring(contentType.lastIndexOf("=")+1);
+                String boundary = contentType.substring(contentType.lastIndexOf(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR)+1);
                 MultipartItemsReader reader = new MultipartItemsReader(getBodyBytes(), boundary.getBytes());
                 List<MultipartItem> items = reader.readItems();
                 for(MultipartItem item : items) {
                     String dispositionHeader = item.getHeader(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER);
                     if (dispositionHeader != null) {
-                        String[] dispositionHeaderTokens = dispositionHeader.split(";");
-                        if (dispositionHeaderTokens[0].equals("form-data")) {
+                        String[] dispositionHeaderTokens = dispositionHeader.split(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR);
+                        if (dispositionHeaderTokens[0].equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE)) {
                             for (int i = 1; i < dispositionHeaderTokens.length; i++) {
                                 String dispositionToken = dispositionHeaderTokens[i].trim();
-                                String[] dispositionTokenParts = dispositionToken.split("=");
+                                String[] dispositionTokenParts = dispositionToken.split(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR);
                                 String dispositionTokenProperty = dispositionTokenParts[0].trim();
-                                if (dispositionTokenProperty.equals("name")) {
+                                if (dispositionTokenProperty.equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY)) {
                                     String parameterName = dispositionTokenParts[1].trim();
-                                    if (parameterName.startsWith("\"") && parameterName.endsWith("\"")) {
+                                    if (parameterName.startsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES) && parameterName.endsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES)) {
                                         parameterName = parameterName.substring(1, parameterName.length()-1);
                                     }
                                     extraParameters.put(parameterName, item);
