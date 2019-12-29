@@ -131,7 +131,6 @@ public class Request {
     /**
      * Return the input stream
      * @return input stream
-     * @throws IOException io exception
      */
     public ServletInputStream getBodyInputStream() {
         try {
@@ -143,8 +142,8 @@ public class Request {
     }
 
     /**
-     * Returns the body in bytess
-     * @return
+     *
+     * @return bytes of the content
      */
     public byte[] getBodyBytes() {
         try {
@@ -158,7 +157,6 @@ public class Request {
     /**
      * Returns the body of the request
      * @return String body of the request
-     * @throws IOException
      */
     public String getBody() {
         return new String(this.getBodyBytes());
@@ -256,11 +254,25 @@ public class Request {
         return extraParameters;
     }
 
+    /**
+     *
+     * @param key
+     * @param defaultValue
+     * @param <V>
+     * @return
+     */
     public <V> V get(String key, V defaultValue) {
         String value = get(key);
         return value != null? (V)value : defaultValue;
     }
 
+    /**
+     *
+     * @param key
+     * @param valueClass
+     * @param <V>
+     * @return
+     */
     public <V> V get(String key, Class<? extends V> valueClass) {
         Object value = get(key);
         if (value != null && !valueClass.isAssignableFrom(value.getClass())) {
