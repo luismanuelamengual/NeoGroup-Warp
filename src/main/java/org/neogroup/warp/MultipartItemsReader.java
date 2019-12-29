@@ -2,29 +2,6 @@ package org.neogroup.warp;
 
 import java.util.*;
 
-/*
-
-boundary:
-
-
-
---------------------------269233648182700186798516
-
-content:
-
-
-
-----------------------------269233648182700186798516
-Content-Disposition: form-data; name="name"
-
-Luis
-----------------------------269233648182700186798516
-Content-Disposition: form-data; name="lastName"
-
-Amengual
-----------------------------269233648182700186798516--
-
-*/
 public class MultipartItemsReader {
 
     private static final byte CR = 0x0D;
