@@ -277,12 +277,24 @@ public class Request {
                     value = value.toString().getBytes();
                 }
             } else if (int.class.isAssignableFrom(valueClass) || Integer.class.isAssignableFrom(valueClass)) {
+                if (value instanceof MultipartItem) {
+                    value = new String(((MultipartItem) value).getContent());
+                }
                 value = Integer.parseInt((String) value);
             } else if (float.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
+                if (value instanceof MultipartItem) {
+                    value = new String(((MultipartItem) value).getContent());
+                }
                 value = Float.parseFloat((String) value);
             } else if (double.class.isAssignableFrom(valueClass) || Double.class.isAssignableFrom(valueClass)) {
+                if (value instanceof MultipartItem) {
+                    value = new String(((MultipartItem) value).getContent());
+                }
                 value = Double.parseDouble((String) value);
             } else if (boolean.class.isAssignableFrom(valueClass) || Boolean.class.isAssignableFrom(valueClass)) {
+                if (value instanceof MultipartItem) {
+                    value = new String(((MultipartItem) value).getContent());
+                }
                 value = Boolean.parseBoolean((String) value);
             } else {
                 throw new RuntimeException("Parameter type \"" + valueClass.getName() + "\" not supported !!");

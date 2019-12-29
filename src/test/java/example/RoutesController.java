@@ -158,4 +158,8 @@ public class RoutesController {
         return selfie;
     }
 
+    @Post("multipart2")
+    public String processMultipart2(@Parameter("lastName") String lastName) {
+        return lastName;
+    }
 }
