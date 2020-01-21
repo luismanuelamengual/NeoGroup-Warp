@@ -2,14 +2,10 @@
 package org.neogroup.warp.utils;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.FilenameFilter;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 
 /**
  * Class scanner to find clases with certain filters
@@ -18,45 +14,11 @@ public class Scanner {
 
     private static final String CLASS_EXTENSION = ".class";
 
-    private Set<URI> classPaths;
-
-    /**
-     * Constructor of the scanner
-     * Adds the classloader classpath by default
-     */
-    public Scanner() {
-        classPaths = new HashSet<>();
-        addClassPaths(Thread.currentThread().getContextClassLoader());
-    }
-
-    /**
-     * Adds a new classLoader for finding classes
-     * @param classLoader Classloader to be loaded
-     */
-    public void addClassPaths (ClassLoader classLoader) {
-        try {
-            Enumeration<URL> roots = classLoader.getResources("");
-            while (roots.hasMoreElements()) {
-                URL root = roots.nextElement();
-                addClassPath(root.toURI());
-            }
-        }
-        catch (Exception ex) {}
-    }
-
-    /**
-     * Add a classpath by an uri
-     * @param classPath uri classpath to be added
-     */
-    public void addClassPath (URI classPath) {
-        classPaths.add(classPath);
-    }
-
     /**
      * Find classes in the given claspaths
      * @return Classes retrieved
      */
-    public Set<Class> findClasses () {
+    public static Set<Class> findClasses () {
         return findClasses((Class clazz) -> { return true; });
     }
 
@@ -65,101 +27,141 @@ public class Scanner {
      * @param classFilter Filter for the classes
      * @return Classes retrieved
      */
-    public Set<Class> findClasses (ClassFilter classFilter) {
-
+    public static Set<Class> findClasses (ClassFilter classFilter) {
         Set<Class> classes = new HashSet<>();
-        for (URI classPath : classPaths) {
-            try {
-                File resource = new File(classPath);
-                if(resource.isDirectory()) {
-                    findClasses(classes, resource, "", classFilter);
-                }
-                else {
-                    JarFile jar = new JarFile(resource);
-                    Enumeration<JarEntry> en = jar.entries();
-                    while (en.hasMoreElements()) {
-                        JarEntry entry = en.nextElement();
-                        findJarClasses(classes, jar, entry, "", classFilter);
-                    }
-                }
-            }
-            catch (Exception ex) {}
+        List<File> classLocations = getClassLocationsForCurrentClasspath();
+        for (File file : classLocations) {
+            findClassesFromPath(file, classes, classFilter);
         }
         return classes;
     }
 
     /**
-     * Find jar classes in a jar
-     * @param classes Classes being collected
-     * @param jf jar file
-     * @param entry jar entry
-     * @param baseName base class name
-     * @param classFilter class filter
-     * @throws Exception
+     * Find classes in a path
+     * @param path
+     * @param classes
+     * @param classFilter
      */
-    private void findJarClasses (Set<Class> classes, JarFile jf, JarEntry entry, String baseName, ClassFilter classFilter) throws Exception {
-
-        String entryName = entry.getName();
-        if (entry.isDirectory()) {
-            try (JarInputStream jis = new JarInputStream(jf.getInputStream(entry))){
-                findJarClasses(classes, jf, jis.getNextJarEntry(), baseName + "." + entryName, classFilter);
-            }
+    private static void findClassesFromPath(File path, Set<Class> classes, ClassFilter classFilter) {
+        if (path.isDirectory()) {
+            findClassesFromDirectory(path, classes, classFilter);
+        } else {
+            findClassesFromJarFile(path, classes, classFilter);
         }
-        else {
-            if (entryName.endsWith(CLASS_EXTENSION)) {
-                String className = baseName.substring(0, baseName.length() - CLASS_EXTENSION.length());
-                Class clazz = getClass(className);
-                if (clazz != null) {
-                    if (classFilter.accept(clazz)) {
-                        classes.add(clazz);
+    }
+
+    /**
+     * Find classes in a Jar file
+     * @param path
+     * @param classes
+     * @param classFilter
+     */
+    private static void findClassesFromJarFile(File path, Set<Class> classes, ClassFilter classFilter) {
+        try {
+            if (path.canRead()) {
+                JarFile jar = new JarFile(path);
+                Enumeration<JarEntry> en = jar.entries();
+                while (en.hasMoreElements()) {
+                    JarEntry entry = en.nextElement();
+                    if (entry.getName().endsWith("class")) {
+                        String className = fromFileToClassName(entry.getName());
+                        try {
+                            Class clazz = Class.forName(className);
+                            if (classFilter.accept(clazz)) {
+                                classes.add(clazz);
+                            }
+                        } catch (Throwable throwable) {}
                     }
                 }
+            }
+        }
+        catch (Exception e) {}
+    }
+
+    /**
+     * Find classes in a directory
+     * @param path
+     * @param classes
+     * @param classFilter
+     */
+    private static void findClassesFromDirectory(File path, Set<Class> classes, ClassFilter classFilter) {
+        List<File> jarFiles = listFiles(path, new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        }, false);
+        for (File file : jarFiles) {
+            findClassesFromJarFile(path, classes, classFilter);
+        }
+
+        List<File> classFiles = listFiles(path, new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".class");
+            }
+        }, true);
+
+        int substringBeginIndex = path.getAbsolutePath().length() + 1;
+        for (File classfile : classFiles) {
+            String className = classfile.getAbsolutePath().substring(substringBeginIndex);
+            className = fromFileToClassName(className);
+            try {
+                Class clazz = Class.forName(className);
+                if (classFilter.accept(clazz)) {
+                    classes.add(clazz);
+                }
+            } catch (Throwable e) {
             }
         }
     }
 
     /**
-     * Find clases
-     * @param classes
-     * @param file
-     * @param baseName
-     * @param classFilter
+     * Get current classpath locations
+     * @return
      */
-    private void findClasses (Set<Class> classes, File file, String baseName, ClassFilter classFilter) {
-
-        if(file.isDirectory()){
-            for(File subFile : file.listFiles()) {
-                if(baseName.isEmpty()){
-                    findClasses(classes, subFile, subFile.getName(), classFilter);
-                }
-                else {
-                    findClasses(classes, subFile, baseName + "." + subFile.getName(), classFilter);
-                }
+    private static List<File> getClassLocationsForCurrentClasspath() {
+        List<File> urls = new ArrayList<File>();
+        String javaClassPath = System.getProperty("java.class.path");
+        if (javaClassPath != null) {
+            for (String path : javaClassPath.split(File.pathSeparator)) {
+                urls.add(new File(path));
             }
         }
-        else {
-            if(file.getName().endsWith(CLASS_EXTENSION)) {
-                String className = baseName.substring(0, baseName.length() - CLASS_EXTENSION.length());
-                Class clazz = getClass(className);
-                if (clazz != null) {
-                    if (classFilter.accept(clazz)) {
-                        classes.add(clazz);
-                    }
-                }
-            }
-        }
+        return urls;
     }
 
-    private Class getClass (String className) {
-        Class clazz = null;
-        try {
-            clazz = Class.forName(className);
-        } catch (Exception ex) {}
-        return clazz;
+    /**
+     * List files in directory
+     * @param directory
+     * @param filter
+     * @param recurse
+     * @return
+     */
+    private static List<File> listFiles(File directory, FilenameFilter filter, boolean recurse) {
+        List<File> files = new ArrayList<>();
+        File[] entries = directory.listFiles();
+        for (File entry : entries) {
+            if (filter == null || filter.accept(directory, entry.getName())) {
+                files.add(entry);
+            }
+            if (recurse && entry.isDirectory()) {
+                files.addAll(listFiles(entry, filter, recurse));
+            }
+        }
+        return files;
+    }
+
+    /**
+     * Get classname from filename
+     * @param fileName
+     * @return
+     */
+    private static String fromFileToClassName(final String fileName) {
+        return fileName.substring(0, fileName.length() - 6).replaceAll("/|\\\\", "\\.");
     }
 
     public interface ClassFilter {
-
         public boolean accept (Class clazz);
     }
 }

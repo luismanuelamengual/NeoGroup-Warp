@@ -75,10 +75,14 @@ public class DefaultQueryParser extends QueryParser {
     }
 
     private SelectQuery createSelectQuery(List<QueryToken> tokens) {
-        for (QueryToken token : tokens) {
+        SelectQuery query = new SelectQuery();
+        for (int index = 0; index < tokens.size(); index++) {
+            QueryToken token = tokens.get(index);
+            if (token.equals(QueryStatement.SELECT)) {
 
+            }
         }
-        return null;
+        return query;
     }
 
     private InsertQuery createInsertQuery(List<QueryToken> tokens) {

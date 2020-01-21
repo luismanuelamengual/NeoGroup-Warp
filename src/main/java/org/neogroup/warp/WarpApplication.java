@@ -70,8 +70,7 @@ public class WarpApplication {
     protected void initializeComponents() {
         getLogger().info("Initializing Warp Components ...");
         String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
-        Scanner scanner = new Scanner();
-        scanner.findClasses(cls -> {
+        Scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
                 try {
 
