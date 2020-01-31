@@ -11,5 +11,4 @@ import java.lang.annotation.Target;
 public @interface Route {
     String[] value();
     int priority() default RoutingPriority.NORMAL;
-    boolean auxiliary() default false;
 }

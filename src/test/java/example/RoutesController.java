@@ -81,10 +81,10 @@ public class RoutesController {
         response.print("PEPE 2 ");
     }
 
-    @Route(value = "*", auxiliary = true, priority = RoutingPriority.VERY_HIGH)
+    @Before("*")
     public void aux () {
-        getResponse().print("Se valido la sesión<br>");
-        //stopRouting();
+        getResponse().print("Se valido la sesión\n");
+        /*stopRouting();*/
     }
 
 

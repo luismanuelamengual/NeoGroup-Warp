@@ -27,6 +27,8 @@ public abstract class Controllers {
 
     private static final Map<Class, Object> controllers;
     private static final Routes routes;
+    private static final Routes beforeRoutes;
+    private static final Routes afterRoutes;
     private static final Routes notFoundRoutes;
     private static final Routes errorRoutes;
 
@@ -35,6 +37,8 @@ public abstract class Controllers {
     static {
         controllers = new HashMap<>();
         routes = new Routes();
+        beforeRoutes = new Routes();
+        afterRoutes = new Routes();
         notFoundRoutes = new Routes();
         errorRoutes = new Routes();
     }
@@ -53,33 +57,73 @@ public abstract class Controllers {
             controllers.put(controllerClass, controller);
 
             for (Method controllerMethod : controllerClass.getDeclaredMethods()) {
+                Route routeAnnotation = controllerMethod.getAnnotation(Route.class);
+                if (routeAnnotation != null) {
+                    registerRoutes(routes, null, controllerPath, routeAnnotation.value(), controller, controllerMethod, routeAnnotation.priority());
+                }
                 Get getAnnotation = controllerMethod.getAnnotation(Get.class);
                 if (getAnnotation != null) {
-                    registerRoutes(routes, "GET", controllerPath, getAnnotation.value(), controller, controllerMethod, getAnnotation.priority(), getAnnotation.auxiliary());
+                    registerRoutes(routes, "GET", controllerPath, getAnnotation.value(), controller, controllerMethod, getAnnotation.priority());
                 }
                 Post postAnnotation = controllerMethod.getAnnotation(Post.class);
                 if (postAnnotation != null) {
-                    registerRoutes(routes, "POST", controllerPath, postAnnotation.value(), controller, controllerMethod, postAnnotation.priority(), postAnnotation.auxiliary());
+                    registerRoutes(routes, "POST", controllerPath, postAnnotation.value(), controller, controllerMethod, postAnnotation.priority());
                 }
                 Put putAnnotation = controllerMethod.getAnnotation(Put.class);
                 if (putAnnotation != null) {
-                    registerRoutes(routes, "PUT", controllerPath, putAnnotation.value(), controller, controllerMethod, putAnnotation.priority(), putAnnotation.auxiliary());
+                    registerRoutes(routes, "PUT", controllerPath, putAnnotation.value(), controller, controllerMethod, putAnnotation.priority());
                 }
                 Delete deleteAnnotation = controllerMethod.getAnnotation(Delete.class);
                 if (deleteAnnotation != null) {
-                    registerRoutes(routes, "DELETE", controllerPath, deleteAnnotation.value(), controller, controllerMethod, deleteAnnotation.priority(), deleteAnnotation.auxiliary());
-                }
-                Route routeAnnotation = controllerMethod.getAnnotation(Route.class);
-                if (routeAnnotation != null) {
-                    registerRoutes(routes, null, controllerPath, routeAnnotation.value(), controller, controllerMethod, routeAnnotation.priority(), routeAnnotation.auxiliary());
+                    registerRoutes(routes, "DELETE", controllerPath, deleteAnnotation.value(), controller, controllerMethod, deleteAnnotation.priority());
                 }
                 NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
                 if (notFoundAnnotation != null) {
-                    registerRoutes(notFoundRoutes, null, controllerPath, notFoundAnnotation.value(), controller, controllerMethod, notFoundAnnotation.priority(), notFoundAnnotation.auxiliary());
+                    registerRoutes(notFoundRoutes, null, controllerPath, notFoundAnnotation.value(), controller, controllerMethod, notFoundAnnotation.priority());
                 }
                 Error errorAnnotation = controllerMethod.getAnnotation(Error.class);
                 if (errorAnnotation != null) {
-                    registerRoutes(errorRoutes, null, controllerPath, errorAnnotation.value(), controller, controllerMethod, errorAnnotation.priority(), errorAnnotation.auxiliary());
+                    registerRoutes(errorRoutes, null, controllerPath, errorAnnotation.value(), controller, controllerMethod, errorAnnotation.priority());
+                }
+                Before beforeAnnotation = controllerMethod.getAnnotation(Before.class);
+                if (beforeAnnotation != null) {
+                    registerRoutes(beforeRoutes, null, controllerPath, beforeAnnotation.value(), controller, controllerMethod, beforeAnnotation.priority());
+                }
+                BeforeGet beforeGetAnnotation = controllerMethod.getAnnotation(BeforeGet.class);
+                if (beforeGetAnnotation != null) {
+                    registerRoutes(beforeRoutes, "GET", controllerPath, beforeGetAnnotation.value(), controller, controllerMethod, beforeGetAnnotation.priority());
+                }
+                BeforePost beforePostAnnotation = controllerMethod.getAnnotation(BeforePost.class);
+                if (beforePostAnnotation != null) {
+                    registerRoutes(beforeRoutes, "POST", controllerPath, beforePostAnnotation.value(), controller, controllerMethod, beforePostAnnotation.priority());
+                }
+                BeforePut beforePutAnnotation = controllerMethod.getAnnotation(BeforePut.class);
+                if (beforePutAnnotation != null) {
+                    registerRoutes(beforeRoutes, "PUT", controllerPath, beforePutAnnotation.value(), controller, controllerMethod, beforePutAnnotation.priority());
+                }
+                BeforeDelete beforeDeleteAnnotation = controllerMethod.getAnnotation(BeforeDelete.class);
+                if (beforeDeleteAnnotation != null) {
+                    registerRoutes(beforeRoutes, "DELETE", controllerPath, beforeDeleteAnnotation.value(), controller, controllerMethod, beforeDeleteAnnotation.priority());
+                }
+                After afterAnnotation = controllerMethod.getAnnotation(After.class);
+                if (afterAnnotation != null) {
+                    registerRoutes(afterRoutes, null, controllerPath, afterAnnotation.value(), controller, controllerMethod, afterAnnotation.priority());
+                }
+                AfterGet afterGetAnnotation = controllerMethod.getAnnotation(AfterGet.class);
+                if (afterGetAnnotation != null) {
+                    registerRoutes(afterRoutes, "GET", controllerPath, afterGetAnnotation.value(), controller, controllerMethod, afterGetAnnotation.priority());
+                }
+                AfterPost afterPostAnnotation = controllerMethod.getAnnotation(AfterPost.class);
+                if (afterPostAnnotation != null) {
+                    registerRoutes(afterRoutes, "POST", controllerPath, afterPostAnnotation.value(), controller, controllerMethod, afterPostAnnotation.priority());
+                }
+                AfterPut afterPutAnnotation = controllerMethod.getAnnotation(AfterPut.class);
+                if (afterPutAnnotation != null) {
+                    registerRoutes(afterRoutes, "PUT", controllerPath, afterPutAnnotation.value(), controller, controllerMethod, afterPutAnnotation.priority());
+                }
+                AfterDelete afterDeleteAnnotation = controllerMethod.getAnnotation(AfterDelete.class);
+                if (afterDeleteAnnotation != null) {
+                    registerRoutes(afterRoutes, "DELETE", controllerPath, afterDeleteAnnotation.value(), controller, controllerMethod, afterDeleteAnnotation.priority());
                 }
             }
         }
@@ -106,28 +150,28 @@ public abstract class Controllers {
         return path.toString();
     }
 
-    public static void registerRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
-        registerRoute(routes, method, path, controller, controllerMethod, priority, auxiliary);
+    public static void registerRoute (String method, String path, Object controller, Method controllerMethod, int priority) {
+        registerRoute(routes, method, path, controller, controllerMethod, priority);
     }
 
-    public static void registerNotFoundRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
-        registerRoute(notFoundRoutes, method, path, controller, controllerMethod, priority, auxiliary);
+    public static void registerNotFoundRoute (String method, String path, Object controller, Method controllerMethod, int priority) {
+        registerRoute(notFoundRoutes, method, path, controller, controllerMethod, priority);
     }
 
-    public static void registerErrorRoute (String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
-        registerRoute(errorRoutes, method, path, controller, controllerMethod, priority, auxiliary);
+    public static void registerErrorRoute (String method, String path, Object controller, Method controllerMethod, int priority) {
+        registerRoute(errorRoutes, method, path, controller, controllerMethod, priority);
     }
 
-    private static void registerRoutes (Routes routes, String method, String controllerPath, String[] paths, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+    private static void registerRoutes (Routes routes, String method, String controllerPath, String[] paths, Object controller, Method controllerMethod, int priority) {
         for (String path : paths) {
-            registerRoute(routes, method, getPath(controllerPath, path), controller, controllerMethod, priority, auxiliary);
+            registerRoute(routes, method, getPath(controllerPath, path), controller, controllerMethod, priority);
         }
     }
 
-    private static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority, boolean auxiliary) {
+    private static void registerRoute (Routes routes, String method, String path, Object controller, Method controllerMethod, int priority) {
         path = getNormalizedPath(path);
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
-        routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority, auxiliary));
+        routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority));
         getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" => " + controller.getClass().getName() + "@" + controllerMethod.getName());
     }
 
@@ -175,30 +219,41 @@ public abstract class Controllers {
         Request request = context.getRequest();
         Response response = context.getResponse();
         try {
-            try {
-                String path = getNormalizedPath(request.getPathInfo());
-                String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
-                List<RouteEntry> routes = Controllers.routes.findRoutes(request.getMethod(), pathParts);
-                boolean routeFound = false;
-                for (RouteEntry route : routes) {
-                    if (!route.isAuxiliary()) {
-                        routeFound = true;
+            String path = getNormalizedPath(request.getPathInfo());
+            String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
+            List<RouteEntry> routes = Controllers.routes.findRoutes(request.getMethod(), pathParts);
+
+            if (!routes.isEmpty()) {
+                List<RouteEntry> beforeRoutes = Controllers.beforeRoutes.findRoutes(request.getMethod(), pathParts);
+                for (RouteEntry route : beforeRoutes) {
+                    executeRoute(route, pathParts, request, response);
+                    if (context.isRoutingStopped()) {
                         break;
                     }
                 }
-                if (routeFound) {
+
+                if (!context.isRoutingStopped()) {
                     for (RouteEntry route : routes) {
                         executeRoute(route, pathParts, request, response);
                         if (context.isRoutingStopped()) {
                             break;
                         }
                     }
-                    writeResponse(response);
                 }
-                else {
-                    throw new RouteNotFoundException();
+
+                if (!context.isRoutingStopped()) {
+                    List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request.getMethod(), pathParts);
+                    for (RouteEntry route : afterRoutes) {
+                        executeRoute(route, pathParts, request, response);
+                        if (context.isRoutingStopped()) {
+                            break;
+                        }
+                    }
                 }
-            } catch (RouteNotFoundException notFoundException) {
+
+                writeResponse(response);
+            }
+            else {
                 handleNotFound(request, response);
             }
         }

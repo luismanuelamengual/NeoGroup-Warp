@@ -11,5 +11,4 @@ import java.lang.annotation.Target;
 public @interface Put {
     String[] value() default "";
     int priority() default RoutingPriority.NORMAL;
-    boolean auxiliary() default false;
 }

@@ -44,7 +44,7 @@ public abstract class Resources {
 
                 ResourceController resourceController = new ResourceController(resourceName, resource);
                 Class resourceControllerClass = resourceController.getClass();
-                Controllers.registerRoute("GET", resourceName, resourceController, resourceControllerClass.getDeclaredMethod("getResources", Request.class), RoutingPriority.NORMAL, false);
+                Controllers.registerRoute("GET", resourceName, resourceController, resourceControllerClass.getDeclaredMethod("getResources", Request.class), RoutingPriority.NORMAL);
             }
         }
         catch (Exception ex) {
