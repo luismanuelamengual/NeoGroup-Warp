@@ -2,6 +2,7 @@ package org.neogroup.warp.controllers;
 
 import org.neogroup.warp.Request;
 import org.neogroup.warp.Response;
+import org.neogroup.warp.WarpContext;
 import org.neogroup.warp.controllers.formatters.Formatter;
 import org.neogroup.warp.controllers.formatters.JsonFormatter;
 import org.neogroup.warp.controllers.routing.*;
@@ -170,7 +171,9 @@ public abstract class Controllers {
         }
     }
 
-    public static void handle(Request request, Response response) {
+    public static void handle(WarpContext context) {
+        Request request = context.getRequest();
+        Response response = context.getResponse();
         try {
             try {
                 String path = getNormalizedPath(request.getPathInfo());
@@ -186,6 +189,9 @@ public abstract class Controllers {
                 if (routeFound) {
                     for (RouteEntry route : routes) {
                         executeRoute(route, pathParts, request, response);
+                        if (context.isRoutingStopped()) {
+                            break;
+                        }
                     }
                     writeResponse(response);
                 }

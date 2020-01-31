@@ -211,39 +211,42 @@ public class Request {
     private Map<String,Object> getExtraParameters() {
         if (extraParameters == null) {
             extraParameters = new HashMap<>();
-            String contentType = getContentType().trim();
-            if (contentType.equals(X_WWW_FORM_URLENCODED_CONTENT_TYPE)) {
-                String content = getBody();
-                String[] pairs = content.split(X_WWW_FORM_URLENCODED_PARTS_SEPARATOR);
-                for (String pair : pairs) {
-                    try {
-                        String[] fields = pair.split(X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR);
-                        String name = URLDecoder.decode(fields[0], X_WWW_FORM_URLENCODED_CHARSET);
-                        String value = URLDecoder.decode(fields[1], X_WWW_FORM_URLENCODED_CHARSET);
-                        extraParameters.put(name, value);
-                    } catch (Exception ex) {}
+            String contentType = getContentType();
+            if (contentType != null) {
+                contentType = contentType.trim();
+                if (contentType.equals(X_WWW_FORM_URLENCODED_CONTENT_TYPE)) {
+                    String content = getBody();
+                    String[] pairs = content.split(X_WWW_FORM_URLENCODED_PARTS_SEPARATOR);
+                    for (String pair : pairs) {
+                        try {
+                            String[] fields = pair.split(X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR);
+                            String name = URLDecoder.decode(fields[0], X_WWW_FORM_URLENCODED_CHARSET);
+                            String value = URLDecoder.decode(fields[1], X_WWW_FORM_URLENCODED_CHARSET);
+                            extraParameters.put(name, value);
+                        } catch (Exception ex) {}
+                    }
                 }
-            }
-            else if (contentType.contains(MULTIPART_FORM_DATA_CONTENT_TYPE)) {
-                String boundary = contentType.substring(contentType.lastIndexOf(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR)+1);
-                MultipartItemsReader reader = new MultipartItemsReader(getBodyBytes(), boundary.getBytes());
-                List<MultipartItem> items = reader.readItems();
-                for(MultipartItem item : items) {
-                    String dispositionHeader = item.getHeader(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER);
-                    if (dispositionHeader != null) {
-                        String[] dispositionHeaderTokens = dispositionHeader.split(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR);
-                        if (dispositionHeaderTokens[0].equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE)) {
-                            for (int i = 1; i < dispositionHeaderTokens.length; i++) {
-                                String dispositionToken = dispositionHeaderTokens[i].trim();
-                                String[] dispositionTokenParts = dispositionToken.split(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR);
-                                String dispositionTokenProperty = dispositionTokenParts[0].trim();
-                                if (dispositionTokenProperty.equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY)) {
-                                    String parameterName = dispositionTokenParts[1].trim();
-                                    if (parameterName.startsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES) && parameterName.endsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES)) {
-                                        parameterName = parameterName.substring(1, parameterName.length()-1);
+                else if (contentType.contains(MULTIPART_FORM_DATA_CONTENT_TYPE)) {
+                    String boundary = contentType.substring(contentType.lastIndexOf(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR)+1);
+                    MultipartItemsReader reader = new MultipartItemsReader(getBodyBytes(), boundary.getBytes());
+                    List<MultipartItem> items = reader.readItems();
+                    for(MultipartItem item : items) {
+                        String dispositionHeader = item.getHeader(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER);
+                        if (dispositionHeader != null) {
+                            String[] dispositionHeaderTokens = dispositionHeader.split(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR);
+                            if (dispositionHeaderTokens[0].equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE)) {
+                                for (int i = 1; i < dispositionHeaderTokens.length; i++) {
+                                    String dispositionToken = dispositionHeaderTokens[i].trim();
+                                    String[] dispositionTokenParts = dispositionToken.split(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR);
+                                    String dispositionTokenProperty = dispositionTokenParts[0].trim();
+                                    if (dispositionTokenProperty.equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY)) {
+                                        String parameterName = dispositionTokenParts[1].trim();
+                                        if (parameterName.startsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES) && parameterName.endsWith(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_PROPERTY_QUOTES)) {
+                                            parameterName = parameterName.substring(1, parameterName.length()-1);
+                                        }
+                                        extraParameters.put(parameterName, item);
+                                        break;
                                     }
-                                    extraParameters.put(parameterName, item);
-                                    break;
                                 }
                             }
                         }

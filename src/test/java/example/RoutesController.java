@@ -83,8 +83,11 @@ public class RoutesController {
 
     @Route(value = "*", auxiliary = true, priority = RoutingPriority.VERY_HIGH)
     public void aux () {
-        getLogger().info("Validando sesión");
+        getResponse().print("Se valido la sesión<br>");
+        //stopRouting();
     }
+
+
 
 
     @Get("tata")

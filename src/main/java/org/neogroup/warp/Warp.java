@@ -96,7 +96,7 @@ public abstract class Warp {
             Response response = new Response(servletResponse);
             WarpContext context = new WarpContext(request, response);
             contexts.put(threadId, context);
-            Controllers.handle(request, response);
+            Controllers.handle(context);
         }
         finally {
             WarpContext context = contexts.remove(threadId);
@@ -150,6 +150,10 @@ public abstract class Warp {
 
     public static Response getResponse() {
         return getContext().getResponse();
+    }
+
+    public static void stopRouting () {
+        getContext().stopRouting();
     }
 
     public static DataConnection getConnection() {

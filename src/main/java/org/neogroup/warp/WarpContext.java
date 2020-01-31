@@ -15,10 +15,12 @@ public class WarpContext {
     private TimeZone timeZone;
     private DataConnection connection;
     private Map<String, DataConnection> connections;
+    private boolean routingStopped;
 
     public WarpContext(Request request, Response response) {
         this.request = request;
         this.response = response;
+        this.routingStopped = false;
     }
 
     public Request getRequest() {
@@ -59,6 +61,14 @@ public class WarpContext {
             connections.put(sourceName, connection);
         }
         return connection;
+    }
+
+    public void stopRouting () {
+        this.routingStopped = true;
+    }
+
+    public boolean isRoutingStopped() {
+        return this.routingStopped;
     }
 
     public void release () {
