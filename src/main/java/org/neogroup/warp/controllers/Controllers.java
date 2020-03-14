@@ -11,6 +11,7 @@ import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -307,6 +308,17 @@ public abstract class Controllers {
                         }
                     }
                     parameters[i] = parameterValue;
+                } else {
+                    Body bodyAnnotation = methodParameter.getAnnotation(Body.class);
+                    if (bodyAnnotation != null) {
+                        if (byte[].class.isAssignableFrom(methodParameterClass)) {
+                            parameters[i] = request.getBodyBytes();
+                        } else if (String.class.isAssignableFrom(methodParameterClass)) {
+                            parameters[i] = request.getBody();
+                        } else if (InputStream.class.isAssignableFrom(methodParameterClass)) {
+                            parameters[i] = request.getBodyInputStream();
+                        }
+                    }
                 }
             }
         }
