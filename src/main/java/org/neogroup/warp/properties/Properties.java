@@ -31,4 +31,8 @@ public abstract class Properties {
     public static <R> R get(String property) {
         return (R)properties.getProperty(property);
     }
+
+    public static <R> R get(String property, String defaultValue) {
+        return (R)properties.getProperty(property, defaultValue);
+    }
 }

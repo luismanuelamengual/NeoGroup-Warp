@@ -1,12 +1,12 @@
 package org.neogroup.warp;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.data.DataSource;
 import org.neogroup.warp.data.DataSourceComponent;
@@ -30,12 +30,21 @@ public class WarpApplication {
     private int port;
     private String webRootFolder;
     private String webRootContextPath;
+    private boolean sslEnabled = false;
 
     public WarpApplication () {
     }
 
     public WarpApplication(int port) {
         this.port = port;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
     }
 
     public int getPort() {
@@ -140,7 +149,25 @@ public class WarpApplication {
             ContextHandler contextHandler= new ContextHandler(webRootContextPath);
             contextHandler.setHandler(resourceHandler);
 
-            server = new Server(port);
+            server = new Server();
+
+            if (!sslEnabled) {
+                ServerConnector connector = new ServerConnector(server);
+                connector.setPort(port);
+                server.setConnectors(new Connector[] { connector });
+            } else {
+                HttpConfiguration https = new HttpConfiguration();
+                https.addCustomizer(new SecureRequestCustomizer());
+                SslContextFactory sslContextFactory = new SslContextFactory.Server();
+                String keyStoreName = Warp.getProperty("ssl_keystore_name", "warp_keystore.jks");
+                URL keyStoreResource = getClass().getClassLoader().getResource(keyStoreName);
+                sslContextFactory.setKeyStorePath(keyStoreResource.toExternalForm());
+                sslContextFactory.setKeyStorePassword(Warp.getProperty("ssl_keystore_password", "123456"));
+                ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+                sslConnector.setPort(port);
+                server.setConnectors(new Connector[] { sslConnector });
+            }
+
             HandlerCollection handlerCollection = new HandlerCollection();
             handlerCollection.setHandlers(new Handler[] {contextHandler, handler});
             server.setHandler(handlerCollection);

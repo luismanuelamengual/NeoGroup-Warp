@@ -53,6 +53,10 @@ public abstract class Warp {
         return (R) Properties.get(property);
     }
 
+    public static <R> R getProperty(String property, String defaultValue) {
+        return (R) Properties.get(property, defaultValue);
+    }
+
     public static boolean hasProperty(String property) {
         return Properties.has(property);
     }
