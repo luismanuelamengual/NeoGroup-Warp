@@ -159,10 +159,10 @@ public class WarpApplication {
                 HttpConfiguration https = new HttpConfiguration();
                 https.addCustomizer(new SecureRequestCustomizer());
                 SslContextFactory sslContextFactory = new SslContextFactory.Server();
-                String keyStoreName = Warp.getProperty("ssl_keystore_name", "warp_keystore.jks");
+                String keyStoreName = Warp.getProperty("ssl_keystore_name");
                 URL keyStoreResource = getClass().getClassLoader().getResource(keyStoreName);
                 sslContextFactory.setKeyStorePath(keyStoreResource.toExternalForm());
-                sslContextFactory.setKeyStorePassword(Warp.getProperty("ssl_keystore_password", "123456"));
+                sslContextFactory.setKeyStorePassword(Warp.getProperty("ssl_keystore_password"));
                 ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
                 sslConnector.setPort(port);
                 server.setConnectors(new Connector[] { sslConnector });
