@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import static org.neogroup.warp.Warp.*;
 
@@ -77,7 +78,7 @@ public class WarpApplication {
     }
 
     protected void initializeComponents() {
-        getLogger().log(System.Logger.Level.INFO,"Initializing Warp Components ...");
+        getLogger().info("Initializing Warp Components ...");
         String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
         Scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
@@ -119,11 +120,11 @@ public class WarpApplication {
             }
             return false;
         });
-        getLogger().log(System.Logger.Level.INFO,"Warp Components initialized !!");
+        getLogger().info("Warp Components initialized !!");
     }
 
     protected void initializeServer() {
-        getLogger().log(System.Logger.Level.INFO,"Initializing Warp Server [port:" + port + "] ...");
+        getLogger().info("Initializing Warp Server [port:" + port + "] ...");
         Server server;
         try {
             ServletHolder holder = new ServletHolder(WarpServlet.class);
@@ -176,10 +177,10 @@ public class WarpApplication {
         catch (Exception ex) {
             throw new RuntimeException("Error initializing warp server", ex);
         }
-        getLogger().log(System.Logger.Level.INFO,"Warp Server [port:" + port + "] initialized !!");
+        getLogger().info("Warp Server [port:" + port + "] initialized !!");
 
         try { server.join(); } catch (Exception ex) {
-            getLogger().log(System.Logger.Level.ERROR,"Warp server error", ex);
+            getLogger().log(Level.SEVERE,"Warp server error", ex);
         }
     }
 

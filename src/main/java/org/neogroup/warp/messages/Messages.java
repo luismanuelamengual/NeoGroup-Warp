@@ -3,6 +3,7 @@ package org.neogroup.warp.messages;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import static org.neogroup.warp.Warp.getContext;
 import static org.neogroup.warp.Warp.getLogger;
@@ -60,7 +61,7 @@ public abstract class Messages {
         }
         catch (Exception ex) {
             value = "{" + key + "}";
-            getLogger().log(System.Logger.Level.WARNING,"Missing resource !!", ex);
+            getLogger().log(Level.WARNING, "Missing resource !!", ex);
         }
         return value;
     }

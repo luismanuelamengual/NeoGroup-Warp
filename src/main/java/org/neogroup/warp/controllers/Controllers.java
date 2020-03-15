@@ -53,7 +53,7 @@ public abstract class Controllers {
 
     public static void registerController (String controllerPath, Class controllerClass) {
         try {
-            getLogger().log(System.Logger.Level.INFO,"Registering controller \"" + controllerClass.getName() + "\" ...");
+            getLogger().info("Registering controller \"" + controllerClass.getName() + "\" ...");
             Object controller = controllerClass.getConstructor().newInstance();
             controllers.put(controllerClass, controller);
 
@@ -173,7 +173,7 @@ public abstract class Controllers {
         path = getNormalizedPath(path);
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         routes.addRoute(new RouteEntry(method, pathParts, controller, controllerMethod, priority));
-        getLogger().log(System.Logger.Level.INFO,(method != null?"[" + method + "] ":"") + "\"" + path + "\" => " + controller.getClass().getName() + "@" + controllerMethod.getName());
+        getLogger().info((method != null?"[" + method + "] ":"") + "\"" + path + "\" => " + controller.getClass().getName() + "@" + controllerMethod.getName());
     }
 
     public static <C extends Object> C get (Class<? extends C> controllerClass) {

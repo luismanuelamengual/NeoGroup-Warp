@@ -18,12 +18,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import java.lang.System.Logger;
+import java.util.logging.Logger;
 
 public abstract class Warp {
-
-    private static final String DEFAULT_LOGGER_NAME = "Warp";
 
     private static final Map<Long, WarpContext> contexts;
 
@@ -64,15 +61,15 @@ public abstract class Warp {
     }
 
     public static Logger getLogger() {
-        return getLogger(DEFAULT_LOGGER_NAME);
+        return Logger.getGlobal();
     }
 
     public static Logger getLogger(String name) {
-        return System.getLogger(name);
+        return Logger.getLogger(name);
     }
 
     public static Logger getLogger(Class<?> clazz) {
-        return System.getLogger(clazz.getName());
+        return Logger.getLogger(clazz.getName());
     }
 
     public static String getMessage(String key, Object... args) {
