@@ -10,18 +10,16 @@ import org.neogroup.warp.resources.Resources;
 import org.neogroup.warp.views.View;
 import org.neogroup.warp.views.ViewFactory;
 import org.neogroup.warp.views.Views;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
+
+import java.lang.System.Logger;
 
 public abstract class Warp {
 
@@ -49,19 +47,19 @@ public abstract class Warp {
         Resources.register(resourceName, resourceClass);
     }
 
-    public static <R> R getProperty(String property) {
-        return (R) Properties.get(property);
+    public static String getProperty(String property) {
+        return Properties.get(property);
     }
 
-    public static <R> R getProperty(String property, String defaultValue) {
-        return (R) Properties.get(property, defaultValue);
+    public static String getProperty(String property, String defaultValue) {
+        return Properties.get(property, defaultValue);
     }
 
     public static boolean hasProperty(String property) {
         return Properties.has(property);
     }
 
-    public static void setProperty(String property, Object value) {
+    public static void setProperty(String property, String value) {
         Properties.set(property, value);
     }
 
@@ -70,11 +68,11 @@ public abstract class Warp {
     }
 
     public static Logger getLogger(String name) {
-        return LoggerFactory.getLogger(name);
+        return System.getLogger(name);
     }
 
     public static Logger getLogger(Class<?> clazz) {
-        return LoggerFactory.getLogger(clazz);
+        return System.getLogger(clazz.getName());
     }
 
     public static String getMessage(String key, Object... args) {

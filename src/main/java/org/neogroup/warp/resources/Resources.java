@@ -37,10 +37,10 @@ public abstract class Resources {
                 if (!modelClass.isAssignableFrom(DataObject.class)) {
                     resourcesByModelClass.put(modelClass, resource);
                     modelClassByResourceName.put(resourceName, modelClass);
-                    getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [modelClass: " + modelClass.getName() + "]");
+                    getLogger().log(System.Logger.Level.INFO,"Resource \"" + resourceClass.getName() + "\" registered !! [modelClass: " + modelClass.getName() + "]");
                 }
                 resources.put(resourceName, resource);
-                getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
+                getLogger().log(System.Logger.Level.INFO,"Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
 
                 ResourceController resourceController = new ResourceController(resourceName, resource);
                 Class resourceControllerClass = resourceController.getClass();

@@ -5,14 +5,16 @@ import java.io.InputStream;
 
 public abstract class Properties {
 
-    private static final java.util.Properties properties;
-    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "warp.properties";
+    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME = "app.properties";
 
     static {
-        properties = new java.util.Properties();
+        java.util.Properties properties = new java.util.Properties();
         try (InputStream in = Properties.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_RESOURCE_NAME)) {
             if (in != null) {
                 properties.load(in);
+            }
+            for (Object key : properties.keySet()) {
+                System.setProperty((String)key, properties.getProperty((String)key));
             }
         }
         catch (IOException exception) {
@@ -21,18 +23,18 @@ public abstract class Properties {
     }
 
     public static boolean has(String property) {
-        return properties.containsKey(property);
+        return System.getProperty(property) != null;
     }
 
-    public static void set(String property, Object value) {
-        properties.put(property, value);
+    public static void set(String property, String value) {
+        System.setProperty(property, value);
     }
 
-    public static <R> R get(String property) {
-        return (R)properties.getProperty(property);
+    public static String get(String property) {
+        return System.getProperty(property);
     }
 
-    public static <R> R get(String property, String defaultValue) {
-        return (R)properties.getProperty(property, defaultValue);
+    public static String get(String property, String defaultValue) {
+        return System.getProperty(property, defaultValue);
     }
 }

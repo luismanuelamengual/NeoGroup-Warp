@@ -77,7 +77,7 @@ public class WarpApplication {
     }
 
     protected void initializeComponents() {
-        getLogger().info("Initializing Warp Components ...");
+        getLogger().log(System.Logger.Level.INFO,"Initializing Warp Components ...");
         String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
         Scanner.findClasses(cls -> {
             if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
@@ -119,11 +119,11 @@ public class WarpApplication {
             }
             return false;
         });
-        getLogger().info("Warp Components initialized !!");
+        getLogger().log(System.Logger.Level.INFO,"Warp Components initialized !!");
     }
 
     protected void initializeServer() {
-        getLogger().info("Initializing Warp Server [port:" + port + "] ...");
+        getLogger().log(System.Logger.Level.INFO,"Initializing Warp Server [port:" + port + "] ...");
         Server server;
         try {
             ServletHolder holder = new ServletHolder(WarpServlet.class);
@@ -176,10 +176,10 @@ public class WarpApplication {
         catch (Exception ex) {
             throw new RuntimeException("Error initializing warp server", ex);
         }
-        getLogger().info("Warp Server [port:" + port + "] initialized !!");
+        getLogger().log(System.Logger.Level.INFO,"Warp Server [port:" + port + "] initialized !!");
 
         try { server.join(); } catch (Exception ex) {
-            getLogger().error("Warp server error", ex);
+            getLogger().log(System.Logger.Level.ERROR,"Warp server error", ex);
         }
     }
 

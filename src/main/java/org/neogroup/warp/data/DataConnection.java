@@ -73,7 +73,7 @@ public class DataConnection  {
     public Collection<DataObject> query(String sql, List<Object> bindings) {
         try {
             PreparedStatement statement = getStatement(sql, bindings);
-            getLogger().info("SQL: " + statement.toString());
+            getLogger().log(System.Logger.Level.INFO, "SQL: " + statement.toString());
             ResultSet resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -105,7 +105,7 @@ public class DataConnection  {
     public int execute (String sql, List<Object> bindings) {
         try {
             PreparedStatement statement = getStatement(sql, bindings);
-            getLogger().info("SQL: " + statement.toString());
+            getLogger().log(System.Logger.Level.INFO,"SQL: " + statement.toString());
             return statement.executeUpdate();
         }
         catch (Exception ex) {

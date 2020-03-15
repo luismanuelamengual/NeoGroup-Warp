@@ -60,7 +60,7 @@ public abstract class Messages {
         }
         catch (Exception ex) {
             value = "{" + key + "}";
-            getLogger().warn("Missing resource !!", ex);
+            getLogger().log(System.Logger.Level.WARNING,"Missing resource !!", ex);
         }
         return value;
     }

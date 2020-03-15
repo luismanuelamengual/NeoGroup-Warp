@@ -27,7 +27,7 @@ public abstract class Views {
             ViewFactory viewFactory = viewFactoryClass.getConstructor().newInstance();
             viewFactories.put(viewFactoryClass, viewFactory);
             viewFactoriesByName.put(viewFactoryName, viewFactory);
-            getLogger().info("View factory \"" + viewFactoryClass.getName() + "\" registered !!" + (viewFactoryName != null?" [name=" + viewFactoryName + "]":""));
+            getLogger().log(System.Logger.Level.INFO,"View factory \"" + viewFactoryClass.getName() + "\" registered !!" + (viewFactoryName != null?" [name=" + viewFactoryName + "]":""));
         }
         catch (Exception ex) {
             throw new RuntimeException ("Error registering view factory \"" + viewFactoryClass.getName() + "\" !!", ex);

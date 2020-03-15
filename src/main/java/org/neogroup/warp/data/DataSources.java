@@ -20,7 +20,7 @@ public abstract class DataSources {
         try {
             DataSource dataConnection = dataSourceClass.getConstructor().newInstance();
             dataSourcesByName.put(dataSourceName, dataConnection);
-            getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null ? " [name=" + dataSourceName + "]" : ""));
+            getLogger().log(System.Logger.Level.INFO,"Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null ? " [name=" + dataSourceName + "]" : ""));
         } catch (Exception ex) {
             throw new RuntimeException("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);
         }
