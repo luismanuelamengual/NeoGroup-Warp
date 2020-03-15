@@ -6,7 +6,7 @@
 
     <groupId>com.github.luismanuelamengual</groupId>
     <artifactId>NeoGroup-Warp</artifactId>
-    <version>1.0.14</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>NeoGroup-Warp</name>
     <description>Simple web framework</description>
