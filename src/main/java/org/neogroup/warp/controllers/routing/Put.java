@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Put {
-    String[] value() default "";
+    String[] value() default "*";
     int priority() default RoutingPriority.NORMAL;
 }

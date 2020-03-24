@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Delete {
-    String[] value() default "";
+    String[] value() default "*";
     int priority() default RoutingPriority.NORMAL;
-    boolean auxiliary() default false;
 }

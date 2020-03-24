@@ -78,6 +78,10 @@ public abstract class Controllers {
                 if (deleteAnnotation != null) {
                     registerRoutes(routes, "DELETE", controllerPath, deleteAnnotation.value(), controller, controllerMethod, deleteAnnotation.priority());
                 }
+                Options optionsAnnotation = controllerMethod.getAnnotation(Options.class);
+                if (optionsAnnotation != null) {
+                    registerRoutes(routes, "OPTIONS", controllerPath, optionsAnnotation.value(), controller, controllerMethod, optionsAnnotation.priority());
+                }
                 NotFound notFoundAnnotation = controllerMethod.getAnnotation(NotFound.class);
                 if (notFoundAnnotation != null) {
                     registerRoutes(notFoundRoutes, null, controllerPath, notFoundAnnotation.value(), controller, controllerMethod, notFoundAnnotation.priority());
