@@ -128,24 +128,7 @@ public class WarpApplication {
         Server server;
         try {
             server = new Server();
-
-            if (!sslEnabled) {
-                ServerConnector connector = new ServerConnector(server);
-                connector.setPort(port);
-                server.setConnectors(new Connector[] { connector });
-            } else {
-                HttpConfiguration https = new HttpConfiguration();
-                https.addCustomizer(new SecureRequestCustomizer());
-                SslContextFactory sslContextFactory = new SslContextFactory.Server();
-                String keyStoreName = Warp.getProperty("ssl_keystore_name");
-                URL keyStoreResource = getClass().getClassLoader().getResource(keyStoreName);
-                sslContextFactory.setKeyStorePath(keyStoreResource.toExternalForm());
-                sslContextFactory.setKeyStorePassword(Warp.getProperty("ssl_keystore_password"));
-                ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
-                sslConnector.setPort(port);
-                server.setConnectors(new Connector[] { sslConnector });
-            }
-
+            server.addConnector(sslEnabled? createHTTPSConnector(server, port) : createHTTPConnector(server, port));
             HandlerCollection handlers = new HandlerCollection();
             handlers.addHandler(createResourcesHandler());
             handlers.addHandler(createControllersHandler());
@@ -160,6 +143,25 @@ public class WarpApplication {
         try { server.join(); } catch (Exception ex) {
             getLogger().log(Level.SEVERE,"Warp server error", ex);
         }
+    }
+
+    private ServerConnector createHTTPConnector(Server server, int port) {
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(port);
+        return connector;
+    }
+
+    private ServerConnector createHTTPSConnector(Server server, int port) {
+        HttpConfiguration https = new HttpConfiguration();
+        https.addCustomizer(new SecureRequestCustomizer());
+        SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        String keyStoreName = Warp.getProperty("ssl_keystore_name");
+        URL keyStoreResource = getClass().getClassLoader().getResource(keyStoreName);
+        sslContextFactory.setKeyStorePath(keyStoreResource.toExternalForm());
+        sslContextFactory.setKeyStorePassword(Warp.getProperty("ssl_keystore_password"));
+        ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+        sslConnector.setPort(port);
+        return sslConnector;
     }
 
     private ContextHandler createResourcesHandler() {
