@@ -127,29 +127,6 @@ public class WarpApplication {
         getLogger().info("Initializing Warp Server [port:" + port + "] ...");
         Server server;
         try {
-            ServletHolder holder = new ServletHolder(WarpServlet.class);
-            ServletHandler handler = new ServletHandler();
-            handler.addServletWithMapping(holder, "/*");
-
-            String webRootFolder = getWebRootFolder();
-            if (webRootFolder == null) {
-                webRootFolder = System.getProperty("web.dir");
-                if (webRootFolder == null) {
-                    webRootFolder = guessWebRootFolder();
-                }
-            }
-
-            String webRootContextPath = getWebRootContextPath();
-            if (webRootContextPath == null) {
-                webRootContextPath = "/";
-            }
-
-            ResourceHandler resourceHandler = new ResourceHandler();
-            resourceHandler.setResourceBase(webRootFolder);
-            resourceHandler.setDirectoriesListed(true);
-            ContextHandler contextHandler= new ContextHandler(webRootContextPath);
-            contextHandler.setHandler(resourceHandler);
-
             server = new Server();
 
             if (!sslEnabled) {
@@ -169,9 +146,10 @@ public class WarpApplication {
                 server.setConnectors(new Connector[] { sslConnector });
             }
 
-            HandlerCollection handlerCollection = new HandlerCollection();
-            handlerCollection.setHandlers(new Handler[] {contextHandler, handler});
-            server.setHandler(handlerCollection);
+            HandlerCollection handlers = new HandlerCollection();
+            handlers.addHandler(createResourcesHandler());
+            handlers.addHandler(createControllersHandler());
+            server.setHandler(handlers);
             server.start();
         }
         catch (Exception ex) {
@@ -182,6 +160,34 @@ public class WarpApplication {
         try { server.join(); } catch (Exception ex) {
             getLogger().log(Level.SEVERE,"Warp server error", ex);
         }
+    }
+
+    private ContextHandler createResourcesHandler() {
+        String webRootFolder = getWebRootFolder();
+        if (webRootFolder == null) {
+            webRootFolder = System.getProperty("web.dir");
+            if (webRootFolder == null) {
+                webRootFolder = guessWebRootFolder();
+            }
+        }
+
+        String webRootContextPath = getWebRootContextPath();
+        if (webRootContextPath == null) {
+            webRootContextPath = "/";
+        }
+
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setResourceBase(webRootFolder);
+        resourceHandler.setDirectoriesListed(true);
+        ContextHandler contextHandler= new ContextHandler(webRootContextPath);
+        contextHandler.setHandler(resourceHandler);
+        return contextHandler;
+    }
+
+    private ServletHandler createControllersHandler() {
+        ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(new ServletHolder(WarpServlet.class), "/*");
+        return handler;
     }
 
     private Class getMainClass() {
