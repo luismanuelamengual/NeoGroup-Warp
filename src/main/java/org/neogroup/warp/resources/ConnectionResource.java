@@ -1,5 +1,6 @@
 package org.neogroup.warp.resources;
 
+import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.data.query.DeleteQuery;
 import org.neogroup.warp.data.query.InsertQuery;
@@ -8,30 +9,34 @@ import org.neogroup.warp.data.query.UpdateQuery;
 
 import java.util.Collection;
 
-import static org.neogroup.warp.Warp.getConnection;
+public class ConnectionResource extends Resource<DataObject> {
 
-public class DataResource extends Resource<DataObject> {
+    private DataConnection connection;
+
+    public ConnectionResource(DataConnection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public Collection<DataObject> find(SelectQuery query) {
-        return getConnection().query(query);
+        return connection.query(query);
     }
 
     @Override
     public Collection<DataObject> insert(InsertQuery query) {
-        getConnection().execute(query);
+        connection.execute(query);
         return null;
     }
 
     @Override
     public Collection<DataObject> update(UpdateQuery query) {
-        getConnection().execute(query);
+        connection.execute(query);
         return null;
     }
 
     @Override
     public Collection<DataObject> delete(DeleteQuery query) {
-        getConnection().execute(query);
+        connection.execute(query);
         return null;
     }
 }

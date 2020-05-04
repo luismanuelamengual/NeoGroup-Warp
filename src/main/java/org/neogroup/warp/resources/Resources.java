@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.neogroup.warp.Warp.getConnection;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
@@ -17,13 +18,13 @@ public abstract class Resources {
     private static Map<String, Resource> resources;
     private static Map<String, Class> modelClassByResourceName;
     private static Map<Class, Resource> resourcesByModelClass;
-    private static DataResource defaultDataResource;
+    private static ConnectionResource defaultConnectionResource;
 
     static {
         resources = new HashMap<>();
         resourcesByModelClass = new HashMap<>();
         modelClassByResourceName = new HashMap<>();
-        defaultDataResource = new DataResource();
+        defaultConnectionResource = new ConnectionResource(getConnection());
     }
 
     public static void register(String resourceName, Class<? extends Resource> resourceClass) {
@@ -64,7 +65,7 @@ public abstract class Resources {
         Resource resource = resources.get(resourceName);
         ResourceProxy<DataObject> resourceProxy = null;
         if (resource == null) {
-            resourceProxy = new ResourceProxy<>(resourceName, defaultDataResource);
+            resourceProxy = new ResourceProxy<>(resourceName, defaultConnectionResource);
         }
         else {
             Class modelClass = modelClassByResourceName.get(resourceName);
