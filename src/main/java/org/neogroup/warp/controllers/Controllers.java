@@ -5,13 +5,14 @@ import org.neogroup.warp.Response;
 import org.neogroup.warp.WarpContext;
 import org.neogroup.warp.controllers.formatters.Formatter;
 import org.neogroup.warp.controllers.formatters.JsonFormatter;
-import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.controllers.routing.Error;
+import org.neogroup.warp.controllers.routing.*;
 import org.neogroup.warp.views.View;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -309,18 +310,37 @@ public abstract class Controllers {
                     if (parameterValue == null) {
                         if (paramAnnotation.required()) {
                             throw new RuntimeException("Parameter \"" + paramAnnotation.value() + "\" is required !!");
+                        } else {
+                            if (!Object.class.isAssignableFrom(methodParameterClass)) {
+                                parameterValue = Array.get(Array.newInstance(methodParameterClass, 1), 0);
+                            }
                         }
                     }
                     parameters[i] = parameterValue;
                 } else {
-                    Body bodyAnnotation = methodParameter.getAnnotation(Body.class);
-                    if (bodyAnnotation != null) {
-                        if (byte[].class.isAssignableFrom(methodParameterClass)) {
-                            parameters[i] = request.getBodyBytes();
-                        } else if (String.class.isAssignableFrom(methodParameterClass)) {
-                            parameters[i] = request.getBody();
-                        } else if (InputStream.class.isAssignableFrom(methodParameterClass)) {
-                            parameters[i] = request.getBodyInputStream();
+                    HeaderParameter headerParamAnnotation = methodParameter.getAnnotation(HeaderParameter.class);
+                    if (headerParamAnnotation != null) {
+                        if (!String.class.isAssignableFrom(methodParameterClass)) {
+                            throw new RuntimeException("Header parameter \"" + headerParamAnnotation.value() + "\" must be of type String !!");
+                        }
+                        String parameterName = headerParamAnnotation.value();
+                        String parameterValue = request.getHeader (parameterName);
+                        if (parameterValue == null) {
+                            if (headerParamAnnotation.required()) {
+                                throw new RuntimeException("Header parameter \"" + headerParamAnnotation.value() + "\" is required !!");
+                            }
+                        }
+                        parameters[i] = parameterValue;
+                    } else {
+                        Body bodyAnnotation = methodParameter.getAnnotation(Body.class);
+                        if (bodyAnnotation != null) {
+                            if (byte[].class.isAssignableFrom(methodParameterClass)) {
+                                parameters[i] = request.getBodyBytes();
+                            } else if (String.class.isAssignableFrom(methodParameterClass)) {
+                                parameters[i] = request.getBody();
+                            } else if (InputStream.class.isAssignableFrom(methodParameterClass)) {
+                                parameters[i] = request.getBodyInputStream();
+                            }
                         }
                     }
                 }

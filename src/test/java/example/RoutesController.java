@@ -88,7 +88,20 @@ public class RoutesController {
     }
 
 
+    @Get("cata")
+    public String cata(@Parameter("uno") String uno,
+                       @Parameter(value = "dos", required = false) String dos,
+                       @Parameter(value = "cinco", required = false) int cinco,
+                       @Parameter(value = "seis", required = false) double seis,
+                       @HeaderParameter(value = "Connectionj", required = false) String connection) {
 
+        System.out.println (uno);
+        System.out.println (dos);
+        System.out.println (cinco);
+        System.out.println (seis);
+        System.out.println (connection);
+        return "done";
+    }
 
     @Get("tata")
     public Object[] rama () {
