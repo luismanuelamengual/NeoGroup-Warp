@@ -88,6 +88,14 @@ public class Request {
     }
 
     /**
+     * Returns the remote Address
+     * @return
+     */
+    public String getRemoteAddress() {
+        return request.getRemoteAddr();
+    }
+
+    /**
      * Returns the URI of the request
      * @return URI of request
      */
