@@ -4,13 +4,13 @@ import org.neogroup.warp.Request;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.controllers.routing.RoutingPriority;
 import org.neogroup.warp.data.DataObject;
+import org.neogroup.warp.data.DataSources;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.neogroup.warp.Warp.getConnection;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Resources {
@@ -24,7 +24,7 @@ public abstract class Resources {
         resources = new HashMap<>();
         resourcesByModelClass = new HashMap<>();
         modelClassByResourceName = new HashMap<>();
-        defaultConnectionResource = new ConnectionResource(getConnection());
+        defaultConnectionResource = new ConnectionResource(DataSources.getConnection());
     }
 
     public static void register(String resourceName, Class<? extends Resource> resourceClass) {
