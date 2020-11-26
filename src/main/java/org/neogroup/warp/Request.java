@@ -199,7 +199,7 @@ public class Request {
      * @param key key of parameter
      * @param value value of parameter
      */
-    public void set(String key, String value) {
+    public void set(String key, Object value) {
         getExtraParameters().put(key, value);
     }
 
