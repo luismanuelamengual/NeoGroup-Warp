@@ -31,7 +31,6 @@ public class WarpApplication {
 
     private static final String SSL_KEYSTORE_NAME_PROPERTY = "ssl_keystore_name";
     private static final String SSL_KEYSTORE_PASSWORD_PROPERTY = "ssl_keystore_password";
-    private static final String BASE_PACKAGE_PROPERTY = "base_package";
 
     private int port;
     private String webRootFolder;
