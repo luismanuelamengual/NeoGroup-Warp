@@ -21,6 +21,8 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import static org.neogroup.warp.Warp.*;
@@ -35,6 +37,7 @@ public class WarpApplication {
     private String webRootFolder;
     private String webRootContextPath;
     private boolean sslEnabled = false;
+    private List<String> classPaths = new ArrayList<>();
 
     public WarpApplication () {
         this(8080);
@@ -81,6 +84,10 @@ public class WarpApplication {
         this.webRootContextPath = webRootContextPath;
     }
 
+    public void addClassPath(String classPath) {
+        this.classPaths.add(classPath);
+    }
+
     public void start () {
         initializeComponents();
         initializeServer();
@@ -88,11 +95,21 @@ public class WarpApplication {
 
     protected void initializeComponents() {
         getLogger().info("Initializing Warp Components ...");
-        String basePackage = getProperty(BASE_PACKAGE_PROPERTY);
-        Scanner.findClasses(cls -> {
-            if ((basePackage == null || cls.getPackage().getName().startsWith(basePackage))) {
-                try {
+        Scanner.findClasses(className -> {
+            boolean processClass = true;
+            if (!classPaths.isEmpty()) {
+                processClass = false;
+                for (String classPath : classPaths) {
+                    if (className.startsWith(classPath)) {
+                        processClass = true;
+                        break;
+                    }
+                }
+            }
 
+            if (processClass) {
+                try {
+                    Class cls = Class.forName(className);
                     ControllerComponent controllerAnnotation = (ControllerComponent)cls.getAnnotation(ControllerComponent.class);
                     if (controllerAnnotation != null) {
                         registerController(controllerAnnotation.value(), cls);
