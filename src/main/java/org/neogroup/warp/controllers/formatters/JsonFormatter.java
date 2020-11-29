@@ -19,6 +19,10 @@ public class JsonFormatter extends Formatter {
     private static final char JSON_DOUBLE_COLON_CHAR = '"';
     private static final char JSON_ELEMENT_SEPARATOR_CHAR = ',';
     private static final char JSON_OBJECT_KEY_VALUE_SEPARATOR_CHAR = ':';
+    private static final String JSON_SLASH_STRING = "\\";
+    private static final String JSON_ESCAPED_SLASH_STRING = "\\\\";
+    private static final String JSON_DOUBLE_COLON_STRING = "\"";
+    private static final String JSON_ESCAPED_DOUBLE_COLON_STRING = "\\\"";
 
     @Override
     public String format(Object object) {
@@ -34,8 +38,8 @@ public class JsonFormatter extends Formatter {
             writeNumber((Number) object, writer);
         } else if (object instanceof Boolean) {
             writeBoolean((Boolean) object, writer);
-        } else if (object instanceof CharSequence) {
-            writeString((CharSequence) object, writer);
+        } else if (object instanceof String) {
+            writeString((String) object, writer);
         } else if (object instanceof DataObject) {
             writeDataObject((DataObject) object, writer);
         } else if (object.getClass().isArray()) {
@@ -69,9 +73,9 @@ public class JsonFormatter extends Formatter {
         writer.append(JSON_DOUBLE_COLON_CHAR);
     }
 
-    private void writeString (CharSequence string, StringWriter writer) {
+    private void writeString (String string, StringWriter writer) {
         writer.append(JSON_DOUBLE_COLON_CHAR);
-        writer.append(string);
+        writer.append(string.replace(JSON_SLASH_STRING, JSON_ESCAPED_SLASH_STRING).replace(JSON_DOUBLE_COLON_STRING, JSON_ESCAPED_DOUBLE_COLON_STRING));
         writer.append(JSON_DOUBLE_COLON_CHAR);
     }
 
