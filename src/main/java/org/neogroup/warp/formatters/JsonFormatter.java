@@ -1,4 +1,4 @@
-package org.neogroup.warp.controllers.formatters;
+package org.neogroup.warp.formatters;
 
 import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.utils.Introspection;

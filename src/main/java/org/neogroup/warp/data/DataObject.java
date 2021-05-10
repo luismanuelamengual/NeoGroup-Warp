@@ -1,5 +1,8 @@
 package org.neogroup.warp.data;
 
+import org.neogroup.warp.formatters.Formatter;
+import org.neogroup.warp.formatters.JsonFormatter;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +10,7 @@ import java.util.Set;
 public class DataObject {
 
     private Map<String, Object> properties;
+    private static Formatter jsonFormatter = new JsonFormatter();
 
     public DataObject() {
         properties = new LinkedHashMap<>();
@@ -36,5 +40,10 @@ public class DataObject {
 
     public int size() {
         return properties.size();
+    }
+
+    @Override
+    public String toString() {
+        return jsonFormatter.format(this);
     }
 }
