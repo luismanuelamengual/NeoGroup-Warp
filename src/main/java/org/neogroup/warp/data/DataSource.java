@@ -27,5 +27,5 @@ public abstract class DataSource {
         }
     }
 
-    protected abstract Connection requestConnection() throws SQLException;
+    protected abstract Connection requestConnection() throws Exception;
 }
