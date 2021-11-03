@@ -4,10 +4,7 @@ import org.neogroup.warp.data.DataObject;
 import org.neogroup.warp.utils.Introspection;
 
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JsonFormatter extends Formatter {
 
@@ -42,6 +39,8 @@ public class JsonFormatter extends Formatter {
             writeString((String) object, writer);
         } else if (object instanceof DataObject) {
             writeDataObject((DataObject) object, writer);
+        } else if (object instanceof byte[]) {
+            writeBytes((byte[])object, writer);
         } else if (object.getClass().isArray()) {
             writeArray((Object[]) object, writer);
         } else if (object instanceof Iterable) {
@@ -76,6 +75,12 @@ public class JsonFormatter extends Formatter {
     private void writeString (String string, StringWriter writer) {
         writer.append(JSON_DOUBLE_COLON_CHAR);
         writer.append(string.replace(JSON_SLASH_STRING, JSON_ESCAPED_SLASH_STRING).replace(JSON_DOUBLE_COLON_STRING, JSON_ESCAPED_DOUBLE_COLON_STRING));
+        writer.append(JSON_DOUBLE_COLON_CHAR);
+    }
+
+    private void writeBytes(byte[] bytes, StringWriter writer) {
+        writer.append(JSON_DOUBLE_COLON_CHAR);
+        writer.append(new String(Base64.getEncoder().encode(bytes)));
         writer.append(JSON_DOUBLE_COLON_CHAR);
     }
 

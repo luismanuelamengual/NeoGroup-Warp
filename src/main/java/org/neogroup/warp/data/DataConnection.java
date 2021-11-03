@@ -118,7 +118,11 @@ public class DataConnection  {
         if (bindings != null) {
             int bindingIndex = 1;
             for (Object binding : bindings) {
-                statement.setObject(bindingIndex++, binding);
+                if (binding instanceof java.util.Date) {
+                    statement.setTimestamp(bindingIndex++, new Timestamp(((java.util.Date) binding).getTime()));
+                } else {
+                    statement.setObject(bindingIndex++, binding);
+                }
             }
         }
         return statement;
