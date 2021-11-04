@@ -28,6 +28,10 @@ public abstract class Resources {
     }
 
     public static void register(String resourceName, Class<? extends Resource> resourceClass) {
+        register(resourceName, resourceClass, false);
+    }
+
+    public static void register(String resourceName, Class<? extends Resource> resourceClass, boolean publish) {
         try {
             Type type = resourceClass.getGenericSuperclass();
             if (type instanceof ParameterizedType) {
@@ -43,9 +47,11 @@ public abstract class Resources {
                 resources.put(resourceName, resource);
                 getLogger().info("Resource \"" + resourceClass.getName() + "\" registered !! [name: " + resourceName + "]");
 
-                ResourceController resourceController = new ResourceController(resourceName, resource);
-                Class resourceControllerClass = resourceController.getClass();
-                Controllers.registerRoute("GET", resourceName, resourceController, resourceControllerClass.getDeclaredMethod("getResources", Request.class), RoutingPriority.NORMAL);
+                if (publish) {
+                    ResourceController resourceController = new ResourceController(resourceName, resource);
+                    Class resourceControllerClass = resourceController.getClass();
+                    Controllers.registerRoute("GET", resourceName, resourceController, resourceControllerClass.getDeclaredMethod("getResources", Request.class), RoutingPriority.NORMAL);
+                }
             }
         }
         catch (Exception ex) {

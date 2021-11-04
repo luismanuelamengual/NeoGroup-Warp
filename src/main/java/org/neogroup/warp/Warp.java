@@ -44,7 +44,11 @@ public abstract class Warp {
     }
 
     public static void registerResource(String resourceName, Class<? extends Resource> resourceClass) {
-        Resources.register(resourceName, resourceClass);
+        registerResource(resourceName, resourceClass, false);
+    }
+
+    public static void registerResource(String resourceName, Class<? extends Resource> resourceClass, boolean publish) {
+        Resources.register(resourceName, resourceClass, publish);
     }
 
     public static String getProperty(String property) {

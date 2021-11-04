@@ -107,7 +107,7 @@ public class WarpApplication {
                     ResourceComponent resourceComponent = (ResourceComponent)cls.getAnnotation(ResourceComponent.class);
                     if (resourceComponent != null) {
                         if (Resource.class.isAssignableFrom(cls)) {
-                            registerResource(resourceComponent.value(), cls);
+                            registerResource(resourceComponent.value(), cls, resourceComponent.publish());
                             return true;
                         }
                     }
