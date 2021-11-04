@@ -1,6 +1,6 @@
 package org.neogroup.warp.data;
 
-import org.neogroup.warp.data.query.*;
+import org.neogroup.warp.data.query.QueryObject;
 
 import java.util.Collection;
 
@@ -30,6 +30,7 @@ public class DataTable extends QueryObject<DataTable> {
     }
 
     public DataObject first () {
-        return limit(1).find().iterator().next();
+        Collection<DataObject> objects = limit(1).find();
+        return !objects.isEmpty()? objects.iterator().next() : null;
     }
 }

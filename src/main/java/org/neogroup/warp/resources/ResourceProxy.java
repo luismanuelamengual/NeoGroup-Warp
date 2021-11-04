@@ -30,6 +30,7 @@ public class ResourceProxy<T extends Object> extends QueryObject<ResourceProxy<T
     }
 
     public T first () {
-        return limit(1).find().iterator().next();
+        Collection<T> resources = limit(1).find();
+        return !resources.isEmpty()? resources.iterator().next() : null;
     }
 }
