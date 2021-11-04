@@ -14,15 +14,18 @@ import org.neogroup.warp.views.Views;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public abstract class Warp {
 
     private static final Map<Long, WarpContext> contexts;
+    private static final Logger mainLogger = LoggerFactory.getLogger(Warp.class);
 
     static {
         contexts = new HashMap<>();
@@ -61,15 +64,15 @@ public abstract class Warp {
     }
 
     public static Logger getLogger() {
-        return Logger.getGlobal();
+        return mainLogger;
     }
 
     public static Logger getLogger(String name) {
-        return Logger.getLogger(name);
+        return LoggerFactory.getLogger(name);
     }
 
     public static Logger getLogger(Class<?> clazz) {
-        return Logger.getLogger(clazz.getName());
+        return LoggerFactory.getLogger(clazz);
     }
 
     public static String getMessage(String key, Object... args) {

@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import static org.neogroup.warp.Warp.*;
 
@@ -143,12 +142,13 @@ public class WarpApplication {
             server.start();
         }
         catch (Exception ex) {
+            getLogger().error("Warp Server [port:" + port + "] error in initialization !!");
             throw new RuntimeException("Error initializing warp server", ex);
         }
         getLogger().info("Warp Server [port:" + port + "] initialized !!");
 
         try { server.join(); } catch (Exception ex) {
-            getLogger().log(Level.SEVERE,"Warp server error", ex);
+            getLogger().error("Warp server error", ex);
         }
     }
 
@@ -205,19 +205,21 @@ public class WarpApplication {
     }
 
     private String guessWebRootFolder() {
-        URL location = getMainClass().getProtectionDomain().getCodeSource().getLocation();
-        File locationFile = new File(location.getFile());
-        Path webappPath = Paths.get (locationFile.getPath());
-        String baseFolderName = webappPath.getFileName().toString();
-        if (baseFolderName.equals("classes")) {
-            webappPath = webappPath.getParent().getParent().resolve("src").resolve("main").resolve("webapp");
-        }
-        else if (baseFolderName.equals("test-classes")) {
-            webappPath = webappPath.getParent().getParent().resolve("src").resolve("test").resolve("webapp");
-        }
-        else {
-            webappPath = Paths.get("./webapp");
-        }
-        return webappPath.toString();
+        String webRootFolder = "";
+        try {
+            URL location = getMainClass().getProtectionDomain().getCodeSource().getLocation();
+            File locationFile = new File(location.getFile());
+            Path webappPath = Paths.get(locationFile.getPath());
+            String baseFolderName = webappPath.getFileName().toString();
+            if (baseFolderName.equals("classes")) {
+                webappPath = webappPath.getParent().getParent().resolve("src").resolve("main").resolve("webapp");
+            } else if (baseFolderName.equals("test-classes")) {
+                webappPath = webappPath.getParent().getParent().resolve("src").resolve("test").resolve("webapp");
+            } else {
+                webappPath = Paths.get("./webapp");
+            }
+            webRootFolder = webappPath.toString();
+        } catch (Exception ex) {}
+        return webRootFolder;
     }
 }
