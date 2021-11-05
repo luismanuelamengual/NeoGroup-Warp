@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface HeaderParameter {
-    String value();
+public @interface Param {
+    String value() default "";
+    String name() default "";
     boolean required() default true;
 }

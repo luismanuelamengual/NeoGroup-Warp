@@ -16,17 +16,22 @@ public class DataObject {
         properties = new LinkedHashMap<>();
     }
 
-    public DataObject set(String name, Object value) {
-        properties.put(name, value);
+    public DataObject set(String key, Object value) {
+        properties.put(key, value);
         return this;
     }
 
-    public <V> V get(String name) {
-        return (V)properties.get(name);
+    public <V> V get(String key) {
+        return (V)properties.get(key);
     }
 
     public boolean has(String key) {
         return properties.containsKey(key);
+    }
+
+    public DataObject remove(String key) {
+        properties.remove(key);
+        return this;
     }
 
     public DataObject clear() {

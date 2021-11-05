@@ -16,9 +16,18 @@ import static org.neogroup.warp.Warp.*;
 @ControllerComponent
 public class RoutesController {
 
+    @Get("cars/:id/")
+    public String getCar (@Param("id") int carId) {
+        return "car(" + carId + ")";
+    }
+
+    @Get("cars")
+    public String getCar2 (@Param(name="id", required = false) Integer carId) {
+        return "carz(" + carId + ")";
+    }
 
     @Get("pepe/:name/:lname/rata")
-    public void tatch (@Parameter("name") String name, @Parameter("lname") String lastName) {
+    public void tatch (@Param("name") String name, @Param("lname") String lastName) {
         getResponse().print("Hola ").print(name).print(" ").print(lastName);
     }
 
@@ -29,7 +38,7 @@ public class RoutesController {
     }
 
     @Get("/users/showName")
-    public String showName (@Parameter("name") String name) {
+    public String showName (@Param("name") String name) {
         return MessageFormat.format("My name is \"{0}\"", name);
     }
 
@@ -39,7 +48,7 @@ public class RoutesController {
     }
 
     @Get("/users/show")
-    public String show (@Parameter(value = "name", required=false) String name) {
+    public String show (@Param(value = "name", required=false) String name) {
         return MessageFormat.format("My name is \"{0}\"", name);
     }
 
@@ -84,16 +93,16 @@ public class RoutesController {
     @Before("*")
     public void aux () {
         getResponse().print("Se valido la sesión\n");
-        /*stopRouting();*/
+        // stopRouting();
     }
 
 
     @Get("cata")
-    public String cata(@Parameter("uno") String uno,
-                       @Parameter(value = "dos", required = false) String dos,
-                       @Parameter(value = "cinco", required = false) int cinco,
-                       @Parameter(value = "seis", required = false) double seis,
-                       @HeaderParameter(value = "Connectionj", required = false) String connection) {
+    public String cata(@Param("uno") String uno,
+                       @Param(value = "dos", required = false) String dos,
+                       @Param(value = "cinco", required = false) int cinco,
+                       @Param(value = "seis", required = false) double seis,
+                       @Header(value = "Connectionj", required = false) String connection) {
 
         System.out.println (uno);
         System.out.println (dos);
@@ -145,7 +154,7 @@ public class RoutesController {
     }
 
     @Get("resinsert")
-    public void insertCountry (@Parameter("name") String name) {
+    public void insertCountry (@Param("name") String name) {
         getResource("country").set("name", name).insert();
         getResponse().print("Pais \"" + name + "\" insertado !!");
     }
@@ -165,17 +174,17 @@ public class RoutesController {
     }
 
     @Post("urlencoded")
-    public String processUrlEncoded(@Parameter("lastName") String name) {
+    public String processUrlEncoded(@Param("lastName") String name) {
         return "Hola " + name;
     }
 
     @Post("multipart")
-    public byte[] processMultipart(@Parameter("selfie") byte[] selfie) {
+    public byte[] processMultipart(@Param("selfie") byte[] selfie) {
         return selfie;
     }
 
     @Post("multipart2")
-    public String processMultipart2(@Parameter("lastName") String lastName) {
+    public String processMultipart2(@Param("lastName") String lastName) {
         return lastName;
     }
 }

@@ -2,7 +2,7 @@ package example.users;
 
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.controllers.routing.Get;
-import org.neogroup.warp.controllers.routing.Parameter;
+import org.neogroup.warp.controllers.routing.Param;
 import org.neogroup.warp.data.DataObject;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class UsersController {
     }
 
     @Get("/insert/:id")
-    public DataObject getUser(@Parameter("id") int userId) {
+    public DataObject getUser(@Param("id") int userId) {
         return getResource("user").where("id", userId).first();
     }
 

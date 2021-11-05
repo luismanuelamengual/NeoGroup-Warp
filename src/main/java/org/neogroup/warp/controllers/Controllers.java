@@ -295,17 +295,14 @@ public abstract class Controllers {
             Class methodParameterClass = methodParameter.getType();
             if (Request.class.isAssignableFrom(methodParameterClass)) {
                 parameters[i] = request;
-            }
-            else if (Response.class.isAssignableFrom(methodParameterClass)) {
+            } else if (Response.class.isAssignableFrom(methodParameterClass)) {
                 parameters[i] = response;
-            }
-            else if (throwable != null && Throwable.class.isAssignableFrom(methodParameterClass)) {
+            } else if (throwable != null && Throwable.class.isAssignableFrom(methodParameterClass)) {
                 parameters[i] = throwable;
-            }
-            else {
-                Parameter paramAnnotation = methodParameter.getAnnotation(Parameter.class);
+            } else {
+                Param paramAnnotation = methodParameter.getAnnotation(Param.class);
                 if (paramAnnotation != null) {
-                    String parameterName = paramAnnotation.value();
+                    String parameterName = !paramAnnotation.name().isEmpty()? paramAnnotation.name() : paramAnnotation.value();
                     Object parameterValue = request.get(parameterName, methodParameterClass);
                     if (parameterValue == null) {
                         if (paramAnnotation.required()) {
@@ -318,12 +315,12 @@ public abstract class Controllers {
                     }
                     parameters[i] = parameterValue;
                 } else {
-                    HeaderParameter headerParamAnnotation = methodParameter.getAnnotation(HeaderParameter.class);
+                    Header headerParamAnnotation = methodParameter.getAnnotation(Header.class);
                     if (headerParamAnnotation != null) {
                         if (!String.class.isAssignableFrom(methodParameterClass)) {
                             throw new RuntimeException("Header parameter \"" + headerParamAnnotation.value() + "\" must be of type String !!");
                         }
-                        String parameterName = headerParamAnnotation.value();
+                        String parameterName = !headerParamAnnotation.name().isEmpty()? headerParamAnnotation.name() : headerParamAnnotation.value();
                         String parameterValue = request.getHeader (parameterName);
                         if (parameterValue == null) {
                             if (headerParamAnnotation.required()) {
