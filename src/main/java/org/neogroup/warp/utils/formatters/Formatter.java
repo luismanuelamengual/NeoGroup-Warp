@@ -1,4 +1,4 @@
-package org.neogroup.warp.formatters;
+package org.neogroup.warp.utils.formatters;
 
 public abstract class Formatter {
 

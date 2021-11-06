@@ -1,7 +1,7 @@
 package org.neogroup.warp.data;
 
-import org.neogroup.warp.formatters.Formatter;
-import org.neogroup.warp.formatters.JsonFormatter;
+import org.neogroup.warp.utils.formatters.Formatter;
+import org.neogroup.warp.utils.formatters.JsonFormatter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
