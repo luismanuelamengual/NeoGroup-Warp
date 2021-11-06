@@ -10,6 +10,9 @@ import java.util.Map;
 
 public class WarpContext {
 
+    private static final Map<Long, WarpContext> contexts = new HashMap<>();
+
+    private final long threadId;
     private final Request request;
     private final Response response;
     private DataConnection connection;
@@ -18,6 +21,8 @@ public class WarpContext {
     public WarpContext(Request request, Response response) {
         this.request = request;
         this.response = response;
+        this.threadId = Thread.currentThread().getId();
+        contexts.put(this.threadId, this);
     }
 
     public Request getRequest() {
@@ -48,16 +53,22 @@ public class WarpContext {
     }
 
     public void release () {
-        if (connection != null) {
-            try { connection.close(); } catch (Exception ex) {}
-            connection = null;
-        }
-        if (connections != null) {
-            for (DataConnection connection : connections.values()) {
+        if (contexts.remove(threadId) != null) {
+            if (connection != null) {
                 try { connection.close(); } catch (Exception ex) {}
+                connection = null;
             }
-            connections.clear();
-            connections = null;
+            if (connections != null) {
+                for (DataConnection connection : connections.values()) {
+                    try { connection.close(); } catch (Exception ex) {}
+                }
+                connections.clear();
+                connections = null;
+            }
         }
+    }
+
+    public static WarpContext getCurrent() {
+        return contexts.get(Thread.currentThread().getId());
     }
 }

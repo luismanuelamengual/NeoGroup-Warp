@@ -12,26 +12,15 @@ import org.neogroup.warp.resources.Resources;
 import org.neogroup.warp.views.View;
 import org.neogroup.warp.views.ViewFactory;
 import org.neogroup.warp.views.Views;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public abstract class Warp {
 
-    private static final Map<Long, WarpContext> contexts;
     private static final Logger mainLogger = LoggerFactory.getLogger(Warp.class);
-
-    static {
-        contexts = new HashMap<>();
-    }
 
     public static void registerController(String basePath, Class controllerClass) {
         Controllers.registerController(basePath, controllerClass);
@@ -97,20 +86,6 @@ public abstract class Warp {
         return Messages.get(bundleName, locale, key, args);
     }
 
-    public static void handleRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
-        long threadId = Thread.currentThread().getId();
-        try {
-            Request request = new Request(servletRequest);
-            Response response = new Response(servletResponse);
-            WarpContext context = new WarpContext(request, response);
-            contexts.put(threadId, context);
-            Controllers.handle(context);
-        } finally {
-            WarpContext context = contexts.remove(threadId);
-            try { context.release(); } catch (Exception ex) {}
-        }
-    }
-
     public static <C> C getController(Class<? extends C> controllerClass) {
         return Controllers.get(controllerClass);
     }
@@ -147,24 +122,20 @@ public abstract class Warp {
         return Views.createView(viewFactoryName, viewName, viewParameters);
     }
 
-    public static WarpContext getContext() {
-        return contexts.get(Thread.currentThread().getId());
-    }
-
     public static Request getRequest() {
-        return getContext().getRequest();
+        return WarpContext.getCurrent().getRequest();
     }
 
     public static Response getResponse() {
-        return getContext().getResponse();
+        return WarpContext.getCurrent().getResponse();
     }
 
     public static DataConnection getConnection() {
-        return getContext().getConnection();
+        return WarpContext.getCurrent().getConnection();
     }
 
     public static DataConnection getConnection(String dataSourceName) {
-        return getContext().getConnection(dataSourceName);
+        return WarpContext.getCurrent().getConnection(dataSourceName);
     }
 
     public static DataTable getTable (String table) {
