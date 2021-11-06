@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static org.neogroup.warp.Warp.getContext;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Messages {
@@ -24,7 +23,7 @@ public abstract class Messages {
     }
 
     public static String get(String key, Object... args) {
-        return get(getContext().getLocale(), key, args);
+        return get(Locale.getDefault(), key, args);
     }
 
     public static String get(Locale locale, String key, Object... args) {
@@ -46,7 +45,7 @@ public abstract class Messages {
     }
 
     public static String get(String bundleName, String key, Object... args) {
-        return get(bundleName, getContext().getLocale(), key, args);
+        return get(bundleName, Locale.getDefault(), key, args);
     }
 
     public static String get(String bundleName, Locale locale, String key, Object... args) {

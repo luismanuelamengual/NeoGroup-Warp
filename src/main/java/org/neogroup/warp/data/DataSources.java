@@ -18,8 +18,8 @@ public abstract class DataSources {
 
     public static void registerDataSource(String dataSourceName, Class<? extends DataSource> dataSourceClass) {
         try {
-            DataSource dataConnection = dataSourceClass.getConstructor().newInstance();
-            dataSourcesByName.put(dataSourceName, dataConnection);
+            DataSource dataSource = dataSourceClass.getConstructor().newInstance();
+            dataSourcesByName.put(dataSourceName, dataSource);
             getLogger().info("Data source \"" + dataSourceClass.getName() + "\" registered !!" + (dataSourceName != null ? " [name: " + dataSourceName + "]" : ""));
         } catch (Exception ex) {
             throw new RuntimeException("Error registering data manager \"" + dataSourceClass.getName() + "\" !!", ex);

@@ -1,4 +1,4 @@
-package org.neogroup.warp;
+package org.neogroup.warp.http;
 
 import java.util.*;
 
@@ -86,12 +86,10 @@ public class MultipartItemsReader {
                     itemContents = Arrays.copyOfRange(content, contentIndex, index);
                     index += 2;
                     break;
-                }
-                else {
+                } else {
                     index += 4;
                 }
-            }
-            else {
+            } else {
                 index++;
             }
         }

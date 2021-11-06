@@ -1,4 +1,4 @@
-package org.neogroup.warp;
+package org.neogroup.warp.http;
 
 import java.util.Map;
 

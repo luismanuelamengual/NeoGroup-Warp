@@ -1,7 +1,7 @@
 package org.neogroup.warp.controllers;
 
-import org.neogroup.warp.Request;
-import org.neogroup.warp.Response;
+import org.neogroup.warp.http.Request;
+import org.neogroup.warp.http.Response;
 import org.neogroup.warp.WarpContext;
 import org.neogroup.warp.formatters.Formatter;
 import org.neogroup.warp.formatters.JsonFormatter;
@@ -233,37 +233,19 @@ public abstract class Controllers {
                 List<RouteEntry> beforeRoutes = Controllers.beforeRoutes.findRoutes(request.getMethod(), pathParts);
                 for (RouteEntry route : beforeRoutes) {
                     executeRoute(route, pathParts, request, response);
-                    if (context.isRoutingStopped()) {
-                        break;
-                    }
                 }
-
-                if (!context.isRoutingStopped()) {
-                    for (RouteEntry route : routes) {
-                        executeRoute(route, pathParts, request, response);
-                        if (context.isRoutingStopped()) {
-                            break;
-                        }
-                    }
+                for (RouteEntry route : routes) {
+                    executeRoute(route, pathParts, request, response);
                 }
-
-                if (!context.isRoutingStopped()) {
-                    List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request.getMethod(), pathParts);
-                    for (RouteEntry route : afterRoutes) {
-                        executeRoute(route, pathParts, request, response);
-                        if (context.isRoutingStopped()) {
-                            break;
-                        }
-                    }
+                List<RouteEntry> afterRoutes = Controllers.afterRoutes.findRoutes(request.getMethod(), pathParts);
+                for (RouteEntry route : afterRoutes) {
+                    executeRoute(route, pathParts, request, response);
                 }
-
                 writeResponse(response);
-            }
-            else {
+            } else {
                 handleNotFound(request, response);
             }
-        }
-        catch (Throwable throwable) {
+        } catch (Throwable throwable) {
             handleException(request, response, throwable);
         }
     }

@@ -2,6 +2,8 @@ package org.neogroup.warp;
 
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.data.*;
+import org.neogroup.warp.http.Request;
+import org.neogroup.warp.http.Response;
 import org.neogroup.warp.messages.Messages;
 import org.neogroup.warp.properties.Properties;
 import org.neogroup.warp.resources.Resource;
@@ -103,8 +105,7 @@ public abstract class Warp {
             WarpContext context = new WarpContext(request, response);
             contexts.put(threadId, context);
             Controllers.handle(context);
-        }
-        finally {
+        } finally {
             WarpContext context = contexts.remove(threadId);
             try { context.release(); } catch (Exception ex) {}
         }
@@ -156,10 +157,6 @@ public abstract class Warp {
 
     public static Response getResponse() {
         return getContext().getResponse();
-    }
-
-    public static void stopRouting () {
-        getContext().stopRouting();
     }
 
     public static DataConnection getConnection() {

@@ -2,25 +2,22 @@ package org.neogroup.warp;
 
 import org.neogroup.warp.data.DataConnection;
 import org.neogroup.warp.data.DataSources;
+import org.neogroup.warp.http.Request;
+import org.neogroup.warp.http.Response;
 
-import java.util.Locale;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class WarpContext {
 
     private final Request request;
     private final Response response;
-    private Locale locale;
-    private TimeZone timeZone;
     private DataConnection connection;
     private Map<String, DataConnection> connections;
-    private boolean routingStopped;
 
     public WarpContext(Request request, Response response) {
         this.request = request;
         this.response = response;
-        this.routingStopped = false;
     }
 
     public Request getRequest() {
@@ -31,22 +28,6 @@ public class WarpContext {
         return response;
     }
 
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
-
     public DataConnection getConnection() {
         if (connection == null) {
             connection = DataSources.getConnection();
@@ -55,20 +36,15 @@ public class WarpContext {
     }
 
     public DataConnection getConnection(String sourceName) {
+        if (connections == null) {
+            connections = new HashMap<>();
+        }
         DataConnection connection = connections.get(sourceName);
         if (connection == null) {
             connection = DataSources.getConnection(sourceName);
             connections.put(sourceName, connection);
         }
         return connection;
-    }
-
-    public void stopRouting () {
-        this.routingStopped = true;
-    }
-
-    public boolean isRoutingStopped() {
-        return this.routingStopped;
     }
 
     public void release () {
@@ -83,7 +59,5 @@ public class WarpContext {
             connections.clear();
             connections = null;
         }
-        locale = null;
-        timeZone = null;
     }
 }

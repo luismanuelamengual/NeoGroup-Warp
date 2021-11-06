@@ -1,4 +1,4 @@
-package org.neogroup.warp;
+package org.neogroup.warp.http;
 
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;

@@ -1,6 +1,6 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.Request;
+import org.neogroup.warp.http.Request;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.controllers.routing.RoutingPriority;
 import org.neogroup.warp.data.DataObject;
