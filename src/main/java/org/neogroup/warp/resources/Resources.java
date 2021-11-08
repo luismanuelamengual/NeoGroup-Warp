@@ -1,30 +1,29 @@
 package org.neogroup.warp.resources;
 
-import org.neogroup.warp.http.Request;
 import org.neogroup.warp.controllers.Controllers;
 import org.neogroup.warp.controllers.routing.RoutingPriority;
 import org.neogroup.warp.data.DataObject;
-import org.neogroup.warp.data.DataSources;
+import org.neogroup.warp.http.Request;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.neogroup.warp.Warp.getLogger;
+import static org.neogroup.warp.Warp.*;
 
 public abstract class Resources {
+
+    private static final String USE_DATABASE_RESOURCES_PROPERTY = "useDatabaseResources";
 
     private static Map<String, Resource> resources;
     private static Map<String, Class> modelClassByResourceName;
     private static Map<Class, Resource> resourcesByModelClass;
-    private static ConnectionResource defaultConnectionResource;
 
     static {
         resources = new HashMap<>();
         resourcesByModelClass = new HashMap<>();
         modelClassByResourceName = new HashMap<>();
-        defaultConnectionResource = new ConnectionResource(DataSources.getConnection());
     }
 
     public static void register(String resourceName, Class<? extends Resource> resourceClass) {
@@ -71,9 +70,16 @@ public abstract class Resources {
         Resource resource = resources.get(resourceName);
         ResourceProxy<DataObject> resourceProxy = null;
         if (resource == null) {
-            resourceProxy = new ResourceProxy<>(resourceName, defaultConnectionResource);
-        }
-        else {
+            if (getProperty(USE_DATABASE_RESOURCES_PROPERTY).equals("true")) {
+                try {
+                    resourceProxy = new ResourceProxy<>(resourceName, new ConnectionResource(getConnection()));
+                } catch (Exception ex) {
+                    throw new RuntimeException("Error retrieving default connection for resource \"" + resourceName + "\"");
+                }
+            } else {
+                throw new RuntimeException("Resource \"" + resourceName + "\" not found !!");
+            }
+        } else {
             Class modelClass = modelClassByResourceName.get(resourceName);
             if (modelClass == null || modelClass.equals(DataObject.class)) {
                 resourceProxy = new ResourceProxy<>(resourceName, resource);
