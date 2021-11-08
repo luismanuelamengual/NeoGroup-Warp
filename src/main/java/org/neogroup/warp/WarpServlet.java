@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.neogroup.warp.controllers.Controllers;
+import org.neogroup.warp.http.Header;
+import org.neogroup.warp.http.Method;
 import org.neogroup.warp.http.Request;
 import org.neogroup.warp.http.Response;
 
@@ -21,12 +23,6 @@ public class WarpServlet extends HttpServlet {
     private static final String CORS_METHODS_ALLOWED_PROPERTY_NAME = "cors_methods_allowed";
     private static final String CORS_HEADERS_ALLOWED_PROPERTY_NAME = "cors_headers_allowed";
 
-    private static final String ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = "Access-Control-Allow-Origin";
-    private static final String ACCESS_CONTROL_ALLOW_METHODS_HEADER = "Access-Control-Allow-Methods";
-    private static final String ACCESS_CONTROL_ALLOW_HEADERS_HEADER = "Access-Control-Allow-Headers";
-
-    private static final String OPTIONS_METHOD = "OPTIONS";
-
     private static final String TRUE_VALUE = "true";
     private static final String FALSE_VALUE = "false";
     private static final String WILDCARD_VALUE = "*";
@@ -37,10 +33,10 @@ public class WarpServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         if (getProperty(CORS_ENABLED_PROPERTY_NAME, FALSE_VALUE).equalsIgnoreCase(TRUE_VALUE)) {
-            servletResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN_HEADER , getProperty(CORS_ORIGINS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
-            if (servletRequest.getMethod().equalsIgnoreCase(OPTIONS_METHOD)) {
-                servletResponse.setHeader(ACCESS_CONTROL_ALLOW_METHODS_HEADER, getProperty(CORS_METHODS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
-                servletResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS_HEADER, getProperty(CORS_HEADERS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
+            servletResponse.setHeader(Header.ACCESS_CONTROL_ALLOW_ORIGIN , getProperty(CORS_ORIGINS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
+            if (servletRequest.getMethod().equalsIgnoreCase(Method.OPTIONS)) {
+                servletResponse.setHeader(Header.ACCESS_CONTROL_ALLOW_METHODS, getProperty(CORS_METHODS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
+                servletResponse.setHeader(Header.ACCESS_CONTROL_ALLOW_HEADERS, getProperty(CORS_HEADERS_ALLOWED_PROPERTY_NAME, WILDCARD_VALUE));
                 servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } else {
                 handleRequest(servletRequest, servletResponse);

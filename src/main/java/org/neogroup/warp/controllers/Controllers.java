@@ -1,5 +1,6 @@
 package org.neogroup.warp.controllers;
 
+import org.neogroup.warp.http.MediaType;
 import org.neogroup.warp.http.Request;
 import org.neogroup.warp.http.Response;
 import org.neogroup.warp.WarpContext;
@@ -22,8 +23,6 @@ import java.util.Map;
 import static org.neogroup.warp.Warp.getLogger;
 
 public abstract class Controllers {
-
-    private static final String JSON_CONTENT_TYPE = "application/json";
 
     private static final String ROUTE_PATH_SEPARATOR = "/";
 
@@ -342,7 +341,7 @@ public abstract class Controllers {
                 response.print((byte[])responseObject);
             } else {
                 if (response.getContentType() == null) {
-                    response.setContentType(JSON_CONTENT_TYPE);
+                    response.setContentType(MediaType.APPLICATION_JSON);
                 }
                 response.print(defaultFormatter.format(responseObject));
             }

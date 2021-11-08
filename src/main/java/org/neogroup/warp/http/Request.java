@@ -13,13 +13,10 @@ import java.util.*;
  */
 public class Request {
 
-    private static final String X_WWW_FORM_URLENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
     private static final String X_WWW_FORM_URLENCODED_PARTS_SEPARATOR = "\\&";
     private static final String X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR = "=";
     private static final String X_WWW_FORM_URLENCODED_CHARSET = "UTF-8";
 
-    private static final String MULTIPART_FORM_DATA_CONTENT_TYPE = "multipart/form-data";
-    private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER = "Content-Disposition";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR = ";";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE = "form-data";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY = "name";
@@ -222,7 +219,7 @@ public class Request {
             String contentType = getContentType();
             if (contentType != null) {
                 contentType = contentType.trim();
-                if (contentType.equals(X_WWW_FORM_URLENCODED_CONTENT_TYPE)) {
+                if (contentType.equals(MediaType.APPLICATION_FORM_URLENCODED)) {
                     String content = getBody();
                     String[] pairs = content.split(X_WWW_FORM_URLENCODED_PARTS_SEPARATOR);
                     for (String pair : pairs) {
@@ -234,12 +231,12 @@ public class Request {
                         } catch (Exception ex) {}
                     }
                 }
-                else if (contentType.contains(MULTIPART_FORM_DATA_CONTENT_TYPE)) {
+                else if (contentType.contains(MediaType.MULTIPART_FORM_DATA)) {
                     String boundary = contentType.substring(contentType.lastIndexOf(MULTIPART_FORM_DATA_KEY_VALUE_SEPARATOR)+1);
                     MultipartItemsReader reader = new MultipartItemsReader(getBodyBytes(), boundary.getBytes());
                     List<MultipartItem> items = reader.readItems();
                     for(MultipartItem item : items) {
-                        String dispositionHeader = item.getHeader(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER);
+                        String dispositionHeader = item.getHeader(Header.CONTENT_DISPOSITION);
                         if (dispositionHeader != null) {
                             String[] dispositionHeaderTokens = dispositionHeader.split(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR);
                             if (dispositionHeaderTokens[0].equals(MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE)) {
