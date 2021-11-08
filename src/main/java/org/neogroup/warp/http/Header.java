@@ -62,4 +62,5 @@ public class Header {
     public static final String VIA = "Via";
     public static final String WARNING = "Warning";
     public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+    public static final String X_FORWARDED_FOR = "X-Forwarded-For";
 }
