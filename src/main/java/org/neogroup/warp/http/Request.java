@@ -17,6 +17,9 @@ public class Request {
     private static final String X_WWW_FORM_URLENCODED_NAME_VALUE_SEPARATOR = "=";
     private static final String X_WWW_FORM_URLENCODED_CHARSET = "UTF-8";
 
+    private static final String SERVER_ADDRESS_PORT_SEPARATOR = ":";
+    private static final String SERVER_ADDRESS_SCHEME_SEPARATOR = "://";
+
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_HEADER_SEPARATOR = ";";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_TYPE = "form-data";
     private static final String MULTIPART_FORM_DATA_CONTENT_DISPOSITION_NAME_PROPERTY = "name";
@@ -32,14 +35,6 @@ public class Request {
      */
     public Request (HttpServletRequest request) {
         this.request = request;
-    }
-
-    /**
-     * Returns the path info
-     * @return path info for the request
-     */
-    public String getPathInfo() {
-        return request.getPathInfo();
     }
 
     /**
@@ -86,17 +81,33 @@ public class Request {
 
     /**
      * Returns the remote Address
-     * @return
+     * @return The remote address
      */
     public String getRemoteAddress() {
         return request.getRemoteAddr();
     }
 
     /**
+     * Returns the remote host
+     * @return The remote host
+     */
+    public String getRemoteHost() {
+        return request.getRemoteHost();
+    }
+
+    /**
+     * Returns the remote port
+     * @return The remote port
+     */
+    public int getRemotePort() {
+        return request.getRemotePort();
+    }
+
+    /**
      * Returns the URI of the request
      * @return URI of request
      */
-    public String getRequestURI() {
+    public String getUri() {
         return request.getRequestURI();
     }
 
@@ -104,8 +115,75 @@ public class Request {
      * Returns the URL of the request
      * @return URL of request
      */
-    public StringBuffer getRequestURL() {
-        return request.getRequestURL();
+    public String getUrl() {
+        return request.getRequestURL().toString();
+    }
+
+    /**
+     * Return the query string of the request
+     * @return String query string
+     */
+    public String getQueryString() {
+        return request.getQueryString();
+    }
+
+    /**
+     * Returns the request protocol
+     * @return protocol
+     */
+    public String getProtocol() {
+        return request.getProtocol();
+    }
+
+    /**
+     * Returns the scheme of the request
+     * @return scheme
+     */
+    public String getScheme() {
+        return request.getScheme();
+    }
+
+    /**
+     * Returns the path info
+     * @return path info for the request
+     */
+    public String getPath() {
+        return request.getPathInfo();
+    }
+
+    /**
+     * Returns the server address
+     * @return String address
+     */
+    public String getServerAddress() {
+        String url = getUrl();
+        String path = getPath();
+        return url.substring(0, url.length() - path.length());
+    }
+
+    /**
+     * Returns the server host
+     * @return host
+     */
+    public String getServerHost() {
+        String serverHost = getServerAddress();
+        int protocolIndex = serverHost.indexOf(SERVER_ADDRESS_SCHEME_SEPARATOR);
+        if (protocolIndex >= 0) {
+            serverHost = serverHost.substring(protocolIndex + SERVER_ADDRESS_SCHEME_SEPARATOR.length());
+        }
+        int portSeparatorIndex = serverHost.indexOf(SERVER_ADDRESS_PORT_SEPARATOR);
+        if (portSeparatorIndex >= 0) {
+            serverHost = serverHost.substring(0, portSeparatorIndex);
+        }
+        return serverHost;
+    }
+
+    /**
+     * Returns the server port
+     * @return port
+     */
+    public int getServerPort() {
+        return request.getServerPort();
     }
 
     /**
@@ -140,8 +218,7 @@ public class Request {
     public ServletInputStream getBodyInputStream() {
         try {
             return request.getInputStream();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -153,8 +230,7 @@ public class Request {
     public byte[] getBodyBytes() {
         try {
             return request.getInputStream().readAllBytes();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -262,25 +338,11 @@ public class Request {
         return extraParameters;
     }
 
-    /**
-     *
-     * @param key
-     * @param defaultValue
-     * @param <V>
-     * @return
-     */
     public <V> V get(String key, V defaultValue) {
         String value = get(key);
         return value != null? (V)value : defaultValue;
     }
 
-    /**
-     *
-     * @param key
-     * @param valueClass
-     * @param <V>
-     * @return
-     */
     public <V> V get(String key, Class<? extends V> valueClass) {
         Object value = get(key);
         if (value != null && !valueClass.isAssignableFrom(value.getClass())) {
@@ -366,21 +428,5 @@ public class Request {
 
     public boolean getBoolean(String key, boolean defaultValue) {
         return get(key, Boolean.class, defaultValue);
-    }
-
-    /**
-     * Returns the request protocol
-     * @return protocol
-     */
-    public String getProtocol() {
-        return request.getProtocol();
-    }
-
-    /**
-     * Returns the scheme of the request
-     * @return scheme
-     */
-    public String getScheme() {
-        return request.getScheme();
     }
 }

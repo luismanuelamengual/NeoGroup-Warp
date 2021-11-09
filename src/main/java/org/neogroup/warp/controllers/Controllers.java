@@ -185,7 +185,7 @@ public abstract class Controllers {
     }
 
     private static void handleNotFound (Request request, Response response) throws InvocationTargetException, IllegalAccessException, IOException {
-        String path = getNormalizedPath(request.getPathInfo());
+        String path = getNormalizedPath(request.getPath());
         String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
         List<RouteEntry> notFoundRoutes = Controllers.notFoundRoutes.findRoutes(request.getMethod(), pathParts);
         if (!notFoundRoutes.isEmpty()) {
@@ -196,13 +196,13 @@ public abstract class Controllers {
         }
         else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().println("Route for path \"" + request.getPathInfo() + "\" not found !!");
+            response.getWriter().println("Route for path \"" + request.getPath() + "\" not found !!");
         }
     }
 
     private static void handleException (Request request, Response response, Throwable throwable) {
         try {
-            String path = getNormalizedPath(request.getPathInfo());
+            String path = getNormalizedPath(request.getPath());
             String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
             List<RouteEntry> errorRoutes = Controllers.errorRoutes.findRoutes(request.getMethod(), pathParts);
             if (!errorRoutes.isEmpty()) {
@@ -224,7 +224,7 @@ public abstract class Controllers {
         Request request = context.getRequest();
         Response response = context.getResponse();
         try {
-            String path = getNormalizedPath(request.getPathInfo());
+            String path = getNormalizedPath(request.getPath());
             String[] pathParts = path.split(ROUTE_PATH_SEPARATOR);
             List<RouteEntry> routes = Controllers.routes.findRoutes(request.getMethod(), pathParts);
 
