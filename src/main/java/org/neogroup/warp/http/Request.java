@@ -155,7 +155,7 @@ public class Request {
      * Returns the server address
      * @return String address
      */
-    public String getServerAddress() {
+    public String getServerUrl() {
         String url = getUrl();
         String path = getPath();
         return url.substring(0, url.length() - path.length());
@@ -166,7 +166,7 @@ public class Request {
      * @return host
      */
     public String getServerHost() {
-        String serverHost = getServerAddress();
+        String serverHost = getServerUrl();
         int protocolIndex = serverHost.indexOf(SERVER_ADDRESS_SCHEME_SEPARATOR);
         if (protocolIndex >= 0) {
             serverHost = serverHost.substring(protocolIndex + SERVER_ADDRESS_SCHEME_SEPARATOR.length());
