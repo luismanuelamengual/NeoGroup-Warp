@@ -1,12 +1,13 @@
 package org.neogroup.warp;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.neogroup.warp.controllers.ControllerComponent;
 import org.neogroup.warp.data.DataSource;
 import org.neogroup.warp.data.DataSourceComponent;
@@ -27,7 +28,11 @@ import static org.neogroup.warp.Warp.*;
 
 public class WarpApplication {
 
+    private static final String SSL_KEYSTORE_NAME_PROPERTY = "ssl_keystore_name";
+    private static final String SSL_KEYSTORE_PASSWORD_PROPERTY = "ssl_keystore_password";
+
     private int port;
+    private boolean sslEnabled = false;
     private String webRootFolder;
     private String webRootContextPath;
     private final List<String> classPaths = new ArrayList<>();
@@ -46,6 +51,14 @@ public class WarpApplication {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public boolean isSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
     }
 
     public String getWebRootFolder() {
@@ -134,7 +147,7 @@ public class WarpApplication {
         Server server;
         try {
             server = new Server();
-            server.addConnector(createHTTPConnector(server, port));
+            server.addConnector(sslEnabled ? createHTTPSConnector(server, port) : createHTTPConnector(server, port));
             HandlerCollection handlers = new HandlerCollection();
             handlers.addHandler(createResourcesHandler());
             handlers.addHandler(createControllersHandler());
@@ -156,6 +169,25 @@ public class WarpApplication {
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
         return connector;
+    }
+
+    private ServerConnector createHTTPSConnector(Server server, int port) {
+        if (!hasProperty(SSL_KEYSTORE_NAME_PROPERTY)) {
+            throw new RuntimeException("Property \"" + SSL_KEYSTORE_NAME_PROPERTY + "\" is needed for ssl support");
+        }
+        if (!hasProperty(SSL_KEYSTORE_PASSWORD_PROPERTY)) {
+            throw new RuntimeException("Property \"" + SSL_KEYSTORE_PASSWORD_PROPERTY + "\" is needed for ssl support");
+        }
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+        sslContextFactory.setKeyStorePath(getClass().getClassLoader().getResource(getProperty(SSL_KEYSTORE_NAME_PROPERTY)).toExternalForm());
+        sslContextFactory.setKeyStorePassword(getProperty(SSL_KEYSTORE_PASSWORD_PROPERTY));
+        SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
+
+        HttpConfiguration https = new HttpConfiguration();
+        https.addCustomizer(new SecureRequestCustomizer(false));
+        ServerConnector sslConnector = new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(https));
+        sslConnector.setPort(port);
+        return sslConnector;
     }
 
     private ContextHandler createResourcesHandler() {
